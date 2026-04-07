@@ -1,0 +1,57 @@
+.footer-container {
+    margin-top: auto;
+    padding: 4rem 0 2rem;
+    border-top: 1px dashed var(--glass-border);
+    background: var(--bg-primary);
+}
+
+.adsense-placeholder {
+    width: 100%;
+    max-width: 900px;
+    min-height: 120px;
+    margin: 0 auto 3rem;
+    border: 2px dashed var(--border-color);
+    background: var(--bg-secondary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    border-radius: 8px;
+}
+
+.ads-text {
+    font-weight: 700;
+    letter-spacing: 2px;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.ads-dims {
+    font-size: 0.8rem;
+    opacity: 0.5;
+}
+
+.footer-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.footer-social-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: var(--text-primary);
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.footer-social-link:hover {
+    opacity: 1;
+}
