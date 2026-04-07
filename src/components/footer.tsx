@@ -14,7 +14,12 @@ export function Footer() {
                 </div>
 
                 <div className="footer-bottom">
-                    <p>RAPwUK powstał w <strong>2012</strong>. &copy; {new Date().getFullYear()} Wszelkie prawa zastrzeżone.</p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'center' }}>
+                        <p>RAPwUK powstał w <strong>2012</strong>. &copy; {new Date().getFullYear()} Wszelkie prawa zastrzeżone.</p>
+                        <a href="/login" style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', opacity: 0.6, textDecoration: 'none' }}>
+                            Admin / Promotor login
+                        </a>
+                    </div>
                     <a href="https://www.facebook.com/RAPwUK" target="_blank" rel="noreferrer" className="footer-social-link">
                         <Facebook size={24} /> <span>/RAPwUK</span>
                     </a>

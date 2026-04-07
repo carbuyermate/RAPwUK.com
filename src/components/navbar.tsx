@@ -38,9 +38,6 @@ export function Navbar() {
                                 {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
                             </button>
                         )}
-                        <Link href="/login" className="btn-primary login-btn">
-                            Promotor Login
-                        </Link>
                     </div>
                 </div>
 

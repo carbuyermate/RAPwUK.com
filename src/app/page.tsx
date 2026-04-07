@@ -89,7 +89,7 @@ export default async function Home() {
           {news.length === 0 ? (
             <div className="empty-state glass-panel">
               <Newspaper size={48} strokeWidth={1} />
-              <p>Brak newsów. Dodaj pierwszy news w <Link href="/dashboard">panelu admina</Link>.</p>
+              <p>Brak newsów.</p>
             </div>
           ) : (
             <div className="news-feed">
