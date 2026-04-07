@@ -1,0 +1,99 @@
+.horizontal-layout {
+    display: flex !important;
+    flex-direction: row !important;
+    padding: 0 !important;
+    overflow: hidden;
+    min-height: 250px;
+}
+
+.rapper-content {
+    flex: 1;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.rapper-name {
+    font-size: 1.5rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.rapper-bio-container {
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.rapper-bio-text {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+    transition: all 0.3s ease;
+}
+
+.rapper-bio-container.collapsed .rapper-bio-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.expand-hint {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    border-bottom: 1px dotted var(--text-primary);
+}
+
+.expand-hint:hover {
+    border-bottom-style: solid;
+}
+
+.mt-auto {
+    margin-top: auto;
+}
+
+.rapper-gallery-col {
+    width: 300px;
+    flex-shrink: 0;
+    background: var(--bg-secondary);
+    display: flex;
+    position: relative;
+}
+
+/* Override the gallery container to fill height instead of keeping square aspect ratio */
+.rapper-gallery-col .gallery-container {
+    margin-bottom: 0;
+    border-radius: 0;
+    aspect-ratio: auto;
+    height: 100%;
+}
+
+.gallery-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+    .horizontal-layout {
+        flex-direction: column-reverse !important;
+    }
+
+    .rapper-gallery-col {
+        width: 100%;
+        height: 250px;
+    }
+}
