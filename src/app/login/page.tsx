@@ -81,9 +81,15 @@ export default function LoginPage() {
                     </button>
                 </form>
 
-                <div className="login-footer">
-                    <span>Nie masz konta?</span>
-                    <Link href="/register" className="register-link">Zarejestruj się</Link>
+                <div className="login-footer" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    <div>
+                        <span>Zapomniałeś hasła?</span>
+                        <Link href="/forgot-password" className="register-link">Zresetuj je</Link>
+                    </div>
+                    <div style={{ paddingTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                        <span>Chcesz dołączyć jako redaktor?</span>
+                        <Link href="/register" className="register-link">Zobacz jak</Link>
+                    </div>
                 </div>
             </div>
         </div>
