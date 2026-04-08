@@ -1,27 +1,65 @@
+'use client';
+
 import { supabase } from '@/lib/supabase';
 import { Newspaper, Users, CalendarDays } from 'lucide-react';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import './dashboard.css';
 
-export default async function DashboardPage() {
-    const { data: { user } } = await supabase.auth.getUser();
+export default function DashboardPage() {
+    const router = useRouter();
+    const [user, setUser] = useState<any>(null);
+    const [profile, setProfile] = useState<any>(null);
+    const [counts, setCounts] = useState({ news: 0, events: 0, rappers: 0 });
+    const [loading, setLoading] = useState(true);
 
-    if (!user) {
-        redirect('/login');
+    useEffect(() => {
+        const fetchDashboardData = async () => {
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                
+                if (!session?.user) {
+                    router.push('/login');
+                    return;
+                }
+
+                setUser(session.user);
+
+                const { data: profileData } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', session.user.id)
+                    .single();
+                
+                setProfile(profileData);
+
+                const [{ count: newsCount }, { count: eventsCount }, { count: rappersCount }] = await Promise.all([
+                    supabase.from('news').select('*', { count: 'exact', head: true }),
+                    supabase.from('events').select('*', { count: 'exact', head: true }),
+                    supabase.from('rappers').select('*', { count: 'exact', head: true }),
+                ]);
+
+                setCounts({
+                    news: newsCount || 0,
+                    events: eventsCount || 0,
+                    rappers: rappersCount || 0
+                });
+            } catch (error) {
+                console.error("Dashboard error:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDashboardData();
+    }, [router]);
+
+    if (loading) {
+        return <div className="container mt-12 text-center text-white">Ładowanie panelu...</div>;
     }
 
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-
-    const [{ count: newsCount }, { count: eventsCount }, { count: rappersCount }] = await Promise.all([
-        supabase.from('news').select('*', { count: 'exact', head: true }),
-        supabase.from('events').select('*', { count: 'exact', head: true }),
-        supabase.from('rappers').select('*', { count: 'exact', head: true }),
-    ]);
+    if (!user) return null;
 
     return (
         <div className="dashboard-container container animate-fade-in">
@@ -54,7 +92,7 @@ export default async function DashboardPage() {
                     </div>
                     <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between' }}>
                         <span className="text-secondary">Liczba wpisów:</span>
-                        <span className="font-bold">{newsCount || 0}</span>
+                        <span className="font-bold">{counts.news}</span>
                     </div>
                 </Link>
 
@@ -71,7 +109,7 @@ export default async function DashboardPage() {
                     </div>
                     <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between' }}>
                         <span className="text-secondary">Liczba imprez:</span>
-                        <span className="font-bold">{eventsCount || 0}</span>
+                        <span className="font-bold">{counts.events}</span>
                     </div>
                 </Link>
 
@@ -88,7 +126,7 @@ export default async function DashboardPage() {
                     </div>
                     <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between' }}>
                         <span className="text-secondary">Liczba profili:</span>
-                        <span className="font-bold">{rappersCount || 0}</span>
+                        <span className="font-bold">{counts.rappers}</span>
                     </div>
                 </Link>
 
