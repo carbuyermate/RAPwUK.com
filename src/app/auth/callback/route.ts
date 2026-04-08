@@ -5,10 +5,11 @@ import { cookies } from 'next/headers'
 export async function GET(request: Request) {
     const { searchParams, origin } = new URL(request.url)
     const code = searchParams.get('code')
-    // Next można ustawić jeśli chcemy kogoś przekierować np. do ustwiania hasła
+    const token_hash = searchParams.get('token_hash')
+    const type = searchParams.get('type')
     const next = searchParams.get('next') ?? '/dashboard'
 
-    if (code) {
+    if (code || (token_hash && type)) {
         const cookieStore = await cookies()
         const supabase = createServerClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -30,7 +31,19 @@ export async function GET(request: Request) {
                 },
             }
         )
-        const { error } = await supabase.auth.exchangeCodeForSession(code)
+
+        let error = null;
+        
+        if (token_hash && type) {
+            const result = await supabase.auth.verifyOtp({
+                type: type as any,
+                token_hash,
+            })
+            error = result.error
+        } else if (code) {
+            const result = await supabase.auth.exchangeCodeForSession(code)
+            error = result.error
+        }
         
         if (!error) {
             return NextResponse.redirect(`${origin}${next}`)
