@@ -4,10 +4,21 @@ import { cookies } from 'next/headers'
 
 export async function GET(request: Request) {
     const requestUrl = new URL(request.url)
+    
+    // Rozpoznawanie prawdziwej domeny z nagłówków proxy Rendera:
+    const host = request.headers.get('x-forwarded-host') || requestUrl.host
+    const protocol = request.headers.get('x-forwarded-proto') || requestUrl.protocol
+    const externalOrigin = `${protocol}://${host}`
+
     const code = requestUrl.searchParams.get('code')
     const token_hash = requestUrl.searchParams.get('token_hash')
     const type = requestUrl.searchParams.get('type')
     const next = requestUrl.searchParams.get('next') ?? '/dashboard'
+    const error_description = requestUrl.searchParams.get('error_description')
+
+    if (error_description) {
+        return NextResponse.redirect(`${externalOrigin}/login?error=${encodeURIComponent(error_description)}`)
+    }
 
     if (code || (token_hash && type)) {
         const cookieStore = await cookies()
@@ -46,10 +57,10 @@ export async function GET(request: Request) {
         }
         
         if (!error) {
-            return NextResponse.redirect(new URL(next, request.url))
+            return NextResponse.redirect(`${externalOrigin}${next}`)
         }
     }
 
-    // Zwróć błąd logowania z zachowaniem oryginalnego proxy (unika localhost)
-    return NextResponse.redirect(new URL('/login?error=Invalid_link', request.url))
+    // Zwróć błąd logowania używając wyciągniętej prawdziwej domeny (zamiast localhost port 10000)
+    return NextResponse.redirect(`${externalOrigin}/login?error=Invalid_link`)
 }
