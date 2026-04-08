@@ -62,7 +62,7 @@ export default function ManagingEventsPage() {
                 <table className="events-table">
                     <thead>
                         <tr>
-                            <th>Data koncertu</th>
+                            <th>Data imprezy</th>
                             <th>Wydarzenie</th>
                             <th>Miejscowość</th>
                             <th>Status (czas)</th>

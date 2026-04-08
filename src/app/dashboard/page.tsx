@@ -66,11 +66,11 @@ export default async function DashboardPage() {
                         </div>
                         <div>
                             <h3 className="font-bold text-lg mb-1">Wydarzenia</h3>
-                            <p className="text-secondary text-sm">Zarządzaj kalendarzem imprez i koncertów</p>
+                            <p className="text-secondary text-sm">Zarządzaj kalendarzem imprez</p>
                         </div>
                     </div>
                     <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between' }}>
-                        <span className="text-secondary">Liczba koncertów:</span>
+                        <span className="text-secondary">Liczba imprez:</span>
                         <span className="font-bold">{eventsCount || 0}</span>
                     </div>
                 </Link>
