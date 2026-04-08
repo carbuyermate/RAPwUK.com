@@ -82,7 +82,7 @@ export default async function DashboardPage() {
                             <Users size={28} />
                         </div>
                         <div>
-                            <h3 className="font-bold text-lg mb-1">Raperzy UK</h3>
+                            <h3 className="font-bold text-lg mb-1">Raperzy</h3>
                             <p className="text-secondary text-sm">Zarządzaj katalogiem polskich raperów w UK</p>
                         </div>
                     </div>

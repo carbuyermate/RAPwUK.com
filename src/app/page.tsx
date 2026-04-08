@@ -155,7 +155,7 @@ export default async function Home() {
         <aside className="events-sidebar">
           <div className="section-header">
             <h2 className="section-title">
-              <CalendarDays size={22} /> Koncerty
+              <CalendarDays size={22} /> Imprezy
             </h2>
           </div>
 
