@@ -72,16 +72,11 @@ export default function AddEventPage() {
                 const fileExt = imageFile.name.split('.').pop();
                 const fileName = `events/${Date.now()}.${fileExt}`;
 
-                const { data: uploadData, error: uploadError } = await supabase.storage
-                    .from('uploads')
-                    .uploadUniqueness(fileName, imageFile); // Pomocnicza metoda jeśli dostępna lub standard
-
-                // Standardowy upload
-                const { error: standardUploadError } = await supabase.storage
+                const { error: uploadError } = await supabase.storage
                     .from('uploads')
                     .upload(fileName, imageFile, { upsert: false });
 
-                if (standardUploadError) throw standardUploadError;
+                if (uploadError) throw uploadError;
 
                 const { data: { publicUrl } } = supabase.storage.from('uploads').getPublicUrl(fileName);
                 finalImageUrl = publicUrl;
