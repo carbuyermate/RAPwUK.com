@@ -26,7 +26,7 @@ export default function LoginPage() {
 
             if (error) throw error;
 
-            router.push('/dashboard');
+            window.location.href = '/dashboard';
         } catch (err: any) {
             let msg = err.message || 'Wystąpił błąd podczas logowania';
             if (msg.includes('Email not confirmed')) msg = 'Podany adres e-mail nie został potwierdzony! Jeżeli zakładałeś konto ręcznie w Supabase, upewnij się, że zaznaczyłeś opcję "Auto Confirm User".';
