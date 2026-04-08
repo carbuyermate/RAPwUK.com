@@ -1,36 +1,31 @@
 import { supabase } from '@/lib/supabase';
-import { Plus, Edit2, Trash2, Newspaper, Users } from 'lucide-react';
+import { Newspaper, Users, CalendarDays } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import './dashboard.css';
 
 export default async function DashboardPage() {
-    // 1. Sprawdzenie sesji (na serwerze)
-    // Uwaga: W idealnym świecie używamy createServerComponentClient z @supabase/auth-helpers-nextjs
-    // Ale tutaj użyjemy prostego getUser() dla demonstracji, middleware i tak pilnuje trasy.
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
         redirect('/login');
     }
 
-    // 2. Pobranie profilu, aby sprawdzić rolę i nazwę
     const { data: profile } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
         .single();
 
-    // 3. Pobranie wydarzeń przypisanych do tego promotora
-    const { data: events } = await supabase
-        .from('events')
-        .select('*')
-        .eq('promoter_id', user.id)
-        .order('event_date', { ascending: false });
+    const [{ count: newsCount }, { count: eventsCount }, { count: rappersCount }] = await Promise.all([
+        supabase.from('news').select('*', { count: 'exact', head: true }),
+        supabase.from('events').select('*', { count: 'exact', head: true }),
+        supabase.from('rappers').select('*', { count: 'exact', head: true }),
+    ]);
 
     return (
         <div className="dashboard-container container animate-fade-in">
-            <header className="dashboard-header">
+            <header className="dashboard-header" style={{ marginBottom: '2rem' }}>
                 <div className="user-info">
                     <div className="user-avatar">
                         {profile?.full_name?.charAt(0) || user.email?.charAt(0)}
@@ -40,81 +35,64 @@ export default async function DashboardPage() {
                         <p className="text-secondary text-sm">{profile?.role === 'admin' ? 'Administrator' : 'Promotor'}</p>
                     </div>
                 </div>
-                <div className="dashboard-actions">
-                    <Link href="/dashboard/add-news" className="btn-primary flex items-center gap-2">
-                        <Newspaper size={18} /> Dodaj news
-                    </Link>
-                    <Link href="/dashboard/add-event" className="btn-secondary flex items-center gap-2">
-                        <Plus size={18} /> Wydarzenie
-                    </Link>
-                    <Link href="/dashboard/add-rapper" className="btn-secondary flex items-center gap-2">
-                        <Users size={18} /> Dodaj rapera
-                    </Link>
-                </div>
             </header>
 
-            <div className="dashboard-stats">
-                <div className="stat-card glass-panel">
-                    <span className="stat-label">Wszystkie Wydarzenia</span>
-                    <span className="stat-value">{events?.length || 0}</span>
-                </div>
-                <div className="stat-card glass-panel">
-                    <span className="stat-label">Nadchodzące</span>
-                    <span className="stat-value">
-                        {events?.filter(e => new Date(e.event_date) > new Date()).length || 0}
-                    </span>
-                </div>
-                <div className="stat-card glass-panel">
-                    <span className="stat-label">Zasięg (est.)</span>
-                    <span className="stat-value">--</span>
-                </div>
+            <h2 className="section-title mb-6">Wybierz moduł do zarządzania</h2>
+
+            <div className="dashboard-modules" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                
+                {/* News Module */}
+                <Link href="/dashboard/news" className="stat-card glass-panel" style={{ cursor: 'pointer', textDecoration: 'none', transition: 'all 0.2s', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <div style={{ padding: '12px', background: 'rgba(255,255,255,0.05)', borderRadius: '12px' }}>
+                            <Newspaper size={28} />
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-lg mb-1">Newsy</h3>
+                            <p className="text-secondary text-sm">Zarządzaj artykułami i wiadomościami</p>
+                        </div>
+                    </div>
+                    <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between' }}>
+                        <span className="text-secondary">Liczba wpisów:</span>
+                        <span className="font-bold">{newsCount || 0}</span>
+                    </div>
+                </Link>
+
+                {/* Events Module */}
+                <Link href="/dashboard/events" className="stat-card glass-panel" style={{ cursor: 'pointer', textDecoration: 'none', transition: 'all 0.2s', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <div style={{ padding: '12px', background: 'rgba(255,255,255,0.05)', borderRadius: '12px' }}>
+                            <CalendarDays size={28} />
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-lg mb-1">Wydarzenia</h3>
+                            <p className="text-secondary text-sm">Zarządzaj kalendarzem imprez i koncertów</p>
+                        </div>
+                    </div>
+                    <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between' }}>
+                        <span className="text-secondary">Liczba koncertów:</span>
+                        <span className="font-bold">{eventsCount || 0}</span>
+                    </div>
+                </Link>
+
+                {/* Rappers Module */}
+                <Link href="/dashboard/rappers" className="stat-card glass-panel" style={{ cursor: 'pointer', textDecoration: 'none', transition: 'all 0.2s', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <div style={{ padding: '12px', background: 'rgba(255,255,255,0.05)', borderRadius: '12px' }}>
+                            <Users size={28} />
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-lg mb-1">Raperzy UK</h3>
+                            <p className="text-secondary text-sm">Zarządzaj katalogiem polskich raperów w UK</p>
+                        </div>
+                    </div>
+                    <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between' }}>
+                        <span className="text-secondary">Liczba profili:</span>
+                        <span className="font-bold">{rappersCount || 0}</span>
+                    </div>
+                </Link>
+
             </div>
-
-            <section className="events-list-section">
-                <h2 className="section-title mb-4">Twoje Wydarzenia</h2>
-
-                <div className="events-table-container glass-panel">
-                    <table className="events-table">
-                        <thead>
-                            <tr>
-                                <th>Data</th>
-                                <th>Wydarzenie</th>
-                                <th>Lokalizacja</th>
-                                <th>Status</th>
-                                <th>Akcje</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {events && events.length > 0 ? (
-                                events.map((event) => (
-                                    <tr key={event.id} className="event-row">
-                                        <td>{new Date(event.event_date).toLocaleDateString('pl-PL')}</td>
-                                        <td className="font-semibold">{event.title}</td>
-                                        <td>{event.city}, {event.venue}</td>
-                                        <td>
-                                            <span className={`status-badge ${new Date(event.event_date) > new Date() ? 'active' : 'draft'}`}>
-                                                {new Date(event.event_date) > new Date() ? 'Aktywne' : 'Zakończone'}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div className="action-btns">
-                                                <button className="action-btn" title="Edytuj"><Edit2 size={16} /></button>
-                                                <button className="action-btn delete" title="Usuń"><Trash2 size={16} /></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={5} className="text-center py-8 text-secondary">
-                                        Nie dodałeś jeszcze żadnych wydarzeń.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </section>
         </div>
     );
 }

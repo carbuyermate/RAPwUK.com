@@ -58,10 +58,10 @@ export default async function NewsArticlePage({ params }: { params: { id: string
 
         <h1 className="article-title">{article.title}</h1>
 
-        <div className="article-body">
-          {article.content?.split('\n').map((para, i) => (
-            para.trim() ? <p key={i}>{para}</p> : null
-          ))}
+        <div 
+          className="article-body rich-content"
+          dangerouslySetInnerHTML={{ __html: article.content || '' }}
+        >
         </div>
       </article>
     </div>

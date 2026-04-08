@@ -1,25 +1,46 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { Newspaper, Tag, FileText, Image as ImageIcon, ChevronLeft, Upload, X } from 'lucide-react';
 import Link from 'next/link';
 import { RichTextEditor } from '@/components/RichTextEditor';
-import '../dashboard.css';
+import '../../dashboard.css';
+import { use } from 'react';
 
 const CATEGORIES = ['Muzyka', 'Koncerty', 'Wywiady', 'Premiery', 'Relacja', 'Konkurs', 'Inne'];
 
-export default function AddNewsPage() {
+export default function EditNewsPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = use(params);
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [category, setCategory] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const [fetching, setFetching] = useState(true);
     const [uploadProgress, setUploadProgress] = useState('');
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
+
+    useEffect(() => {
+        async function loadData() {
+            const { data, error } = await supabase.from('news').select('*').eq('id', id).single();
+            if (error) {
+                setError("Nie znaleziono wpisu!");
+            } else if (data) {
+                setTitle(data.title);
+                setContent(data.content || '');
+                setCategory(data.category);
+                if (data.image_url) {
+                    setImagePreview(data.image_url);
+                }
+            }
+            setFetching(false);
+        }
+        loadData();
+    }, [id]);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -43,9 +64,9 @@ export default function AddNewsPage() {
         setLoading(true);
         setError(null);
 
-        let image_url: string | null = null;
+        let image_url: string | null = imagePreview && !imageFile ? imagePreview : null;
 
-        // 1. Upload zdjęcia do Supabase Storage (jeśli wybrano)
+        // 1. Upload zdjęcia do Supabase Storage
         if (imageFile) {
             setUploadProgress('Wysyłam zdjęcie...');
             const fileExt = imageFile.name.split('.').pop();
@@ -64,33 +85,40 @@ export default function AddNewsPage() {
 
             const { data: { publicUrl } } = supabase.storage.from('uploads').getPublicUrl(fileName);
             image_url = publicUrl;
+        } else if (!imagePreview) {
+            image_url = null; // Removed image
         }
 
-        // 2. Zapisz news do bazy
-        setUploadProgress('Zapisuję news...');
-        const { error: insertError } = await supabase
+        // 2. Aktualizacja (PATCH) w bazie
+        setUploadProgress('Zapisuję zmiany...');
+        const { error: updateError } = await supabase
             .from('news')
-            .insert([{ title, content, category, image_url, is_auto_generated: false }]);
+            .update({ title, content, category, image_url })
+            .eq('id', id);
 
-        if (insertError) {
-            setError(insertError.message);
+        if (updateError) {
+            setError(updateError.message);
             setLoading(false);
             setUploadProgress('');
             return;
         }
 
-        router.push('/dashboard');
+        router.push('/dashboard/news');
         router.refresh();
     };
+
+    if (fetching) {
+        return <div className="dashboard-container container mt-12 text-center">Ładowanie edytora...</div>;
+    }
 
     return (
         <div className="dashboard-container container animate-fade-in">
             <header className="dashboard-header">
                 <div className="flex items-center gap-4">
-                    <Link href="/dashboard" className="action-btn">
+                    <Link href="/dashboard/news" className="action-btn">
                         <ChevronLeft size={24} />
                     </Link>
-                    <h1 className="text-2xl font-bold">Dodaj News</h1>
+                    <h1 className="text-2xl font-bold">Edytuj News</h1>
                 </div>
             </header>
 
@@ -185,9 +213,9 @@ export default function AddNewsPage() {
                         className="btn-primary flex-1 py-3"
                         disabled={loading}
                     >
-                        {loading ? 'Publikowanie...' : 'Opublikuj News'}
+                        {loading ? 'Zapisywanie...' : 'Zapisz Zmiany'}
                     </button>
-                    <Link href="/dashboard" className="btn-secondary py-3 px-8">
+                    <Link href="/dashboard/news" className="btn-secondary py-3 px-8">
                         Anuluj
                     </Link>
                 </div>
