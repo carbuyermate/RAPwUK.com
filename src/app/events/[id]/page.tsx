@@ -43,95 +43,95 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
     const dateInfo = formatDate(event.event_date);
 
     return (
-        <div className="event-detail-page container animate-fade-in">
-            <div className="event-detail-back">
-                <Link href="/events" className="back-link">
-                    <ArrowLeft size={18} /> Powrót do listy imprez
-                </Link>
-            </div>
-
-            <div className="event-detail-grid">
-                {/* Poster Side */}
-                <div className="event-detail-poster-sec">
-                    {event.image_url ? (
-                        <EventPoster src={event.image_url} alt={event.title} />
-                    ) : (
-                        <div className="aspect-[3/4] bg-[rgba(255,255,255,0.03)] rounded-2xl flex flex-col items-center justify-center border border-[rgba(255,255,255,0.05)] text-secondary gap-4">
-                            <Calendar size={64} strokeWidth={1} opacity={0.3} />
-                            <p className="text-sm opacity-50">Brak plakatu dla tego wydarzenia</p>
-                        </div>
-                    )}
-
-                    <div className="ticket-cta-box mt-8">
-                        {event.ticket_url ? (
-                            <>
-                                <h4 className="text-lg font-bold">Wybierasz się?</h4>
-                                <p className="text-secondary text-sm">Zarezerwuj swoje miejsce już teraz, zanim bilety zostaną wyprzedane!</p>
-                                <a 
-                                    href={event.ticket_url} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    className="ticket-cta-btn"
-                                >
-                                    <Ticket size={24} /> KUP BILETY ONLINE
-                                </a>
-                            </>
-                        ) : (
-                            <p className="text-secondary text-sm italic">Informacje o biletach wkrótce lub u organizatora.</p>
-                        )}
-                    </div>
+        <div className="event-detail-page animate-fade-in">
+            <div className="container">
+                <div className="event-detail-back">
+                    <Link href="/events" className="back-link">
+                        <ArrowLeft size={18} /> Powrót do listy
+                    </Link>
                 </div>
 
-                {/* Info Side */}
-                <div className="event-detail-content">
-                    {event.is_premium && (
-                        <div className="event-tag-premium-large">
-                            <Zap size={14} fill="black" /> Polecane Wydarzenie
-                        </div>
-                    )}
+                <div className="event-detail-grid">
+                    {/* Poster Side */}
+                    <div className="event-detail-poster-sec">
+                        {event.image_url ? (
+                            <EventPoster src={event.image_url} alt={event.title} />
+                        ) : (
+                            <div className="aspect-[3/4] bg-[rgba(255,255,255,0.03)] rounded-2xl flex flex-col items-center justify-center border border-[rgba(255,255,255,0.05)] text-secondary gap-4">
+                                <Calendar size={64} strokeWidth={1} opacity={0.3} />
+                                <p className="text-sm opacity-50">Brak plakatu</p>
+                            </div>
+                        )}
 
-                    <h1 className="event-detail-title">{event.title}</h1>
-
-                    <div className="event-detail-meta-group mt-4">
-                        <div className="meta-item">
-                            <div className="meta-icon-box">
-                                <Calendar size={20} />
-                            </div>
-                            <div>
-                                <div className="meta-label">Data</div>
-                                <div className="meta-value">{dateInfo.full}</div>
-                                <div className="text-secondary text-sm capitalize">{dateInfo.weekday}</div>
-                            </div>
-                        </div>
-
-                        <div className="meta-item">
-                            <div className="meta-icon-box">
-                                <Clock size={20} />
-                            </div>
-                            <div>
-                                <div className="meta-label">Start</div>
-                                <div className="meta-value">{dateInfo.time}</div>
-                            </div>
-                        </div>
-
-                        <div className="meta-item">
-                            <div className="meta-icon-box">
-                                <MapPin size={20} />
-                            </div>
-                            <div>
-                                <div className="meta-label">Lokalizacja</div>
-                                <div className="meta-value">{event.city}</div>
-                                <div className="text-secondary text-sm">{event.venue}</div>
-                            </div>
+                        <div className="ticket-cta-box">
+                            {event.ticket_url ? (
+                                <>
+                                    <h4 className="text-lg font-bold mb-4">Zarezerwuj bilety</h4>
+                                    <a 
+                                        href={event.ticket_url} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="ticket-cta-btn"
+                                    >
+                                        <Ticket size={24} /> KUP BILETY
+                                    </a>
+                                </>
+                            ) : (
+                                <p className="text-secondary text-sm italic">Informacje o biletach wkrótce.</p>
+                            )}
                         </div>
                     </div>
 
-                    <div className="h-px bg-white/10 my-4" />
+                    {/* Info Side */}
+                    <div className="event-detail-content">
+                        <div>
+                            {event.is_premium && (
+                                <div className="event-tag-premium-large mb-4">
+                                    <Zap size={14} fill="black" /> Polecane
+                                </div>
+                            )}
+                            <h1 className="event-detail-title">{event.title}</h1>
+                        </div>
 
-                    <div className="event-detail-description-box">
-                        <h4 className="text-sm uppercase tracking-widest font-bold text-secondary mb-4">Informacje o wydarzeniu</h4>
-                        <div className="event-detail-description">
-                            {event.description || "Brak dodatkowego opisu dla tego wydarzenia."}
+                        <div className="event-detail-meta-group">
+                            <div className="meta-item">
+                                <div className="meta-icon-box">
+                                    <Calendar size={20} />
+                                </div>
+                                <div>
+                                    <div className="meta-label">Kiedy</div>
+                                    <div className="meta-value">{dateInfo.full}</div>
+                                    <div className="text-secondary text-xs uppercase opacity-70 mt-1">{dateInfo.weekday}</div>
+                                </div>
+                            </div>
+
+                            <div className="meta-item">
+                                <div className="meta-icon-box">
+                                    <Clock size={20} />
+                                </div>
+                                <div>
+                                    <div className="meta-label">Start</div>
+                                    <div className="meta-value">{dateInfo.time}</div>
+                                </div>
+                            </div>
+
+                            <div className="meta-item">
+                                <div className="meta-icon-box">
+                                    <MapPin size={20} />
+                                </div>
+                                <div>
+                                    <div className="meta-label">Gdzie</div>
+                                    <div className="meta-value">{event.city}</div>
+                                    <div className="text-secondary text-xs opacity-70 mt-1">{event.venue}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="event-detail-description-box">
+                            <h4 className="meta-label mb-4 opacity-50">O wydarzeniu</h4>
+                            <div className="event-detail-description">
+                                {event.description || "Brak dodatkowego opisu."}
+                            </div>
                         </div>
                     </div>
                 </div>
