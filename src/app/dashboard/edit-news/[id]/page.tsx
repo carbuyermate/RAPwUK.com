@@ -9,7 +9,7 @@ import { RichTextEditor } from '@/components/RichTextEditor';
 import '../../dashboard.css';
 import { use } from 'react';
 
-const CATEGORIES = ['Muzyka', 'Koncerty', 'Wywiady', 'Premiery', 'Relacja', 'Konkurs', 'Inne'];
+const CATEGORIES = ['Muzyka', 'Imprezy', 'Wywiady', 'Premiery', 'Relacja', 'Konkurs', 'Inne'];
 
 export default function EditNewsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);

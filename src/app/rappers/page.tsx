@@ -18,7 +18,7 @@ export default async function RappersDirectory() {
     return (
         <div className="directory-container container">
             <div className="directory-header animate-fade-in">
-                <h1 className="page-title">Raperzy UK</h1>
+                <h1 className="page-title">Raperzy</h1>
                 <p className="page-subtitle">Alfabetyczny spis twórców polskiego rapu na Wyspach.</p>
             </div>
             
