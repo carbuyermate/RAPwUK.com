@@ -37,7 +37,7 @@ export default async function EventsPage() {
     return (
         <div className="events-container container">
             <header className="events-header animate-fade-in">
-                <h1 className="page-title">Kalendarz Koncertowy</h1>
+                <h1 className="page-title">Lista Imprez</h1>
                 <p className="page-subtitle">Rap bez granic na Wyspach – od polskiego podziemia po światowe gwiazdy w jednym miejscu.</p>
             </header>
 

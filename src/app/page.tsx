@@ -70,7 +70,7 @@ export default async function Home() {
           Rapowe Wibracje<br />na Wyspach
         </h1>
         <p className="hero-subtitle">
-          Najświeższe newsy ze sceny, kalendarz koncertów i wszystko o polskim hip-hopie w UK.
+          Najświeższe newsy ze sceny, kalendarz imprez i wszystko o polskim hip-hopie w UK.
         </p>
       </section>
 
@@ -217,7 +217,7 @@ export default async function Home() {
           {/* Bottom CTA */}
           <Link href="/events" className="events-cta-btn">
             <CalendarDays size={18} />
-            Pełny kalendarz koncertów
+            Pełna lista imprez
             <ArrowRight size={18} />
           </Link>
         </aside>
