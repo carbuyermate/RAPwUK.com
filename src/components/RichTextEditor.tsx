@@ -5,15 +5,11 @@ import 'react-quill/dist/quill.snow.css';
 import { useMemo } from 'react';
 
 // Use dynamic import to prevent SSR rendering issues with Quill
-const ReactQuill = dynamic(
-    async () => {
-        const { default: RQ } = await import('react-quill');
-        return function forwardRef({ forwardedRef, ...props }: any) {
-            return <RQ ref={forwardRef} {...props} />;
-        };
-    },
-    { ssr: false, loading: () => <div className="p-4 text-center text-sm text-secondary border border-[rgba(255,255,255,0.1)] rounded-lg min-h-[200px] flex items-center justify-center">Ładowanie edytora...</div> }
-);
+// Standardowy dynamiczny import dla Next.js 13+
+const ReactQuill = dynamic(() => import('react-quill'), { 
+    ssr: false,
+    loading: () => <div className="p-4 text-center text-sm text-secondary border border-[rgba(255,255,255,0.1)] rounded-lg min-h-[200px] flex items-center justify-center">Ładowanie edytora...</div>
+});
 
 interface RichTextEditorProps {
     value: string;
