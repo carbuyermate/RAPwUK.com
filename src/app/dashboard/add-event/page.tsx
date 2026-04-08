@@ -1,4 +1,5 @@
 'use client';
+// Build version: 1.0.1 (Force refresh)
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
