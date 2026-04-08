@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { Calendar, MapPin, Ticket, ExternalLink, Zap, Search, ChevronUp, ChevronDown } from 'lucide-react';
+import Link from 'next/link';
 import './events-list.css';
 
 interface Event {
@@ -124,39 +125,39 @@ export default function EventsList({ initialEvents }: EventsListProps) {
                     filteredEvents.map((event) => {
                         const { day, month, year } = formatDate(event.event_date);
                         return (
-                            <div key={event.id} className={`event-card glass-panel ${event.is_premium ? 'premium' : ''}`}>
-                                <div className="event-image-container">
-                                    {event.image_url ? (
-                                        <img src={event.image_url} alt={event.title} className="event-poster" />
-                                    ) : (
-                                        <div className="event-poster-placeholder">
-                                            <Calendar size={32} />
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="event-date-box">
-                                    <div className="date-day">{day}</div>
-                                    <div className="date-month">{month}</div>
-                                    <div className="text-secondary" style={{ fontSize: '0.7rem' }}>{year}</div>
-                                </div>
-                                <div className="event-main-info">
-                                    {event.is_premium && <div className="event-tag-premium">Premium</div>}
-                                    <div className="text-secondary font-bold uppercase tracking-wider" style={{ fontSize: '0.7rem', marginBottom: '4px' }}>{event.city}</div>
-                                    <h3 className="text-xl font-bold">{event.title}</h3>
-                                    <p className="text-secondary text-sm mt-1 line-clamp-2">
-                                        {event.description}
-                                    </p>
-                                    <div className="flex items-center gap-4 mt-2 text-sm text-secondary">
-                                        <span className="flex items-center gap-1" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><MapPin size={14} /> {event.venue}</span>
+                                <Link href={`/events/${event.id}`} className={`event-card glass-panel ${event.is_premium ? 'premium' : ''}`}>
+                                    <div className="event-image-container">
+                                        {event.image_url ? (
+                                            <img src={event.image_url} alt={event.title} className="event-poster" />
+                                        ) : (
+                                            <div className="event-poster-placeholder">
+                                                <Calendar size={32} />
+                                            </div>
+                                        )}
                                     </div>
-                                </div>
-                                <div className="event-actions">
-                                    <a href={event.ticket_url} target="_blank" rel="noopener noreferrer" className="btn-primary py-2 px-6 flex items-center gap-2 text-sm" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        Bilety <ExternalLink size={14} />
-                                    </a>
-                                    {event.is_premium && <Zap size={18} className="text-accent" />}
-                                </div>
-                            </div>
+                                    <div className="event-date-box">
+                                        <div className="date-day">{day}</div>
+                                        <div className="date-month">{month}</div>
+                                        <div className="text-secondary" style={{ fontSize: '0.7rem' }}>{year}</div>
+                                    </div>
+                                    <div className="event-main-info">
+                                        {event.is_premium && <div className="event-tag-premium">Premium</div>}
+                                        <div className="text-secondary font-bold uppercase tracking-wider" style={{ fontSize: '0.7rem', marginBottom: '4px' }}>{event.city}</div>
+                                        <h3 className="text-xl font-bold">{event.title}</h3>
+                                        <p className="text-secondary text-sm mt-1 line-clamp-2">
+                                            {event.description}
+                                        </p>
+                                        <div className="flex items-center gap-4 mt-2 text-sm text-secondary">
+                                            <span className="flex items-center gap-1" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><MapPin size={14} /> {event.venue}</span>
+                                        </div>
+                                    </div>
+                                    <div className="event-actions">
+                                        <div className="btn-secondary py-2 px-6 flex items-center gap-2 text-sm" style={{ pointerEvents: 'none' }}>
+                                            Szczegóły
+                                        </div>
+                                        {event.is_premium && <Zap size={18} className="text-accent" />}
+                                    </div>
+                                </Link>
                         );
                     })
                 ) : (

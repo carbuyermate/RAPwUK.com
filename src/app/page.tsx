@@ -170,9 +170,11 @@ export default async function Home() {
               {events.map((ev, i) => {
                 const d = formatDate(ev.event_date);
                 return (
-                  <div
+                  <Link
                     key={ev.id}
+                    href={`/events/${ev.id}`}
                     className={`event-row${ev.is_premium ? ' event-row--premium' : ''}${i < events.length - 1 ? ' event-row--border' : ''}`}
+                    style={{ textDecoration: 'none', color: 'inherit' }}
                   >
                     {/* Date pill */}
                     <div className="event-date-pill">
@@ -201,26 +203,13 @@ export default async function Home() {
                         <MapPin size={11} />
                         {ev.city}{ev.venue ? `, ${ev.venue}` : ''}
                       </p>
-                      <p className="event-info__time">
-                        <Clock size={11} />
-                        {d.time}
-                      </p>
                     </div>
 
-                    {/* Ticket link */}
-                    {ev.ticket_url && (
-                      <a
-                        href={ev.ticket_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="ticket-btn"
-                        aria-label="Kup bilety"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <ExternalLink size={14} />
-                      </a>
-                    )}
-                  </div>
+                    {/* Arrow (Visual cue) */}
+                    <div className="text-secondary opacity-30">
+                      <ArrowRight size={14} />
+                    </div>
+                  </Link>
                 );
               })}
             </div>
