@@ -22,6 +22,7 @@ interface EventItem {
   venue: string;
   city: string;
   ticket_url?: string;
+  image_url?: string;
   is_premium: boolean;
 }
 
@@ -177,6 +178,17 @@ export default async function Home() {
                     <div className="event-date-pill">
                       <span className="event-date-pill__day">{d.day}</span>
                       <span className="event-date-pill__month">{d.month}</span>
+                    </div>
+
+                    {/* Poster thumbnail (NEW) */}
+                    <div className="event-mini-poster">
+                      {ev.image_url ? (
+                        <img src={ev.image_url} alt={ev.title} />
+                      ) : (
+                        <div className="event-mini-poster-placeholder">
+                           <CalendarDays size={14} />
+                        </div>
+                      )}
                     </div>
 
                     {/* Info */}

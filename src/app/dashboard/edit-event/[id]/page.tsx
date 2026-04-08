@@ -3,7 +3,7 @@
 import { useState, useEffect, use } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { Calendar, MapPin, Tag, FileText, Link as LinkIcon, ChevronLeft } from 'lucide-react';
+import { Calendar, MapPin, Tag, FileText, Link as LinkIcon, ChevronLeft, Upload, X } from 'lucide-react';
 import Link from 'next/link';
 import '../../dashboard.css';
 
@@ -17,6 +17,12 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
     const [city, setCity] = useState('');
     const [ticketUrl, setTicketUrl] = useState('');
     const [isPremium, setIsPremium] = useState(false);
+    
+    // Image state
+    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [uploadProgress, setUploadProgress] = useState('');
+    
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -37,24 +43,45 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
             if (error) {
                 setError("Nie znaleziono wydarzenia!");
             } else if (data) {
-                // Ensure the event belongs to this user if they are a promoter...
-                // Handled partially by RLS, but if they hit it, good to load.
                 setTitle(data.title);
                 setDescription(data.description || '');
                 if (data.event_date) {
                     const evtDate = new Date(data.event_date);
-                    setDate(evtDate.toISOString().split('T')[0]);
-                    setTime(evtDate.toISOString().substring(11, 16));
+                    // Handle offset to get correct local date/time
+                    const offset = evtDate.getTimezoneOffset();
+                    const localDate = new Date(evtDate.getTime() - (offset * 60 * 1000));
+                    setDate(localDate.toISOString().split('T')[0]);
+                    setTime(localDate.toISOString().substring(11, 16));
                 }
                 setVenue(data.venue);
                 setCity(data.city);
                 setTicketUrl(data.ticket_url || '');
                 setIsPremium(data.is_premium);
+                if (data.image_url) {
+                    setImagePreview(data.image_url);
+                }
             }
             setFetching(false);
         };
         getSessionAndData();
     }, [id, router]);
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        if (file.size > 5 * 1024 * 1024) {
+            setError('Zdjęcie nie może przekraczać 5MB.');
+            return;
+        }
+        setImageFile(file);
+        setImagePreview(URL.createObjectURL(file));
+        setError(null);
+    };
+
+    const removeImage = () => {
+        setImageFile(null);
+        setImagePreview(null);
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -63,9 +90,31 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
         setLoading(true);
         setError(null);
 
-        const eventDateTime = `${date}T${time}:00Z`;
+        let finalImageUrl = imagePreview && !imageFile ? imagePreview : null;
 
         try {
+            // 1. Upload plakat (jeśli wybrano nowy plik)
+            if (imageFile) {
+                setUploadProgress('Wysyłam plakat...');
+                const fileExt = imageFile.name.split('.').pop();
+                const fileName = `events/${Date.now()}.${fileExt}`;
+
+                const { error: uploadError } = await supabase.storage
+                    .from('uploads')
+                    .upload(fileName, imageFile, { upsert: false });
+
+                if (uploadError) throw uploadError;
+
+                const { data: { publicUrl } } = supabase.storage.from('uploads').getPublicUrl(fileName);
+                finalImageUrl = publicUrl;
+            } else if (!imagePreview) {
+                finalImageUrl = null; // Removed existing image
+            }
+
+            // 2. Aktualizacja wydarzenia
+            setUploadProgress('Zapisuję zmiany...');
+            const eventDateTime = `${date}T${time}:00Z`;
+
             const { error: updateError } = await supabase
                 .from('events')
                 .update({
@@ -75,7 +124,8 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
                     venue,
                     city,
                     ticket_url: ticketUrl,
-                    is_premium: isPremium
+                    is_premium: isPremium,
+                    image_url: finalImageUrl
                 })
                 .eq('id', id);
 
@@ -87,6 +137,7 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
             setError(err.message || 'Wystąpił błąd podczas edycji wydarzenia');
         } finally {
             setLoading(false);
+            setUploadProgress('');
         }
     };
 
@@ -203,6 +254,34 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
                         />
                     </div>
 
+                    {/* Zdjęcie (Plakat) */}
+                    <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                        <label className="form-label">Plakat / Zdjęcie wydarzenia</label>
+
+                        {imagePreview ? (
+                            <div className="image-preview-wrapper">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={imagePreview} alt="Podgląd plakatu" className="image-preview" />
+                                <button type="button" className="image-remove-btn" onClick={removeImage}>
+                                    <X size={18} /> Usuń/Zmień plakat
+                                </button>
+                            </div>
+                        ) : (
+                            <label className="upload-zone" htmlFor="image-upload">
+                                <Upload size={32} strokeWidth={1.5} />
+                                <span>Dodaj plakat imprezy</span>
+                                <span className="upload-hint">PNG, JPG, WEBP · max 5MB</span>
+                                <input
+                                    id="image-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    style={{ display: 'none' }}
+                                    onChange={handleImageChange}
+                                />
+                            </label>
+                        )}
+                    </div>
+
                     <div className="form-group" style={{ gridColumn: 'span 2', display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '1rem' }}>
                         <input
                             type="checkbox"
@@ -216,6 +295,10 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
                         </label>
                     </div>
                 </div>
+
+                {uploadProgress && (
+                    <p className="text-secondary text-sm mt-4 text-center">{uploadProgress}</p>
+                )}
 
                 <div className="mt-8 flex gap-4">
                     <button
