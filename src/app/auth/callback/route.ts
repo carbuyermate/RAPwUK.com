@@ -3,11 +3,11 @@ import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 
 export async function GET(request: Request) {
-    const { searchParams, origin } = new URL(request.url)
-    const code = searchParams.get('code')
-    const token_hash = searchParams.get('token_hash')
-    const type = searchParams.get('type')
-    const next = searchParams.get('next') ?? '/dashboard'
+    const requestUrl = new URL(request.url)
+    const code = requestUrl.searchParams.get('code')
+    const token_hash = requestUrl.searchParams.get('token_hash')
+    const type = requestUrl.searchParams.get('type')
+    const next = requestUrl.searchParams.get('next') ?? '/dashboard'
 
     if (code || (token_hash && type)) {
         const cookieStore = await cookies()
@@ -46,10 +46,10 @@ export async function GET(request: Request) {
         }
         
         if (!error) {
-            return NextResponse.redirect(`${origin}${next}`)
+            return NextResponse.redirect(new URL(next, request.url))
         }
     }
 
-    // Zwróć błąd logowania
-    return NextResponse.redirect(`${origin}/login?error=Invalid_link`)
+    // Zwróć błąd logowania z zachowaniem oryginalnego proxy (unika localhost)
+    return NextResponse.redirect(new URL('/login?error=Invalid_link', request.url))
 }
