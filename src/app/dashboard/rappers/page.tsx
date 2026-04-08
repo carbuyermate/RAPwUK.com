@@ -1,7 +1,7 @@
 'use client';
 
 import { supabase } from '@/lib/supabase';
-import { Trash2, Users, ChevronLeft } from 'lucide-react';
+import { Edit2, Trash2, Users, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { deleteRapper } from '../actions';
@@ -75,6 +75,9 @@ export default function ManagingRappersPage() {
                                     <td>{rapper.city_uk || '-'}</td>
                                     <td>
                                         <div className="action-btns">
+                                            <Link href={`/dashboard/edit-rapper/${rapper.id}`} className="action-btn" title="Edytuj">
+                                                <Edit2 size={16} />
+                                            </Link>
                                             <button onClick={() => handleDelete(rapper.id, rapper.name)} className="action-btn delete" title="Usuń">
                                                 <Trash2 size={16} />
                                             </button>
