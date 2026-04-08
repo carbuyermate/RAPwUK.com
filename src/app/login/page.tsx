@@ -27,9 +27,11 @@ export default function LoginPage() {
             if (error) throw error;
 
             router.push('/dashboard');
-            router.refresh();
         } catch (err: any) {
-            setError(err.message || 'Wystąpił błąd podczas logowania');
+            let msg = err.message || 'Wystąpił błąd podczas logowania';
+            if (msg.includes('Email not confirmed')) msg = 'Podany adres e-mail nie został potwierdzony! Jeżeli zakładałeś konto ręcznie w Supabase, upewnij się, że zaznaczyłeś opcję "Auto Confirm User".';
+            if (msg.includes('Invalid login credentials')) msg = 'Nieprawidłowy adres e-mail lub hasło!';
+            setError(msg);
         } finally {
             setLoading(false);
         }
