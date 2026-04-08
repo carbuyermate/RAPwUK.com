@@ -85,7 +85,9 @@ export default function ManagingEventsPage() {
                                     </td>
                                     <td>
                                         <div className="action-btns">
-                                            <button className="action-btn" title="Edytuj (wkrótce)"><Edit2 size={16} /></button>
+                                            <Link href={`/dashboard/edit-event/${event.id}`} className="action-btn" title="Edytuj">
+                                                <Edit2 size={16} />
+                                            </Link>
                                             <button onClick={() => handleDelete(event.id, event.title)} className="action-btn delete" title="Usuń">
                                                 <Trash2 size={16} />
                                             </button>
