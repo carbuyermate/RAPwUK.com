@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { Calendar, MapPin, Tag, FileText, Link as LinkIcon, ChevronLeft } from 'lucide-react';
+import { Calendar, MapPin, Tag, FileText, Link as LinkIcon, ChevronLeft, Upload, X } from 'lucide-react';
 import Link from 'next/link';
 import '../dashboard.css';
 
@@ -16,6 +16,12 @@ export default function AddEventPage() {
     const [city, setCity] = useState('');
     const [ticketUrl, setTicketUrl] = useState('');
     const [isPremium, setIsPremium] = useState(false);
+    
+    // Image state
+    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [uploadProgress, setUploadProgress] = useState('');
+    
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [userId, setUserId] = useState<string | null>(null);
@@ -33,6 +39,23 @@ export default function AddEventPage() {
         getSession();
     }, [router]);
 
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        if (file.size > 5 * 1024 * 1024) {
+            setError('Zdjęcie nie może przekraczać 5MB.');
+            return;
+        }
+        setImageFile(file);
+        setImagePreview(URL.createObjectURL(file));
+        setError(null);
+    };
+
+    const removeImage = () => {
+        setImageFile(null);
+        setImagePreview(null);
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!userId) return;
@@ -40,9 +63,34 @@ export default function AddEventPage() {
         setLoading(true);
         setError(null);
 
-        const eventDateTime = `${date}T${time}:00Z`;
+        let finalImageUrl = null;
 
         try {
+            // 1. Upload plakat (jeśli wybrano)
+            if (imageFile) {
+                setUploadProgress('Wysyłam plakat...');
+                const fileExt = imageFile.name.split('.').pop();
+                const fileName = `events/${Date.now()}.${fileExt}`;
+
+                const { data: uploadData, error: uploadError } = await supabase.storage
+                    .from('uploads')
+                    .uploadUniqueness(fileName, imageFile); // Pomocnicza metoda jeśli dostępna lub standard
+
+                // Standardowy upload
+                const { error: standardUploadError } = await supabase.storage
+                    .from('uploads')
+                    .upload(fileName, imageFile, { upsert: false });
+
+                if (standardUploadError) throw standardUploadError;
+
+                const { data: { publicUrl } } = supabase.storage.from('uploads').getPublicUrl(fileName);
+                finalImageUrl = publicUrl;
+            }
+
+            // 2. Zapisz wydarzenie
+            setUploadProgress('Zapisuję wydarzenie...');
+            const eventDateTime = `${date}T${time}:00Z`;
+
             const { error: insertError } = await supabase
                 .from('events')
                 .insert([
@@ -54,18 +102,20 @@ export default function AddEventPage() {
                         city,
                         ticket_url: ticketUrl,
                         is_premium: isPremium,
-                        promoter_id: userId
+                        promoter_id: userId,
+                        image_url: finalImageUrl
                     }
                 ]);
 
             if (insertError) throw insertError;
 
-            router.push('/dashboard');
+            router.push('/dashboard/events');
             router.refresh();
         } catch (err: any) {
             setError(err.message || 'Wystąpił błąd podczas dodawania wydarzenia');
         } finally {
             setLoading(false);
+            setUploadProgress('');
         }
     };
 
@@ -178,6 +228,34 @@ export default function AddEventPage() {
                         />
                     </div>
 
+                    {/* Zdjęcie (Plakat) */}
+                    <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                        <label className="form-label">Plakat / Zdjęcie wydarzenia</label>
+
+                        {imagePreview ? (
+                            <div className="image-preview-wrapper">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={imagePreview} alt="Podgląd plakatu" className="image-preview" />
+                                <button type="button" className="image-remove-btn" onClick={removeImage}>
+                                    <X size={18} /> Usuń plakat
+                                </button>
+                            </div>
+                        ) : (
+                            <label className="upload-zone" htmlFor="image-upload">
+                                <Upload size={32} strokeWidth={1.5} />
+                                <span>Dodaj plakat imprezy</span>
+                                <span className="upload-hint">PNG, JPG, WEBP · max 5MB</span>
+                                <input
+                                    id="image-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    style={{ display: 'none' }}
+                                    onChange={handleImageChange}
+                                />
+                            </label>
+                        )}
+                    </div>
+
                     <div className="form-group" style={{ gridColumn: 'span 2', display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '1rem' }}>
                         <input
                             type="checkbox"
@@ -191,6 +269,10 @@ export default function AddEventPage() {
                         </label>
                     </div>
                 </div>
+
+                {uploadProgress && (
+                    <p className="text-secondary text-sm mt-4 text-center">{uploadProgress}</p>
+                )}
 
                 <div className="mt-8 flex gap-4">
                     <button
