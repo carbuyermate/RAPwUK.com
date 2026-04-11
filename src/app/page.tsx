@@ -101,56 +101,29 @@ export default async function Home() {
             </div>
           ) : (
             <div className="news-feed">
-              {/* Featured (first) news */}
-              {featuredNews && (
-                <Link href={`/news/${featuredNews.id}`} className="news-card news-card--featured glass-panel">
-                  {featuredNews.image_url && (
-                    <div className="news-card__image">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={featuredNews.image_url} alt={featuredNews.title} />
-                    </div>
-                  )}
-                  <div className="news-card__body">
-                    {featuredNews.category && (
-                      <span className="news-tag news-tag--highlight">{featuredNews.category}</span>
-                    )}
-                    <h3 className="news-card__title news-card__title--featured">{featuredNews.title}</h3>
-                    {featuredNews.content && (
-                      <p className="news-card__excerpt">{featuredNews.content.slice(0, 180)}…</p>
-                    )}
-                    <p className="news-meta">
-                      <Clock size={12} />
-                      {timeAgo(featuredNews.created_at)}
-                    </p>
-                  </div>
-                </Link>
-              )}
-
-              {/* Rest of news grid */}
-              {restNews.length > 0 && (
-                <div className="news-grid">
-                  {restNews.map((item) => (
-                    <Link key={item.id} href={`/news/${item.id}`} className="news-card glass-panel">
-                      {item.image_url && (
-                        <div className="news-card__image news-card__image--small">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={item.image_url} alt={item.title} />
-                        </div>
-                      )}
-                      <div className="news-card__body">
-                        {item.category && (
-                          <span className="news-tag">{item.category}</span>
-                        )}
-                        <h3 className="news-card__title">{item.title}</h3>
-                        <p className="news-meta">
-                          <Clock size={12} />
-                          {timeAgo(item.created_at)}
-                        </p>
+              {/* News grid */}
+              <div className="news-grid">
+                {news.map((item) => (
+                  <Link key={item.id} href={`/news/${item.id}`} className="news-card glass-panel">
+                    {item.image_url && (
+                      <div className="news-card__image news-card__image--small">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={item.image_url} alt={item.title} />
                       </div>
-                    </Link>
-                  ))}
-                </div>
-              )}
+                    )}
+                    <div className="news-card__body">
+                      {item.category && (
+                        <span className="news-tag">{item.category}</span>
+                      )}
+                      <h3 className="news-card__title">{item.title}</h3>
+                      <p className="news-meta">
+                        <Clock size={12} />
+                        {timeAgo(item.created_at)}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
 
               <Link href="/news" className="btn-secondary btn-block">
                 Więcej newsów <ArrowRight size={16} />
