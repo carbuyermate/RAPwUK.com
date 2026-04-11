@@ -1,4 +1,5 @@
-import { supabase } from '@/lib/supabase';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
 
 const PLACEHOLDER_AD = {
     id: 'placeholder',
@@ -12,6 +13,19 @@ interface BannerAdProps {
 }
 
 export async function BannerAd({ position = 'homepage_top' }: BannerAdProps) {
+    const cookieStore = await cookies();
+
+    const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+            cookies: {
+                getAll: () => cookieStore.getAll(),
+                setAll: () => {},
+            },
+        }
+    );
+
     const { data } = await supabase
         .from('ads')
         .select('*')
