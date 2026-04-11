@@ -85,7 +85,8 @@ export default function AddEventPage() {
 
             // 2. Zapisz wydarzenie
             setUploadProgress('Zapisuję wydarzenie...');
-            const eventDateTime = `${date}T${time}:00Z`;
+            const savedTime = time || '00:00';
+            const eventDateTime = `${date}T${savedTime}:00Z`;
 
             const { error: insertError } = await supabase
                 .from('events')
@@ -174,12 +175,12 @@ export default function AddEventPage() {
                         <label className="form-label flex items-center gap-2">
                             <Calendar size={16} /> Godzina
                         </label>
+                        <div className="text-secondary text-xs mb-1" style={{ opacity: 0.6 }}>(Opcjonalnie. Jeśli nie znasz, zostaw puste)</div>
                         <input
                             type="time"
                             className="form-input"
                             value={time}
                             onChange={(e) => setTime(e.target.value)}
-                            required
                         />
                     </div>
 

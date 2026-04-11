@@ -51,7 +51,8 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
                     const offset = evtDate.getTimezoneOffset();
                     const localDate = new Date(evtDate.getTime() - (offset * 60 * 1000));
                     setDate(localDate.toISOString().split('T')[0]);
-                    setTime(localDate.toISOString().substring(11, 16));
+                    const fetchedTime = localDate.toISOString().substring(11, 16);
+                    setTime(fetchedTime === '00:00' ? '' : fetchedTime);
                 }
                 setVenue(data.venue);
                 setCity(data.city);
@@ -113,7 +114,8 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
 
             // 2. Aktualizacja wydarzenia
             setUploadProgress('Zapisuję zmiany...');
-            const eventDateTime = `${date}T${time}:00Z`;
+            const savedTime = time || '00:00';
+            const eventDateTime = `${date}T${savedTime}:00Z`;
 
             const { error: updateError } = await supabase
                 .from('events')
@@ -204,12 +206,12 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
                         <label className="form-label flex items-center gap-2">
                             <Calendar size={16} /> Godzina
                         </label>
+                        <div className="text-secondary text-xs mb-1" style={{ opacity: 0.6 }}>(Opcjonalnie. Jeśli nie znasz, zostaw puste)</div>
                         <input
                             type="time"
                             className="form-input"
                             value={time}
                             onChange={(e) => setTime(e.target.value)}
-                            required
                         />
                     </div>
 
