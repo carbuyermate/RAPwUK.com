@@ -22,10 +22,11 @@ export const dynamic = 'force-dynamic';
 
 function formatDate(dateStr: string) {
     const d = new Date(dateStr);
+    const isUnknownTime = dateStr.includes('T00:00:00+00:00') || dateStr.endsWith('T00:00:00Z') || dateStr.includes('T00:00:00.000Z');
     return {
         full: d.toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' }),
         weekday: d.toLocaleDateString('pl-PL', { weekday: 'long' }),
-        time: d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' }),
+        time: isUnknownTime ? 'Godzina nieznana' : d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' }),
     };
 }
 
