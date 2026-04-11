@@ -78,7 +78,7 @@ export default async function NewsPage() {
                 <h2 className="news-page__card-title">{item.title}</h2>
                 {item.content && (
                   <p className="news-page__card-excerpt">
-                    {item.content.slice(0, 200)}…
+                    {item.content.replace(/<[^>]*>?/gm, '').slice(0, 200)}…
                   </p>
                 )}
                 <p className="news-meta">

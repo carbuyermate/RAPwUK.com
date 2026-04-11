@@ -50,9 +50,12 @@ function timeAgo(dateStr: string) {
 }
 
 export default async function Home() {
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+
   const [{ data: newsData }, { data: eventsData }] = await Promise.all([
     supabase.from('news').select('*').order('created_at', { ascending: false }).limit(20),
-    supabase.from('events').select('*').gte('event_date', new Date().toISOString()).order('event_date', { ascending: true }).limit(30),
+    supabase.from('events').select('*').gte('event_date', todayStart.toISOString()).order('event_date', { ascending: true }).limit(30),
   ]);
 
   const news = (newsData || []) as NewsItem[];
