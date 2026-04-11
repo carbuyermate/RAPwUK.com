@@ -105,7 +105,7 @@ export default async function Home() {
               {/* News grid */}
               <div className="news-grid">
                 {news.map((item) => (
-                  <Link key={item.id} href={`/news/${item.id}`} className="news-card glass-panel">
+                  <Link key={item.id} href={`/news/${item.id}`} className={`news-card glass-panel ${item.category === 'Sponsorowane' ? 'sponsored-card' : ''}`}>
                     {item.image_url && (
                       <div className="news-card__image news-card__image--small">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -114,7 +114,7 @@ export default async function Home() {
                     )}
                     <div className="news-card__body">
                       {item.category && (
-                        <span className="news-tag">{item.category}</span>
+                        <span className={`news-tag ${item.category === 'Sponsorowane' ? 'news-tag--sponsored' : ''}`}>{item.category}</span>
                       )}
                       <h3 className="news-card__title">{item.title}</h3>
                       <p className="news-meta">
