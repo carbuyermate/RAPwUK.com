@@ -1,7 +1,7 @@
 'use client';
 
 import { supabase } from '@/lib/supabase';
-import { Newspaper, Users, CalendarDays } from 'lucide-react';
+import { Newspaper, Users, CalendarDays, MonitorPlay } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -91,23 +91,8 @@ export default function DashboardPage() {
 
     if (loading) {
         return (
-            <div className="login-container container">
-                <div className="login-card glass-panel text-center animate-fade-in">
-                    <div className="loading-spinner"></div>
-                    <p className="mt-4 text-secondary">Autoryzacja dostępu...</p>
-                    <style jsx>{`
-                        .loading-spinner {
-                            width: 40px;
-                            height: 40px;
-                            border: 3px solid rgba(255,255,255,0.1);
-                            border-top-color: white;
-                            border-radius: 50%;
-                            animation: spin 1s linear infinite;
-                            margin: 0 auto;
-                        }
-                        @keyframes spin { to { transform: rotate(360deg); } }
-                    `}</style>
-                </div>
+            <div className="dashboard-container container">
+                <p className="text-secondary" style={{ padding: '4rem', textAlign: 'center' }}>Autoryzacja dostępu...</p>
             </div>
         );
     }
@@ -193,6 +178,23 @@ export default function DashboardPage() {
                     <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between' }}>
                         <span className="text-secondary">Liczba profili:</span>
                         <span className="font-bold">{counts.rappers}</span>
+                    </div>
+                </Link>
+
+                {/* Ads Module */}
+                <Link href="/dashboard/ads" className="stat-card glass-panel" style={{ cursor: 'pointer', textDecoration: 'none', transition: 'all 0.2s', display: 'flex', flexDirection: 'column', gap: '1rem', borderColor: 'rgba(245,158,11,0.15)', background: 'rgba(245,158,11,0.02)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <div style={{ padding: '12px', background: 'rgba(245,158,11,0.08)', borderRadius: '12px' }}>
+                            <MonitorPlay size={28} style={{ color: '#f59e0b' }} />
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-lg mb-1">Reklama</h3>
+                            <p className="text-secondary text-sm">Zarządzaj banerami reklamowymi</p>
+                        </div>
+                    </div>
+                    <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between' }}>
+                        <span className="text-secondary">Sprzedaj miejsce reklamowe</span>
+                        <span style={{ color: '#f59e0b', fontWeight: 700 }}>→</span>
                     </div>
                 </Link>
 

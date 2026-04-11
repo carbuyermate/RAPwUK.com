@@ -2,6 +2,7 @@ import Link from "next/link";
 import "./page.css";
 import { CalendarDays, ExternalLink, Newspaper, Clock, MapPin, ArrowRight, Tag } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { BannerAd } from "@/components/BannerAd";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -77,6 +78,9 @@ export default async function Home() {
           Najświeższe newsy ze sceny, kalendarz imprez i wszystko o polskim hip-hopie w UK.
         </p>
       </section>
+
+      {/* Banner Ad */}
+      <BannerAd position="homepage_top" />
 
       {/* Main Layout: News + Events sidebar */}
       <div className="main-layout">
