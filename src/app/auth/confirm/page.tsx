@@ -35,11 +35,6 @@ function ConfirmAuthContent() {
                     Rozumiem, kontynuuj do ustawienia hasła
                 </a>
             </div>
-            
-            <style jsx>{`
-                .login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-                .login-card { max-width: 500px; padding: 40px; }
-            `}</style>
         </div>
     );
 }
