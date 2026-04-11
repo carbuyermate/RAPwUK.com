@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Calendar, MapPin, Clock, ArrowLeft, Ticket, Zap } from "lucide-react";
 import { EventPoster } from "@/components/EventPoster";
+import { ViewTracker } from "@/components/ViewTracker";
 import "./event.css";
 
 interface EventDetail {
@@ -44,6 +45,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
 
     return (
         <div className="event-detail-page animate-fade-in">
+            <ViewTracker type="events" id={event.id} />
             <div className="container">
                 <div className="event-detail-back">
                     <Link href="/events" className="back-link">

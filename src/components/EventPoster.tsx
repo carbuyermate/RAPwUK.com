@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Maximize2, Download } from 'lucide-react';
+import { Maximize2, Download } from 'lucide-react';
 
 interface EventPosterProps {
     src: string;
@@ -18,7 +18,6 @@ export function EventPoster({ src, alt }: EventPosterProps) {
         return () => setMounted(false);
     }, []);
 
-    // Prevent scrolling when modal is open
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';
@@ -39,65 +38,95 @@ export function EventPoster({ src, alt }: EventPosterProps) {
     };
 
     const modalContent = isOpen && (
-        <div 
-            className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/95 backdrop-blur-md animate-fade-in p-4 md:p-8 cursor-zoom-out"
+        <div
             onClick={() => setIsOpen(false)}
-            style={{ 
-                position: 'fixed', 
-                top: 0, 
-                left: 0, 
-                right: 0, 
-                bottom: 0,
-                width: '100vw',
-                height: '100vh',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: 10000
+            style={{
+                position: 'fixed',
+                top: 0, left: 0, right: 0, bottom: 0,
+                width: '100vw', height: '100vh',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                zIndex: 10000,
+                background: 'rgba(0,0,0,0.97)',
+                backdropFilter: 'blur(8px)',
+                cursor: 'zoom-out',
+                padding: '2rem',
             }}
         >
-            {/* Framed Poster Container */}
-            <div 
-                className="relative bg-[#050505] flex flex-col items-center cursor-default max-w-[85vw] md:max-w-[95vw] max-h-[95vh] rounded-xl"
-                style={{
-                    padding: '8px',
-                    boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.1), 0 0 0 10px #151515, 0 0 0 11px rgba(255,255,255,0.15), 0 30px 60px rgba(0,0,0,0.9)',
-                }}
+            {/* 3D Frame Container */}
+            <div
                 onClick={(e) => e.stopPropagation()}
+                style={{
+                    position: 'relative',
+                    cursor: 'default',
+                    maxWidth: '85vw',
+                    maxHeight: '92vh',
+                    borderRadius: '14px',
+                    padding: '10px',
+                    background: '#0a0a0a',
+                    /* Layered box-shadows create the 3D frame effect */
+                    boxShadow: `
+                        inset 0 2px 2px rgba(255,255,255,0.12),
+                        inset 0 -2px 4px rgba(0,0,0,0.8),
+                        0 0 0 1px rgba(255,255,255,0.08),
+                        0 0 0 12px #111,
+                        0 0 0 13px rgba(255,255,255,0.2),
+                        0 0 0 14px rgba(255,255,255,0.06),
+                        0 0 0 26px #0a0a0a,
+                        0 0 0 27px rgba(255,255,255,0.08),
+                        0 50px 100px rgba(0,0,0,0.95),
+                        0 20px 40px rgba(0,0,0,0.8)
+                    `,
+                }}
             >
-                {/* Action Bar (Top Right) */}
-                <div className="absolute -top-4 -right-4 flex gap-2 z-10">
-                    <button 
-                        className="p-3 bg-black/80 hover:bg-black rounded-full text-white transition-all border border-white/20 shadow-xl"
-                        onClick={handleDownload}
-                        title="Pobierz plakat"
-                    >
-                        <Download size={20} />
-                    </button>
-                    <button 
-                        className="p-3 bg-red-600 hover:bg-red-500 rounded-full text-white transition-all border border-red-400 shadow-xl"
-                        onClick={() => setIsOpen(false)}
-                        title="Zamknij"
-                    >
-                        <X size={20} />
-                    </button>
-                </div>
+                {/* Download button — top right corner of frame */}
+                <button
+                    onClick={handleDownload}
+                    title="Pobierz plakat"
+                    style={{
+                        position: 'absolute',
+                        top: '-18px',
+                        right: '-18px',
+                        zIndex: 10,
+                        width: '40px', height: '40px',
+                        borderRadius: '50%',
+                        background: '#1a1a1a',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        color: 'white',
+                        cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.8)',
+                        transition: 'background 0.2s',
+                    }}
+                >
+                    <Download size={16} />
+                </button>
 
                 {/* Poster Image */}
-                <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-xl">
+                <div style={{ borderRadius: '8px', overflow: 'hidden', lineHeight: 0 }}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img 
-                        src={src} 
-                        alt={alt} 
-                        className="object-contain animate-scale-up"
-                        style={{ maxWidth: '100%', maxHeight: 'calc(95vh - 16px)' }}
+                    <img
+                        src={src}
+                        alt={alt}
+                        style={{ maxWidth: '100%', maxHeight: 'calc(92vh - 60px)', objectFit: 'contain', display: 'block' }}
                         onClick={(e) => e.stopPropagation()}
                     />
                 </div>
             </div>
 
-            {/* Hint (Bottom) */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/40 text-xs font-medium tracking-widest uppercase pointer-events-none">
+            {/* Hint */}
+            <div style={{
+                position: 'absolute',
+                bottom: '1.5rem',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                color: 'rgba(255,255,255,0.3)',
+                fontSize: '0.7rem',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '2px',
+                pointerEvents: 'none',
+                whiteSpace: 'nowrap',
+            }}>
                 Kliknij gdziekolwiek aby zamknąć
             </div>
         </div>
@@ -105,17 +134,17 @@ export function EventPoster({ src, alt }: EventPosterProps) {
 
     return (
         <>
-            <div 
+            <div
                 className="event-poster-container group cursor-pointer relative overflow-hidden rounded-xl border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)] transition-transform hover:scale-[1.02]"
                 onClick={() => setIsOpen(true)}
             >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img 
-                    src={src} 
-                    alt={alt} 
+                <img
+                    src={src}
+                    alt={alt}
                     className="w-full h-auto block object-cover"
                 />
-                
+
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
                     <div className="bg-white/20 backdrop-blur-md p-3 rounded-full">
                         <Maximize2 size={28} className="text-white" />

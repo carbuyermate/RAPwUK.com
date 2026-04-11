@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 
 interface RichTextEditorProps {
     value: string;
@@ -14,15 +14,42 @@ const TOOLBAR_BUTTONS = [
     { label: 'U', command: 'underline', title: 'Podkreślenie', style: { textDecoration: 'underline' } },
 ];
 
+const btnStyle: React.CSSProperties = {
+    padding: '4px 10px',
+    background: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(255,255,255,0.1)',
+    borderRadius: '4px',
+    color: 'rgba(255,255,255,0.8)',
+    cursor: 'pointer',
+    fontSize: '0.85rem',
+    fontWeight: 700,
+    transition: 'all 0.15s',
+};
+
+const dividerStyle: React.CSSProperties = {
+    width: '1px', height: '20px',
+    background: 'rgba(255,255,255,0.1)',
+    margin: '0 4px',
+};
+
 export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {
     const editorRef = useRef<HTMLDivElement>(null);
 
-    const execCommand = (command: string) => {
+    // Initialize editor content only once on mount, or when value changes externally
+    // (not from user typing, to avoid cursor jump)
+    useEffect(() => {
+        const el = editorRef.current;
+        if (!el) return;
+        // Only update DOM if value actually differs from current DOM content
+        // This prevents resetting cursor position on every keystroke
+        if (el.innerHTML !== value) {
+            el.innerHTML = value;
+        }
+    }, [value]);
+
+    const execCmd = (command: string) => {
         document.execCommand(command, false, undefined);
         editorRef.current?.focus();
-        if (editorRef.current) {
-            onChange(editorRef.current.innerHTML);
-        }
     };
 
     const insertLink = () => {
@@ -30,18 +57,12 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
         if (url) {
             document.execCommand('createLink', false, url);
             editorRef.current?.focus();
-            if (editorRef.current) {
-                onChange(editorRef.current.innerHTML);
-            }
         }
     };
 
     const insertHeading = (level: number) => {
         document.execCommand('formatBlock', false, `h${level}`);
         editorRef.current?.focus();
-        if (editorRef.current) {
-            onChange(editorRef.current.innerHTML);
-        }
     };
 
     const handleInput = () => {
@@ -72,66 +93,34 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
                         key={btn.command}
                         type="button"
                         title={btn.title}
-                        onMouseDown={(e) => { e.preventDefault(); execCommand(btn.command); }}
-                        style={{
-                            padding: '4px 10px',
-                            background: 'rgba(255,255,255,0.06)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            borderRadius: '4px',
-                            color: 'rgba(255,255,255,0.8)',
-                            cursor: 'pointer',
-                            fontSize: '0.85rem',
-                            fontWeight: 700,
-                            transition: 'all 0.15s',
-                            ...(btn.style || {}),
-                        }}
+                        onMouseDown={(e) => { e.preventDefault(); execCmd(btn.command); }}
+                        style={{ ...btnStyle, ...(btn.style || {}) }}
                     >
                         {btn.label}
                     </button>
                 ))}
-                <div style={{ width: '1px', height: '20px', background: 'rgba(255,255,255,0.1)', margin: '0 4px' }} />
-                <button
-                    type="button"
-                    title="Nagłówek H2"
+                <div style={dividerStyle} />
+                <button type="button" title="Nagłówek H2"
                     onMouseDown={(e) => { e.preventDefault(); insertHeading(2); }}
-                    style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', color: 'rgba(255,255,255,0.8)', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 700 }}
-                >
-                    H2
-                </button>
-                <button
-                    type="button"
-                    title="Nagłówek H3"
+                    style={btnStyle}>H2</button>
+                <button type="button" title="Nagłówek H3"
                     onMouseDown={(e) => { e.preventDefault(); insertHeading(3); }}
-                    style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', color: 'rgba(255,255,255,0.8)', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 700 }}
-                >
-                    H3
-                </button>
-                <div style={{ width: '1px', height: '20px', background: 'rgba(255,255,255,0.1)', margin: '0 4px' }} />
-                <button
-                    type="button"
-                    title="Lista punktowana"
-                    onMouseDown={(e) => { e.preventDefault(); execCommand('insertUnorderedList'); }}
-                    style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', color: 'rgba(255,255,255,0.8)', cursor: 'pointer', fontSize: '0.85rem' }}
-                >
-                    • Lista
-                </button>
-                <button
-                    type="button"
-                    title="Dodaj link"
+                    style={btnStyle}>H3</button>
+                <div style={dividerStyle} />
+                <button type="button" title="Lista punktowana"
+                    onMouseDown={(e) => { e.preventDefault(); execCmd('insertUnorderedList'); }}
+                    style={btnStyle}>• Lista</button>
+                <button type="button" title="Dodaj link"
                     onMouseDown={(e) => { e.preventDefault(); insertLink(); }}
-                    style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', color: 'rgba(255,255,255,0.8)', cursor: 'pointer', fontSize: '0.85rem' }}
-                >
-                    🔗 Link
-                </button>
+                    style={btnStyle}>🔗 Link</button>
             </div>
 
-            {/* Editable content area */}
+            {/* Editable area — NO dangerouslySetInnerHTML to prevent cursor reset */}
             <div
                 ref={editorRef}
                 contentEditable
                 suppressContentEditableWarning
                 onInput={handleInput}
-                dangerouslySetInnerHTML={{ __html: value }}
                 data-placeholder={placeholder || 'Zacznij pisać tutaj...'}
                 style={{
                     minHeight: '250px',
@@ -149,6 +138,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
                     content: attr(data-placeholder);
                     color: rgba(255,255,255,0.25);
                     pointer-events: none;
+                    display: block;
                 }
                 [contenteditable] a { color: #60a5fa; text-decoration: underline; }
                 [contenteditable] h2 { font-size: 1.4rem; font-weight: 700; margin: 1rem 0 0.5rem; }
