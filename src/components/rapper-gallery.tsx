@@ -2,12 +2,25 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { ChevronLeft, ChevronRight, X, Maximize2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Maximize2 } from "lucide-react";
 import "./gallery.css";
 
 interface RapperGalleryProps {
     images: string[];
 }
+
+const FRAME_SHADOW = `
+    inset 0 2px 2px rgba(255,255,255,0.12),
+    inset 0 -2px 4px rgba(0,0,0,0.8),
+    0 0 0 1px rgba(255,255,255,0.08),
+    0 0 0 12px #111,
+    0 0 0 13px rgba(255,255,255,0.2),
+    0 0 0 14px rgba(255,255,255,0.06),
+    0 0 0 26px #0a0a0a,
+    0 0 0 27px rgba(255,255,255,0.08),
+    0 50px 100px rgba(0,0,0,0.95),
+    0 20px 40px rgba(0,0,0,0.8)
+`;
 
 export function RapperGallery({ images }: RapperGalleryProps) {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -60,76 +73,101 @@ export function RapperGallery({ images }: RapperGalleryProps) {
             </div>
 
             {isLightboxOpen && createPortal((
-                <div 
-                    className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/95 backdrop-blur-md animate-fade-in p-4 md:p-8 cursor-zoom-out"
+                <div
                     onClick={closeLightbox}
-                    style={{ 
-                        position: 'fixed', 
-                        top: 0, 
-                        left: 0, 
-                        right: 0, 
-                        bottom: 0,
-                        width: '100vw',
-                        height: '100vh',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        zIndex: 10000
+                    style={{
+                        position: 'fixed',
+                        top: 0, left: 0, right: 0, bottom: 0,
+                        width: '100vw', height: '100vh',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        zIndex: 10000,
+                        background: 'rgba(0,0,0,0.97)',
+                        backdropFilter: 'blur(8px)',
+                        cursor: 'zoom-out',
+                        padding: '2rem',
                     }}
                 >
+                    {/* Left nav arrow */}
                     {images.length > 1 && (
-                        <button 
-                            className="absolute left-2 md:left-8 z-[10001] p-3 md:p-6 bg-transparent hover:bg-white/10 text-white/50 hover:text-white rounded-full transition-all"
+                        <button
                             onClick={handlePrev}
+                            style={{
+                                position: 'absolute', left: '1.5rem',
+                                zIndex: 10001,
+                                background: 'transparent',
+                                border: 'none',
+                                color: 'rgba(255,255,255,0.5)',
+                                cursor: 'pointer',
+                                padding: '1rem',
+                                borderRadius: '50%',
+                                transition: 'all 0.2s',
+                            }}
                         >
                             <ChevronLeft size={48} />
                         </button>
                     )}
 
-                    {/* Framed Image Container */}
-                    <div 
-                        className="relative bg-[#050505] flex flex-col items-center cursor-default max-w-[85vw] md:max-w-[95vw] max-h-[95vh] rounded-xl"
-                        style={{
-                            padding: '8px',
-                            boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.1), 0 0 0 10px #151515, 0 0 0 11px rgba(255,255,255,0.15), 0 30px 60px rgba(0,0,0,0.9)',
-                        }}
+                    {/* 3D Frame Container */}
+                    <div
                         onClick={(e) => e.stopPropagation()}
+                        style={{
+                            position: 'relative',
+                            cursor: 'default',
+                            maxWidth: '85vw',
+                            maxHeight: '92vh',
+                            borderRadius: '14px',
+                            padding: '10px',
+                            background: '#0a0a0a',
+                            boxShadow: FRAME_SHADOW,
+                        }}
                     >
-                        {/* Action Bar (Top Right) */}
-                        <div className="absolute -top-4 -right-4 flex gap-2 z-10">
-                            <button 
-                                className="p-3 bg-red-600 hover:bg-red-500 rounded-full text-white transition-all border border-red-400 shadow-xl"
-                                onClick={closeLightbox}
-                                title="Zamknij"
-                            >
-                                <X size={20} />
-                            </button>
-                        </div>
-
                         {/* Image */}
-                        <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-xl">
+                        <div style={{ borderRadius: '8px', overflow: 'hidden', lineHeight: 0 }}>
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                                 key={currentIndex}
                                 src={images[currentIndex]}
                                 alt={`Fullscreen ${currentIndex + 1}`}
-                                className="object-contain animate-scale-up"
-                                style={{ maxWidth: '100%', maxHeight: 'calc(95vh - 16px)' }}
+                                style={{ maxWidth: '100%', maxHeight: 'calc(92vh - 60px)', objectFit: 'contain', display: 'block' }}
                                 onClick={(e) => e.stopPropagation()}
                             />
                         </div>
                     </div>
 
+                    {/* Right nav arrow */}
                     {images.length > 1 && (
-                        <button 
-                            className="absolute right-2 md:right-8 z-[10001] p-3 md:p-6 bg-transparent hover:bg-white/10 text-white/50 hover:text-white rounded-full transition-all"
+                        <button
                             onClick={handleNext}
+                            style={{
+                                position: 'absolute', right: '1.5rem',
+                                zIndex: 10001,
+                                background: 'transparent',
+                                border: 'none',
+                                color: 'rgba(255,255,255,0.5)',
+                                cursor: 'pointer',
+                                padding: '1rem',
+                                borderRadius: '50%',
+                                transition: 'all 0.2s',
+                            }}
                         >
                             <ChevronRight size={48} />
                         </button>
                     )}
 
-                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/40 text-xs font-medium tracking-widest uppercase pointer-events-none">
+                    {/* Counter / hint */}
+                    <div style={{
+                        position: 'absolute',
+                        bottom: '1.5rem',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        color: 'rgba(255,255,255,0.3)',
+                        fontSize: '0.7rem',
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                        letterSpacing: '2px',
+                        pointerEvents: 'none',
+                        whiteSpace: 'nowrap',
+                    }}>
                         {images.length > 1 ? `${currentIndex + 1} / ${images.length}` : 'Kliknij gdziekolwiek aby zamknąć'}
                     </div>
                 </div>
