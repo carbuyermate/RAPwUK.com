@@ -100,3 +100,28 @@ CREATE POLICY "Allow service_role full access" ON public.events
 CREATE POLICY "Allow anon insert for sync" ON public.events
     FOR INSERT TO anon
     WITH CHECK (true);
+
+-- 5. Reklamy (Banery)
+CREATE TABLE IF NOT EXISTS public.ads (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    name TEXT NOT NULL,
+    image_url TEXT NOT NULL,
+    link_url TEXT,
+    position TEXT DEFAULT 'homepage_top',
+    is_active BOOLEAN DEFAULT true,
+    clicks INTEGER DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.ads ENABLE ROW LEVEL SECURITY;
+
+-- Każdy może czytać aktywne reklamy
+CREATE POLICY "Allow public read access" ON public.ads
+    FOR SELECT USING (is_active = true);
+
+-- Zalogowani użytkownicy mogą wszystko
+CREATE POLICY "Allow authenticated full access" ON public.ads
+    TO authenticated
+    USING (true)
+    WITH CHECK (true);
+
