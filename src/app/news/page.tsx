@@ -57,11 +57,11 @@ export default async function NewsPage() {
         </div>
       ) : (
         <div className="news-page__grid">
-          {news.map((item, i) => (
+          {news.map((item) => (
             <Link
               key={item.id}
               href={`/news/${item.id}`}
-              className={`news-page__card glass-panel${i === 0 ? ' news-page__card--featured' : ''}`}
+              className="news-page__card glass-panel"
             >
               {item.image_url && (
                 <div className="news-page__card-image">
@@ -71,7 +71,7 @@ export default async function NewsPage() {
               )}
               <div className="news-page__card-body">
                 {item.category && (
-                  <span className={`news-tag${i === 0 ? ' news-tag--highlight' : ''}`}>
+                  <span className="news-tag">
                     {item.category}
                   </span>
                 )}
