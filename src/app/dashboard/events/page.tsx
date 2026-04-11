@@ -13,16 +13,12 @@ export default function ManagingEventsPage() {
 
     const fetchEvents = async () => {
         setLoading(true);
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-            const { data } = await supabase
-                .from('events')
-                .select('*')
-                .eq('promoter_id', user.id)
-                .order('event_date', { ascending: false });
-            
-            if (data) setEvents(data);
-        }
+        const { data } = await supabase
+            .from('events')
+            .select('*')
+            .order('event_date', { ascending: false });
+        
+        if (data) setEvents(data);
         setLoading(false);
     };
 
