@@ -157,10 +157,19 @@ export default function AdsPage() {
 
     const deleteAd = async (id: string) => {
         if (!confirm('Czy na pewno usunąć tę reklamę?')) return;
+        
+        // Optimistic UI update
+        const previousAds = [...ads];
+        setAds(ads.filter(ad => ad.id !== id));
+        
         const { error } = await supabase.from('ads').delete().eq('id', id);
         if (error) {
-            alert('Błąd usuwania reklamy: ' + error.message);
+            console.error(error);
+            setError('Błąd usuwania reklamy: ' + error.message);
+            setAds(previousAds); // revert if failed
         } else {
+            setSuccess('Poprawnie usunięto reklamę.');
+            setTimeout(() => setSuccess(null), 3000);
             fetchAds();
         }
     };
