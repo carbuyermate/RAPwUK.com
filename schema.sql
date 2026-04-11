@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS public.news (
     content TEXT,
     category TEXT,
     image_url TEXT,
+    youtube_url TEXT,
     social_source_url TEXT,
     is_auto_generated BOOLEAN DEFAULT false,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
