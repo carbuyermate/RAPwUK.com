@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { RichTextEditor } from '@/components/RichTextEditor';
 import '../dashboard.css';
 
-const CATEGORIES = ['Muzyka', 'Imprezy', 'Wywiady', 'Premiery', 'Relacja', 'Konkurs', 'Inne'];
+const CATEGORIES = ['News', 'Teledysk', 'Nowość', 'Sponsorowane', 'Muzyka', 'Imprezy', 'Wywiady', 'Premiery', 'Relacja', 'Konkurs', 'Inne'];
 
 export default function AddNewsPage() {
     const [title, setTitle] = useState('');
