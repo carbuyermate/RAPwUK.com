@@ -79,144 +79,139 @@ export default async function Home() {
         </p>
       </section>
 
-      {/* Main Layout: News + Events sidebar */}
-      <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start', paddingBottom: '4rem' }}>
+      {/* Main Layout: [News+Events] | [Sidebar Ad] */}
+      <div className="homepage-outer">
 
-        {/* Left: full content column */}
-        <div style={{ flex: 1, minWidth: 0 }}>
+        {/* Centre column: News feed + Events sidebar stacked */}
+        <div className="homepage-centre">
+
+          {/* News + Events 2-up row */}
           <div className="main-layout">
 
-        {/* ── LEFT: News Feed ── */}
-        <section className="news-main">
-          <div className="section-header">
-            <h2 className="section-title">
-              <Newspaper size={22} /> Świeże Newsy
-            </h2>
-            <Link href="/news" className="view-all-link">Wszystkie newsy →</Link>
-          </div>
-
-          {news.length === 0 ? (
-            <div className="empty-state glass-panel">
-              <Newspaper size={48} strokeWidth={1} />
-              <p>Brak newsów.</p>
-            </div>
-          ) : (
-            <div className="news-feed">
-              {/* News grid */}
-              <div className="news-grid">
-                {news.map((item) => (
-                  <Link key={item.id} href={`/news/${item.id}`} className={`news-card glass-panel ${item.category === 'Sponsorowane' ? 'sponsored-card' : ''}`}>
-                    {item.image_url && (
-                      <div className="news-card__image news-card__image--small">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={item.image_url} alt={item.title} />
-                      </div>
-                    )}
-                    <div className="news-card__body">
-                      {item.category && (
-                        <span className={`news-tag ${item.category === 'Sponsorowane' ? 'news-tag--sponsored' : ''}`}>{item.category}</span>
-                      )}
-                      <h3 className="news-card__title">{item.title}</h3>
-                      <p className="news-meta">
-                        <Clock size={12} />
-                        {timeAgo(item.created_at)}
-                      </p>
-                    </div>
-                  </Link>
-                ))}
+            {/* ── LEFT: News Feed ── */}
+            <section className="news-main">
+              <div className="section-header">
+                <h2 className="section-title">
+                  <Newspaper size={22} /> Świeże Newsy
+                </h2>
+                <Link href="/news" className="view-all-link">Wszystkie newsy →</Link>
               </div>
 
-              <Link href="/news" className="btn-secondary btn-block">
-                Więcej newsów <ArrowRight size={16} />
-              </Link>
-            </div>
-          )}
-        </section>
-
-        {/* ── RIGHT: Events Sidebar ── */}
-        <aside className="events-sidebar">
-          <div className="section-header">
-            <h2 className="section-title">
-              <CalendarDays size={22} /> Imprezy
-            </h2>
-          </div>
-
-          {events.length === 0 ? (
-            <div className="empty-state glass-panel">
-              <CalendarDays size={40} strokeWidth={1} />
-              <p>Brak nadchodzących eventów.</p>
-            </div>
-          ) : (
-            <div className="events-list glass-panel">
-              {events.map((ev, i) => {
-                const d = formatDate(ev.event_date);
-                return (
-                  <Link
-                    key={ev.id}
-                    href={`/events/${ev.id}`}
-                    className={`event-row${ev.is_premium ? ' event-row--premium' : ''}${i < events.length - 1 ? ' event-row--border' : ''}`}
-                    style={{ textDecoration: 'none', color: 'inherit' }}
-                  >
-                    {/* Date pill */}
-                    <div className="event-date-pill">
-                      <span className="event-date-pill__day">{d.day}</span>
-                      <span className="event-date-pill__month">{d.month}</span>
-                    </div>
-
-                    {/* Poster thumbnail (NEW) */}
-                    <div className="event-mini-poster">
-                      {ev.image_url ? (
-                        <img src={ev.image_url} alt={ev.title} />
-                      ) : (
-                        <div className="event-mini-poster-placeholder">
-                           <CalendarDays size={14} />
+              {news.length === 0 ? (
+                <div className="empty-state glass-panel">
+                  <Newspaper size={48} strokeWidth={1} />
+                  <p>Brak newsów.</p>
+                </div>
+              ) : (
+                <div className="news-feed">
+                  <div className="news-grid">
+                    {news.map((item) => (
+                      <Link key={item.id} href={`/news/${item.id}`} className={`news-card glass-panel ${item.category === 'Sponsorowane' ? 'sponsored-card' : ''}`}>
+                        {item.image_url && (
+                          <div className="news-card__image news-card__image--small">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={item.image_url} alt={item.title} />
+                          </div>
+                        )}
+                        <div className="news-card__body">
+                          {item.category && (
+                            <span className={`news-tag ${item.category === 'Sponsorowane' ? 'news-tag--sponsored' : ''}`}>{item.category}</span>
+                          )}
+                          <h3 className="news-card__title">{item.title}</h3>
+                          <p className="news-meta">
+                            <Clock size={12} />
+                            {timeAgo(item.created_at)}
+                          </p>
                         </div>
-                      )}
-                    </div>
+                      </Link>
+                    ))}
+                  </div>
 
-                    {/* Info */}
-                    <div className="event-info">
-                      <h3 className="event-info__title">
-                        {ev.is_premium && <span className="premium-dot" title="Premium" />}
-                        {ev.title}
-                      </h3>
-                      <p className="event-info__meta">
-                        <MapPin size={11} />
-                        {ev.city}{ev.venue ? `, ${ev.venue}` : ''}
-                      </p>
-                    </div>
-
-                    {/* Arrow (Visual cue) */}
-                    <div className="text-secondary opacity-30">
-                      <ArrowRight size={14} />
-                    </div>
+                  <Link href="/news" className="btn-secondary btn-block">
+                    Więcej newsów <ArrowRight size={16} />
                   </Link>
-                );
-              })}
-            </div>
-          )}
+                </div>
+              )}
+            </section>
 
-          {/* Bottom CTA */}
-          <Link href="/events" className="events-cta-btn">
-            <CalendarDays size={18} />
-            Pełna lista imprez
-            <ArrowRight size={18} />
-          </Link>
-        </aside>
+            {/* ── RIGHT: Events Sidebar ── */}
+            <aside className="events-sidebar">
+              <div className="section-header">
+                <h2 className="section-title">
+                  <CalendarDays size={22} /> Imprezy
+                </h2>
+              </div>
+
+              {events.length === 0 ? (
+                <div className="empty-state glass-panel">
+                  <CalendarDays size={40} strokeWidth={1} />
+                  <p>Brak nadchodzących eventów.</p>
+                </div>
+              ) : (
+                <div className="events-list glass-panel">
+                  {events.map((ev, i) => {
+                    const d = formatDate(ev.event_date);
+                    return (
+                      <Link
+                        key={ev.id}
+                        href={`/events/${ev.id}`}
+                        className={`event-row${ev.is_premium ? ' event-row--premium' : ''}${i < events.length - 1 ? ' event-row--border' : ''}`}
+                        style={{ textDecoration: 'none', color: 'inherit' }}
+                      >
+                        <div className="event-date-pill">
+                          <span className="event-date-pill__day">{d.day}</span>
+                          <span className="event-date-pill__month">{d.month}</span>
+                        </div>
+                        <div className="event-mini-poster">
+                          {ev.image_url ? (
+                            <img src={ev.image_url} alt={ev.title} />
+                          ) : (
+                            <div className="event-mini-poster-placeholder">
+                               <CalendarDays size={14} />
+                            </div>
+                          )}
+                        </div>
+                        <div className="event-info">
+                          <h3 className="event-info__title">
+                            {ev.is_premium && <span className="premium-dot" title="Premium" />}
+                            {ev.title}
+                          </h3>
+                          <p className="event-info__meta">
+                            <MapPin size={11} />
+                            {ev.city}{ev.venue ? `, ${ev.venue}` : ''}
+                          </p>
+                        </div>
+                        <div className="text-secondary opacity-30">
+                          <ArrowRight size={14} />
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+
+              <Link href="/events" className="events-cta-btn">
+                <CalendarDays size={18} />
+                Pełna lista imprez
+                <ArrowRight size={18} />
+              </Link>
+            </aside>
 
           </div>{/* /.main-layout */}
 
-          {/* Bottom horizontal banner */}
-          <BannerAd position="homepage_bottom" />
+          {/* Bottom horizontal banner — BELOW news+events */}
+          <div className="bottom-banner-wrapper">
+            <BannerAd position="homepage_bottom" />
+          </div>
 
-        </div>{/* /left column */}
+        </div>{/* /.homepage-centre */}
 
-        {/* Right: vertical sidebar ad (hidden on mobile) */}
+        {/* Far-right: vertical sidebar ad */}
         <div className="sidebar-ad-wrapper">
           <BannerAd position="homepage_sidebar" />
         </div>
 
-      </div>{/* /outer flex */}
+      </div>{/* /.homepage-outer */}
     </div>
   );
 }
