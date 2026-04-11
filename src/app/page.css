@@ -273,7 +273,12 @@
 }
 
 .event-row--premium {
-  background: linear-gradient(90deg, rgba(255,200,0,0.04) 0%, transparent 100%);
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.08) 0%, transparent 100%);
+  border-left: 3px solid #f59e0b;
+}
+
+[data-theme='dark'] .event-row--premium {
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.15) 0%, transparent 100%);
 }
 
 /* Date pill */

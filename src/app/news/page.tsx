@@ -61,7 +61,7 @@ export default async function NewsPage() {
             <Link
               key={item.id}
               href={`/news/${item.id}`}
-              className="news-page__card glass-panel"
+              className={`news-page__card glass-panel ${item.category === 'Sponsorowane' ? 'sponsored-card' : ''}`}
             >
               {item.image_url && (
                 <div className="news-page__card-image">
@@ -71,7 +71,7 @@ export default async function NewsPage() {
               )}
               <div className="news-page__card-body">
                 {item.category && (
-                  <span className="news-tag">
+                  <span className={`news-tag ${item.category === 'Sponsorowane' ? 'news-tag--sponsored' : ''}`}>
                     {item.category}
                   </span>
                 )}
