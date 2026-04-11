@@ -44,7 +44,7 @@ export async function BannerAd({ position = 'homepage_bottom' }: BannerAdProps) 
         .eq('is_active', true)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
     const isSidebar = position === 'homepage_sidebar';
     const ad = data || (isSidebar ? PLACEHOLDER_SIDEBAR : PLACEHOLDER_BOTTOM);

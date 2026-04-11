@@ -38,6 +38,7 @@ export default function AdsPage() {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [position, setPosition] = useState('homepage_bottom');
     const [showForm, setShowForm] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
 
     const fetchAds = async () => {
         const { data, error } = await supabase
@@ -92,27 +93,58 @@ export default function AdsPage() {
             image_url = publicUrl;
         }
 
-        const { error: insertError } = await supabase.from('ads').insert([{
-            name,
-            image_url,
-            link_url: linkUrl,
-            position,
-            is_active: true,
-            clicks: 0,
-        }]);
-
-        if (insertError) {
-            setError(insertError.message);
+        if (editingId) {
+            const updatePayload: any = { name, link_url: linkUrl, position };
+            if (image_url !== PLACEHOLDER_URL || imageFile) {
+                updatePayload.image_url = image_url;
+            }
+            const { error: updateError } = await supabase.from('ads').update(updatePayload).eq('id', editingId);
+            if (updateError) {
+                setError(updateError.message);
+            } else {
+                setSuccess('Reklama zaktualizowana!');
+                resetForm();
+                fetchAds();
+            }
         } else {
-            setSuccess('Reklama dodana!');
-            setName('');
-            setLinkUrl('');
-            setImageFile(null);
-            setImagePreview(null);
-            setShowForm(false);
-            fetchAds();
+            const { error: insertError } = await supabase.from('ads').insert([{
+                name,
+                image_url,
+                link_url: linkUrl,
+                position,
+                is_active: true,
+                clicks: 0,
+            }]);
+
+            if (insertError) {
+                setError(insertError.message);
+            } else {
+                setSuccess('Reklama dodana!');
+                resetForm();
+                fetchAds();
+            }
         }
         setSaving(false);
+    };
+
+    const resetForm = () => {
+        setName('');
+        setLinkUrl('');
+        setImageFile(null);
+        setImagePreview(null);
+        setEditingId(null);
+        setShowForm(false);
+    };
+
+    const startEdit = (ad: Ad) => {
+        setName(ad.name);
+        setLinkUrl(ad.link_url);
+        setPosition(ad.position);
+        setImagePreview(ad.image_url);
+        setImageFile(null);
+        setEditingId(ad.id);
+        setShowForm(true);
+        window.scrollTo(0, 0);
     };
 
     const toggleActive = async (ad: Ad) => {
@@ -126,7 +158,11 @@ export default function AdsPage() {
     const deleteAd = async (id: string) => {
         if (!confirm('Czy na pewno usunąć tę reklamę?')) return;
         const { error } = await supabase.from('ads').delete().eq('id', id);
-        if (!error) fetchAds();
+        if (error) {
+            alert('Błąd usuwania reklamy: ' + error.message);
+        } else {
+            fetchAds();
+        }
     };
 
     if (loading) {
@@ -151,7 +187,7 @@ export default function AdsPage() {
                 </div>
                 <button
                     className="btn-primary"
-                    onClick={() => setShowForm(!showForm)}
+                    onClick={() => { resetForm(); setShowForm(true); }}
                     style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                 >
                     <Plus size={18} /> Dodaj baner
@@ -172,7 +208,7 @@ export default function AdsPage() {
             {/* Add form */}
             {showForm && (
                 <div className="glass-panel p-8 mb-8 animate-fade-in">
-                    <h2 className="font-bold text-xl mb-6">Nowy baner reklamowy</h2>
+                    <h2 className="font-bold text-xl mb-6">{editingId ? 'Edytuj baner' : 'Nowy baner reklamowy'}</h2>
                     <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                         <div className="form-group">
                             <label className="form-label"><Monitor size={14} /> Nazwa (wewnętrzna)</label>
@@ -212,9 +248,9 @@ export default function AdsPage() {
 
                         <div style={{ display: 'flex', gap: '1rem' }}>
                             <button type="submit" className="btn-primary" disabled={saving} style={{ flex: 1 }}>
-                                {saving ? 'Dodawanie...' : 'Dodaj reklamę'}
+                                {saving ? 'Zapisywanie...' : (editingId ? 'Zapisz zmiany' : 'Dodaj reklamę')}
                             </button>
-                            <button type="button" className="btn-secondary" onClick={() => setShowForm(false)}>
+                            <button type="button" className="btn-secondary" onClick={resetForm}>
                                 Anuluj
                             </button>
                         </div>
@@ -284,6 +320,13 @@ export default function AdsPage() {
                                         title={ad.is_active ? 'Dezaktywuj' : 'Aktywuj'}
                                     >
                                         {ad.is_active ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    </button>
+                                    <button
+                                        className="action-btn"
+                                        onClick={() => startEdit(ad)}
+                                        title="Edytuj"
+                                    >
+                                        <Monitor size={18} />
                                     </button>
                                     <button
                                         className="action-btn delete"
