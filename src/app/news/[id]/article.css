@@ -57,7 +57,18 @@
 .article-body {
   font-size: 1.05rem;
   line-height: 1.8;
-  color: var(--text-secondary);
+  color: var(--text-primary);
+}
+
+/* Wymuszenie usunięcia stylów kopiowanych z innych stron (np. białe tło pod tekstem) */
+.article-body * {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+
+/* Wyjątek dla ewentualnych linków (żeby były widoczne) */
+.article-body a, .article-body a * {
+  text-decoration: underline !important;
 }
 
 .article-body p {
