@@ -49,6 +49,17 @@
   }
 }
 
+/* Sidebar ad – hidden on mobile */
+.sidebar-ad-wrapper {
+  display: block;
+}
+
+@media (max-width: 960px) {
+  .sidebar-ad-wrapper {
+    display: none;
+  }
+}
+
 /* ── SECTION HEADER ── */
 .section-header {
   display: flex;

@@ -36,7 +36,7 @@ export default function AdsPage() {
     const [linkUrl, setLinkUrl] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
-    const [position, setPosition] = useState('homepage_top');
+    const [position, setPosition] = useState('homepage_bottom');
     const [showForm, setShowForm] = useState(false);
 
     const fetchAds = async () => {
@@ -185,16 +185,15 @@ export default function AdsPage() {
                         </div>
 
                         <div className="form-group">
-                            <label className="form-label"><Monitor size={14} /> Pozycja</label>
+                            <label className="form-label"><Monitor size={14} /> Pozycja banera</label>
                             <select className="form-input" value={position} onChange={e => setPosition(e.target.value)}>
-                                <option value="homepage_top">Strona główna – górny baner</option>
-                                <option value="homepage_mid">Strona główna – środkowy baner</option>
-                                <option value="events_top">Imprezy – górny baner</option>
+                                <option value="homepage_bottom">🖥️ Dół strony głównej – poziomy (970×90 px)</option>
+                                <option value="homepage_sidebar">📐 Prawa strona – pionowy (160×600 px)</option>
                             </select>
                         </div>
 
                         <div className="form-group">
-                            <label className="form-label"><ImageIcon size={14} /> Grafika banera (zalecane: 970×90 lub 728×90 px)</label>
+                            <label className="form-label"><ImageIcon size={14} /> Grafika banera {position === 'homepage_sidebar' ? '(zalecane: 160×600 px)' : '(zalecane: 970×90 px)'}</label>
                             {imagePreview ? (
                                 <div>
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -260,9 +259,8 @@ export default function AdsPage() {
                                     <div style={{ fontWeight: 700, marginBottom: '2px' }}>{ad.name}</div>
                                     <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'flex', gap: '12px' }}>
                                         <span style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                                            {ad.position === 'homepage_top' ? 'Strona główna – góra' :
-                                             ad.position === 'homepage_mid' ? 'Strona główna – środek' :
-                                             ad.position === 'events_top' ? 'Imprezy – góra' : ad.position}
+                                            {ad.position === 'homepage_bottom' ? '🖥️ Dół strony głównej' :
+                                             ad.position === 'homepage_sidebar' ? '📐 Prawa strona (pionowy)' : ad.position}
                                         </span>
                                         <span>· {ad.clicks} kliknięć</span>
                                     </div>
@@ -307,9 +305,8 @@ export default function AdsPage() {
                     <Monitor size={16} /> Informacje o formatach banerów
                 </h3>
                 <ul style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 2, paddingLeft: '1rem' }}>
-                    <li><strong>Leaderboard:</strong> 728 × 90 px – górny baner strony</li>
-                    <li><strong>Billboard:</strong> 970 × 90 px – szerszy baner</li>
-                    <li><strong>Rectangle:</strong> 300 × 250 px – kwadratowy baner</li>
+                    <li><strong>🖥️ Dół strony głównej (homepage_bottom):</strong> 970 × 90 px – poziomy baner na dole</li>
+                    <li><strong>📐 Prawa strona (homepage_sidebar):</strong> 160 × 600 px – pionowy baner boczny</li>
                     <li>Kontakt z reklamodawcami: <strong>fb.com/RAPwUK</strong></li>
                 </ul>
             </div>

@@ -79,11 +79,12 @@ export default async function Home() {
         </p>
       </section>
 
-      {/* Banner Ad */}
-      <BannerAd position="homepage_top" />
-
       {/* Main Layout: News + Events sidebar */}
-      <div className="main-layout">
+      <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start', paddingBottom: '4rem' }}>
+
+        {/* Left: full content column */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div className="main-layout">
 
         {/* ── LEFT: News Feed ── */}
         <section className="news-main">
@@ -202,7 +203,20 @@ export default async function Home() {
             <ArrowRight size={18} />
           </Link>
         </aside>
-      </div>
+
+          </div>{/* /.main-layout */}
+
+          {/* Bottom horizontal banner */}
+          <BannerAd position="homepage_bottom" />
+
+        </div>{/* /left column */}
+
+        {/* Right: vertical sidebar ad (hidden on mobile) */}
+        <div className="sidebar-ad-wrapper">
+          <BannerAd position="homepage_sidebar" />
+        </div>
+
+      </div>{/* /outer flex */}
     </div>
   );
 }
