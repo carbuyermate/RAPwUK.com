@@ -77,7 +77,10 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
                                     </a>
                                 </>
                             ) : (
-                                <p className="text-secondary text-sm italic">Informacje o biletach wkrótce.</p>
+                                <div className="flex flex-col items-center justify-center p-4 gap-3 opacity-60">
+                                    <Ticket size={32} strokeWidth={1} />
+                                    <p className="text-secondary text-sm text-center uppercase tracking-widest font-bold">Informacje o biletach wkrótce</p>
+                                </div>
                             )}
                         </div>
                     </div>

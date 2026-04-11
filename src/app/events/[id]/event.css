@@ -214,11 +214,12 @@
 
 /* Event poster miniaturization */
 .event-poster-container {
-    max-height: 400px !important;
+    max-width: 220px !important;
+    margin: 0 auto;
     width: 100%;
 }
 
 .event-poster-container img {
-    max-height: 400px !important;
-    object-position: top;
+    max-height: 320px !important;
+    object-position: center;
 }
