@@ -88,7 +88,11 @@ export function RapperGallery({ images }: RapperGalleryProps) {
 
                     {/* Framed Image Container */}
                     <div 
-                        className="relative bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl p-2 flex flex-col items-center cursor-default max-w-[85vw] md:max-w-[95vw] max-h-[95vh]"
+                        className="relative bg-[#050505] flex flex-col items-center cursor-default max-w-[85vw] md:max-w-[95vw] max-h-[95vh] rounded-xl"
+                        style={{
+                            padding: '8px',
+                            boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.1), 0 0 0 10px #151515, 0 0 0 11px rgba(255,255,255,0.15), 0 30px 60px rgba(0,0,0,0.9)',
+                        }}
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Action Bar (Top Right) */}
