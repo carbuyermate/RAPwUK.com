@@ -11,6 +11,7 @@ interface NewsDetail {
   content: string;
   category: string;
   image_url?: string;
+  youtube_url?: string;
   created_at: string;
 }
 
@@ -64,7 +65,32 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ id
           dangerouslySetInnerHTML={{ __html: article.content || '' }}
         >
         </div>
+
+        {article.youtube_url && (
+            <div className="mt-12 rounded-xl overflow-hidden border border-white/10 shadow-2xl" style={{ aspectRatio: '16/9' }}>
+                <iframe
+                    width="100%"
+                    height="100%"
+                    src={getYouTubeEmbedUrl(article.youtube_url) || article.youtube_url}
+                    title="YouTube video player"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    style={{ display: 'block', background: '#000' }}
+                ></iframe>
+            </div>
+        )}
       </article>
     </div>
   );
+}
+
+function getYouTubeEmbedUrl(url: string) {
+    if (!url) return null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+
+    return (match && match[2].length === 11)
+      ? `https://www.youtube.com/embed/${match[2]}`
+      : url;
 }

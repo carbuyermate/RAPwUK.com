@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { Newspaper, Tag, FileText, Image as ImageIcon, ChevronLeft, Upload, X } from 'lucide-react';
+import { Newspaper, Tag, FileText, Image as ImageIcon, ChevronLeft, Upload, X, Youtube } from 'lucide-react';
 import Link from 'next/link';
 import { RichTextEditor } from '@/components/RichTextEditor';
 import '../dashboard.css';
@@ -14,6 +14,7 @@ export default function AddNewsPage() {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [category, setCategory] = useState('');
+    const [youtubeUrl, setYoutubeUrl] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
@@ -70,7 +71,7 @@ export default function AddNewsPage() {
         setUploadProgress('Zapisuję news...');
         const { error: insertError } = await supabase
             .from('news')
-            .insert([{ title, content, category, image_url, is_auto_generated: false }]);
+            .insert([{ title, content, category, image_url, youtube_url: youtubeUrl || null, is_auto_generated: false }]);
 
         if (insertError) {
             setError(insertError.message);
@@ -140,6 +141,20 @@ export default function AddNewsPage() {
                             value={content}
                             onChange={setContent}
                             placeholder="Pełna treść newsa. Użyj paska narzędzi do formatowania tekstu."
+                        />
+                    </div>
+
+                    {/* YouTube URL */}
+                    <div className="form-group">
+                        <label className="form-label flex items-center gap-2">
+                            <Youtube size={16} /> Link do YouTube (opcjonalnie)
+                        </label>
+                        <input
+                            type="url"
+                            className="form-input"
+                            placeholder="np. https://www.youtube.com/watch?v=..."
+                            value={youtubeUrl}
+                            onChange={(e) => setYoutubeUrl(e.target.value)}
                         />
                     </div>
 
