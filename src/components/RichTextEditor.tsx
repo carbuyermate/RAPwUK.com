@@ -5,7 +5,6 @@ import 'react-quill/dist/quill.snow.css';
 import { useMemo } from 'react';
 
 // Use dynamic import to prevent SSR rendering issues with Quill
-// Standardowy dynamiczny import dla Next.js 13+
 const ReactQuill = dynamic(() => import('react-quill'), { 
     ssr: false,
     loading: () => <div className="p-4 text-center text-sm text-secondary border border-[rgba(255,255,255,0.1)] rounded-lg min-h-[200px] flex items-center justify-center">Ładowanie edytora...</div>
@@ -16,6 +15,49 @@ interface RichTextEditorProps {
     onChange: (value: string) => void;
     placeholder?: string;
 }
+
+const editorStyles = `
+    .rich-text-editor-container .quill {
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .rich-text-editor-container .ql-toolbar {
+        border: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+    .rich-text-editor-container .ql-container {
+        border: none;
+        font-family: inherit;
+        font-size: 1rem;
+        color: var(--text-primary);
+        min-height: 250px;
+    }
+    .rich-text-editor-container .ql-editor {
+        padding: 1rem;
+        min-height: 250px;
+    }
+    .rich-text-editor-container .ql-stroke {
+        stroke: rgba(255,255,255,0.7);
+    }
+    .rich-text-editor-container .ql-fill {
+        fill: rgba(255,255,255,0.7);
+    }
+    .rich-text-editor-container .ql-picker {
+        color: rgba(255,255,255,0.7);
+    }
+    .rich-text-editor-container .ql-picker-options {
+        background: #1a1a1a;
+        border-color: rgba(255,255,255,0.1);
+    }
+    .rich-text-editor-container .ql-editor.ql-blank::before {
+        color: rgba(255,255,255,0.3);
+        font-style: normal;
+    }
+`;
 
 export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {
     const modules = useMemo(() => ({
@@ -37,6 +79,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
 
     return (
         <div className="rich-text-editor-container">
+            <style dangerouslySetInnerHTML={{ __html: editorStyles }} />
             <ReactQuill
                 theme="snow"
                 value={value}
@@ -45,43 +88,6 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
                 formats={formats}
                 placeholder={placeholder || "Zacznij pisać tutaj..."}
             />
-            <style jsx global>{`
-                .rich-text-editor-container .quill {
-                    background: rgba(255, 255, 255, 0.02);
-                    border-radius: 8px;
-                    border: 1px solid rgba(255, 255, 255, 0.1);
-                }
-                .rich-text-editor-container .ql-toolbar {
-                    border: none;
-                    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                    background: rgba(255, 255, 255, 0.05);
-                    border-top-left-radius: 8px;
-                    border-top-right-radius: 8px;
-                }
-                .rich-text-editor-container .ql-container {
-                    border: none;
-                    font-family: inherit;
-                    font-size: 1rem;
-                    color: var(--text-primary);
-                    min-height: 250px;
-                }
-                .rich-text-editor-container .ql-editor {
-                    padding: 1rem;
-                }
-                .rich-text-editor-container .ql-stroke {
-                    stroke: var(--text-primary);
-                }
-                .rich-text-editor-container .ql-fill {
-                    fill: var(--text-primary);
-                }
-                .rich-text-editor-container .ql-picker {
-                    color: var(--text-primary);
-                }
-                .rich-text-editor-container .ql-editor.ql-blank::before {
-                    color: var(--text-secondary);
-                    font-style: normal;
-                }
-            `}</style>
         </div>
     );
 }
