@@ -43,18 +43,34 @@
   padding-bottom: 4rem;
 }
 
-@media (max-width: 960px) {
-  .main-layout {
-    grid-template-columns: 1fr;
-  }
+/* ── HOMEPAGE OUTER LAYOUT ── */
+/* 3 columns: [news+events flex] [sidebar ad] */
+.homepage-outer {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  padding-bottom: 4rem;
+}
+
+.homepage-centre {
+  flex: 1;
+  min-width: 0;
+}
+
+.bottom-banner-wrapper {
+  margin-top: 2rem;
 }
 
 /* Sidebar ad – hidden on mobile */
 .sidebar-ad-wrapper {
-  display: block;
+  flex-shrink: 0;
+  width: 160px;
 }
 
 @media (max-width: 960px) {
+  .homepage-outer {
+    flex-direction: column;
+  }
   .sidebar-ad-wrapper {
     display: none;
   }
