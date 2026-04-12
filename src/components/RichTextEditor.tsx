@@ -50,19 +50,37 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
     const execCmd = (command: string) => {
         document.execCommand(command, false, undefined);
         editorRef.current?.focus();
+        handleInput();
     };
 
     const insertLink = () => {
-        const url = prompt('Podaj URL linku:');
-        if (url) {
-            document.execCommand('createLink', false, url);
+        // Zapiszmy zaznaczenie zanim wyskoczy alert (czasami przeglądarki gubią focus przy prompt)
+        const selection = window.getSelection();
+        let range: Range | null = null;
+        if (selection && selection.rangeCount > 0) {
+            range = selection.getRangeAt(0);
+        }
+
+        const url = prompt('Podaj pełny URL linku (np. https://...):');
+        if (url && url.trim() !== '') {
+            if (range) {
+                selection?.removeAllRanges();
+                selection?.addRange(range);
+            }
+            
+            // Format URL (jeśli nie ma http/https to dodaj)
+            const finalUrl = /^https?:\/\//i.test(url) ? url : `https://${url}`;
+            
+            document.execCommand('createLink', false, finalUrl);
             editorRef.current?.focus();
+            handleInput();
         }
     };
 
     const insertHeading = (level: number) => {
         document.execCommand('formatBlock', false, `h${level}`);
         editorRef.current?.focus();
+        handleInput();
     };
 
     const handleInput = () => {
@@ -113,6 +131,9 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
                 <button type="button" title="Dodaj link"
                     onMouseDown={(e) => { e.preventDefault(); insertLink(); }}
                     style={btnStyle}>🔗 Link</button>
+                <button type="button" title="Usun link"
+                    onMouseDown={(e) => { e.preventDefault(); execCmd('unlink'); }}
+                    style={{...btnStyle, opacity: 0.8, fontSize: '0.75rem'}}>🔗✖ Usuń</button>
             </div>
 
             {/* Editable area — NO dangerouslySetInnerHTML to prevent cursor reset */}
