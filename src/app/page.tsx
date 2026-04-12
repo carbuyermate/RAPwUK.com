@@ -94,7 +94,6 @@ export default async function Home() {
                 <h2 className="section-title">
                   <Newspaper size={22} /> Świeże Newsy
                 </h2>
-                <Link href="/news" className="view-all-link">Wszystkie newsy →</Link>
               </div>
 
               {news.length === 0 ? (
