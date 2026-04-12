@@ -171,16 +171,22 @@ export default function AdsPage() {
 
     const deleteAd = async (id: string) => {
         if (!confirm('Czy na pewno usunąć tę reklamę?')) return;
-
-        const previousAds = [...ads];
-        setAds(ads.filter(ad => ad.id !== id));
+        setError(null);
 
         const res = await fetch(`/api/ads?id=${id}`, { method: 'DELETE' });
-        const json = await res.json();
-        if (json.error) {
-            setError('Błąd usuwania: ' + json.error);
-            setAds(previousAds);
+
+        let json: any = {};
+        try {
+            json = await res.json();
+        } catch(e) {
+            setError('Błąd usuwania: nie można odczytać odpowiedzi serwera (status: ' + res.status + ')');
+            return;
+        }
+
+        if (json.error || !res.ok) {
+            setError('Błąd usuwania: ' + (json.error || res.statusText));
         } else {
+            setAds(prev => prev.filter(ad => ad.id !== id));
             setSuccess('Reklama usunięta.');
             setTimeout(() => setSuccess(null), 3000);
         }
