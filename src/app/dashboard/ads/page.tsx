@@ -56,7 +56,7 @@ export default function AdsPage() {
 
     const authHeaders = () => ({
         'Content-Type': 'application/json',
-        ...(token ? { 'x-supabase-token': token } : {}),
+        ...(token ? { 'x-token': token } : {}),
     });
 
     // Form state
@@ -105,7 +105,7 @@ export default function AdsPage() {
             const updatePayload: any = { name, link_url: linkUrl, position };
             if (imageFile) updatePayload.image_url = image_url;
 
-            const res = await fetch(`/api/ads?id=${editingId}`, {
+            const res = await fetch(`/api/banners?id=${editingId}`, {
                 method: 'PATCH',
                 headers: authHeaders(),
                 body: JSON.stringify(updatePayload),
@@ -119,7 +119,7 @@ export default function AdsPage() {
                 fetchAds();
             }
         } else {
-            const res = await fetch('/api/ads', {
+            const res = await fetch('/api/banners', {
                 method: 'POST',
                 headers: authHeaders(),
                 body: JSON.stringify({
@@ -164,7 +164,7 @@ export default function AdsPage() {
     };
 
     const toggleActive = async (ad: Ad) => {
-        const res = await fetch(`/api/ads?id=${ad.id}`, {
+        const res = await fetch(`/api/banners?id=${ad.id}`, {
             method: 'PATCH',
             headers: authHeaders(),
             body: JSON.stringify({ is_active: !ad.is_active }),
@@ -181,7 +181,7 @@ export default function AdsPage() {
         if (!confirm('Czy na pewno usunąć tę reklamę?')) return;
         setError(null);
 
-        const res = await fetch(`/api/ads?id=${id}`, { 
+        const res = await fetch(`/api/banners?id=${id}`, { 
             method: 'DELETE',
             headers: authHeaders(),
         });

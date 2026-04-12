@@ -37,16 +37,8 @@ export function BannerAd({ position = 'homepage_bottom' }: BannerAdProps) {
     const [ad, setAd] = useState<Ad>(isSidebar ? PLACEHOLDER_SIDEBAR : PLACEHOLDER_BOTTOM);
 
     useEffect(() => {
-        const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/ads?position=eq.${position}&is_active=eq.true&order=created_at.desc&limit=1&select=*`;
-
-        fetch(url, {
-            headers: {
-                apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-                Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
-                Accept: 'application/vnd.pgrst.object+json',
-                'Accept-Profile': 'public',
-            },
-        })
+        // Use our own /api/banners endpoint — avoids ad-blocker blocking Supabase REST /ads URL
+        fetch(`/api/banners?position=${position}`)
             .then(async (res) => {
                 if (res.ok) {
                     const data = await res.json();
