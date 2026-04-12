@@ -1,13 +1,14 @@
 -- ============================================================
--- Napraw polityki RLS dla tabeli `ads`
--- Uruchom to w Supabase → SQL Editor
+-- DEFINITYWNA NAPRAWA - wyłącz RLS dla tabeli ads
+-- Uruć to w Supabase → SQL Editor
 -- ============================================================
 
--- 1. Usuń wszystkie stare polityki dla ads
+-- KROK 1: Wyłącz Row Level Security dla ads (najprostsza i najbardziej niezawodna opcja)
+ALTER TABLE public.ads DISABLE ROW LEVEL SECURITY;
+
+-- KROK 2: Usuń stare polityki (nie są już potrzebne)
 DROP POLICY IF EXISTS "Allow public read access" ON public.ads;
 DROP POLICY IF EXISTS "Allow authenticated full access" ON public.ads;
-DROP POLICY IF EXISTS "Allow anon read active ads" ON public.ads;
-DROP POLICY IF EXISTS "Allow auth full access" ON public.ads;
 
 -- 2. Odczyt publiczny — wszyscy mogą czytać aktywne reklamy
 CREATE POLICY "anon_read_active_ads" ON public.ads
