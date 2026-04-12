@@ -87,7 +87,7 @@ export default function AdsPage() {
 
         if (imageFile) {
             const fileExt = imageFile.name.split('.').pop();
-            const fileName = `ads/${Date.now()}.${fileExt}`;
+            const fileName = `promo/${Date.now()}.${fileExt}`;
             const { error: uploadError } = await supabase.storage
                 .from('uploads')
                 .upload(fileName, imageFile, { upsert: false });
