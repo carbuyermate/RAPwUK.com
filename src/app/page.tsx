@@ -199,10 +199,7 @@ export default async function Home() {
 
           </div>{/* /.main-layout */}
 
-          {/* Bottom horizontal banner — BELOW news+events */}
-          <div className="promo-zone-bottom">
-            <PromoWidget position="homepage_bottom" />
-          </div>
+          {/* Removed bottom banner to move to footer */}
 
         </div>{/* /.homepage-centre */}
 
