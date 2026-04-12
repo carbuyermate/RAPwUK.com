@@ -95,29 +95,37 @@ export default function AdsPage() {
 
         if (editingId) {
             const updatePayload: any = { name, link_url: linkUrl, position };
-            if (image_url !== PLACEHOLDER_URL || imageFile) {
-                updatePayload.image_url = image_url;
-            }
-            const { error: updateError } = await supabase.from('ads').update(updatePayload).eq('id', editingId);
-            if (updateError) {
-                setError(updateError.message);
+            if (imageFile) updatePayload.image_url = image_url;
+
+            const res = await fetch(`/api/ads?id=${editingId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatePayload),
+            });
+            const json = await res.json();
+            if (json.error) {
+                setError(json.error);
             } else {
                 setSuccess('Reklama zaktualizowana!');
                 resetForm();
                 fetchAds();
             }
         } else {
-            const { error: insertError } = await supabase.from('ads').insert([{
-                name,
-                image_url,
-                link_url: linkUrl,
-                position,
-                is_active: true,
-                clicks: 0,
-            }]);
-
-            if (insertError) {
-                setError(insertError.message);
+            const res = await fetch('/api/ads', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name,
+                    image_url,
+                    link_url: linkUrl,
+                    position,
+                    is_active: true,
+                    clicks: 0,
+                }),
+            });
+            const json = await res.json();
+            if (json.error) {
+                setError(json.error);
             } else {
                 setSuccess('Reklama dodana!');
                 resetForm();
@@ -148,29 +156,33 @@ export default function AdsPage() {
     };
 
     const toggleActive = async (ad: Ad) => {
-        const { error } = await supabase
-            .from('ads')
-            .update({ is_active: !ad.is_active })
-            .eq('id', ad.id);
-        if (!error) fetchAds();
+        const res = await fetch(`/api/ads?id=${ad.id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ is_active: !ad.is_active }),
+        });
+        const json = await res.json();
+        if (json.error) {
+            setError(json.error);
+        } else {
+            fetchAds();
+        }
     };
 
     const deleteAd = async (id: string) => {
         if (!confirm('Czy na pewno usunąć tę reklamę?')) return;
-        
-        // Optimistic UI update
+
         const previousAds = [...ads];
         setAds(ads.filter(ad => ad.id !== id));
-        
-        const { error } = await supabase.from('ads').delete().eq('id', id);
-        if (error) {
-            console.error(error);
-            setError('Błąd usuwania reklamy: ' + error.message);
-            setAds(previousAds); // revert if failed
+
+        const res = await fetch(`/api/ads?id=${id}`, { method: 'DELETE' });
+        const json = await res.json();
+        if (json.error) {
+            setError('Błąd usuwania: ' + json.error);
+            setAds(previousAds);
         } else {
-            setSuccess('Poprawnie usunięto reklamę.');
+            setSuccess('Reklama usunięta.');
             setTimeout(() => setSuccess(null), 3000);
-            fetchAds();
         }
     };
 
