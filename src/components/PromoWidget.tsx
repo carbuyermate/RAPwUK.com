@@ -1,52 +1,48 @@
-'use client';
+import React from 'react';
 
-import { useEffect, useState } from 'react';
-
-interface Ad {
-    id: string;
-    image_url: string;
-    link_url: string;
-    name: string;
-    position: string;
+interface PromoWidgetProps {
+    position?: 'homepage_bottom' | 'homepage_sidebar';
 }
 
 const PLACEHOLDER_BOTTOM = {
-    id: 'placeholder-bottom',
     image_url: '/banner-placeholder.png',
     link_url: 'https://fb.com/RAPwUK',
-    name: 'Placeholder',
-    position: 'homepage_bottom',
 };
 
 const PLACEHOLDER_SIDEBAR = {
-    id: 'placeholder-sidebar',
     image_url: '/banner-placeholder.png',
     link_url: 'https://fb.com/RAPwUK',
-    name: 'Placeholder',
-    position: 'homepage_sidebar',
 };
 
-type AdPosition = 'homepage_bottom' | 'homepage_sidebar';
-
-interface PromoWidgetProps {
-    position?: AdPosition;
-}
-
-export function PromoWidget({ position = 'homepage_bottom' }: PromoWidgetProps) {
+export async function PromoWidget({ position = 'homepage_bottom' }: PromoWidgetProps) {
     const isSidebar = position === 'homepage_sidebar';
-    const [ad, setAd] = useState<Ad>(isSidebar ? PLACEHOLDER_SIDEBAR : PLACEHOLDER_BOTTOM);
+    let adData = null;
 
-    useEffect(() => {
-        // Use our own /api/promo endpoint — avoids ad-blocker blocking Supabase REST /ads or /banners URL
-        fetch(`/api/promo?position=${position}`)
-            .then(async (res) => {
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data && data.id) setAd(data);
-                }
-            })
-            .catch(() => {});
-    }, [position]);
+    try {
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+        const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+        const res = await fetch(
+            `${supabaseUrl}/rest/v1/ads?position=eq.${position}&is_active=eq.true&order=created_at.desc&limit=1&select=*`,
+            {
+                headers: {
+                    apikey: serviceKey,
+                    Authorization: `Bearer ${serviceKey}`,
+                    Accept: 'application/vnd.pgrst.object+json',
+                },
+                // Next.js: disable cache to always get the latest active banner
+                cache: 'no-store',
+            }
+        );
+
+        if (res.ok && res.status !== 406 && res.status !== 404) {
+            adData = await res.json();
+        }
+    } catch (e) {
+        console.error('Błąd pobierania baneru', e);
+    }
+
+    const ad = adData || (isSidebar ? PLACEHOLDER_SIDEBAR : PLACEHOLDER_BOTTOM);
 
     if (isSidebar) {
         return (
@@ -121,7 +117,7 @@ export function PromoWidget({ position = 'homepage_bottom' }: PromoWidgetProps) 
                 zIndex: 2,
                 pointerEvents: 'none',
             }}>
-                Reklama
+                Polecamy
             </div>
             <a
                 href={ad.link_url || '#'}
@@ -132,10 +128,11 @@ export function PromoWidget({ position = 'homepage_bottom' }: PromoWidgetProps) 
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                     src={ad.image_url}
-                    alt="Reklama"
+                    alt="Polecane"
                     style={{
                         width: '100%',
-                        height: 'auto',
+                        height: '100%',
+                        minHeight: '90px',
                         maxHeight: '120px',
                         objectFit: 'cover',
                         display: 'block',
