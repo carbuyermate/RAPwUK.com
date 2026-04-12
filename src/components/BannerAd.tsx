@@ -1,5 +1,14 @@
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+'use client';
+
+import { useEffect, useState } from 'react';
+
+interface Ad {
+    id: string;
+    image_url: string;
+    link_url: string;
+    name: string;
+    position: string;
+}
 
 const PLACEHOLDER_BOTTOM = {
     id: 'placeholder-bottom',
@@ -23,31 +32,29 @@ interface BannerAdProps {
     position?: AdPosition;
 }
 
-export async function BannerAd({ position = 'homepage_bottom' }: BannerAdProps) {
-    const cookieStore = await cookies();
-
-    const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-            cookies: {
-                getAll: () => cookieStore.getAll(),
-                setAll: () => {},
-            },
-        }
-    );
-
-    const { data } = await supabase
-        .from('ads')
-        .select('*')
-        .eq('position', position)
-        .eq('is_active', true)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
+export function BannerAd({ position = 'homepage_bottom' }: BannerAdProps) {
     const isSidebar = position === 'homepage_sidebar';
-    const ad = data || (isSidebar ? PLACEHOLDER_SIDEBAR : PLACEHOLDER_BOTTOM);
+    const [ad, setAd] = useState<Ad>(isSidebar ? PLACEHOLDER_SIDEBAR : PLACEHOLDER_BOTTOM);
+
+    useEffect(() => {
+        const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/ads?position=eq.${position}&is_active=eq.true&order=created_at.desc&limit=1&select=*`;
+
+        fetch(url, {
+            headers: {
+                apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+                Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
+                Accept: 'application/vnd.pgrst.object+json',
+                'Accept-Profile': 'public',
+            },
+        })
+            .then(async (res) => {
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.id) setAd(data);
+                }
+            })
+            .catch(() => {});
+    }, [position]);
 
     if (isSidebar) {
         return (
@@ -108,6 +115,7 @@ export async function BannerAd({ position = 'homepage_bottom' }: BannerAdProps) 
             border: '1px solid rgba(255,255,255,0.07)',
             background: 'rgba(255,255,255,0.02)',
             position: 'relative',
+            minHeight: '90px',
         }}>
             <div style={{
                 position: 'absolute',

@@ -31,14 +31,7 @@ export default function AdsPage() {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
 
-    // New ad form
-    const [name, setName] = useState('');
-    const [linkUrl, setLinkUrl] = useState('');
-    const [imageFile, setImageFile] = useState<File | null>(null);
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
-    const [position, setPosition] = useState('homepage_bottom');
-    const [showForm, setShowForm] = useState(false);
-    const [editingId, setEditingId] = useState<string | null>(null);
+    const [token, setToken] = useState<string | null>(null);
 
     const fetchAds = async () => {
         const { data, error } = await supabase
@@ -56,9 +49,24 @@ export default function AdsPage() {
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
             if (!session) { router.push('/login'); return; }
+            setToken(session.access_token);
             fetchAds();
         });
     }, [router]);
+
+    const authHeaders = () => ({
+        'Content-Type': 'application/json',
+        ...(token ? { 'x-supabase-token': token } : {}),
+    });
+
+    // Form state
+    const [name, setName] = useState('');
+    const [linkUrl, setLinkUrl] = useState('');
+    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [position, setPosition] = useState('homepage_bottom');
+    const [showForm, setShowForm] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -99,7 +107,7 @@ export default function AdsPage() {
 
             const res = await fetch(`/api/ads?id=${editingId}`, {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
+                headers: authHeaders(),
                 body: JSON.stringify(updatePayload),
             });
             const json = await res.json();
@@ -113,7 +121,7 @@ export default function AdsPage() {
         } else {
             const res = await fetch('/api/ads', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: authHeaders(),
                 body: JSON.stringify({
                     name,
                     image_url,
@@ -158,7 +166,7 @@ export default function AdsPage() {
     const toggleActive = async (ad: Ad) => {
         const res = await fetch(`/api/ads?id=${ad.id}`, {
             method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
+            headers: authHeaders(),
             body: JSON.stringify({ is_active: !ad.is_active }),
         });
         const json = await res.json();
@@ -173,7 +181,10 @@ export default function AdsPage() {
         if (!confirm('Czy na pewno usunąć tę reklamę?')) return;
         setError(null);
 
-        const res = await fetch(`/api/ads?id=${id}`, { method: 'DELETE' });
+        const res = await fetch(`/api/ads?id=${id}`, { 
+            method: 'DELETE',
+            headers: authHeaders(),
+        });
 
         let json: any = {};
         try {
