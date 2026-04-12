@@ -55,7 +55,7 @@ export default async function Home() {
   todayStart.setHours(0, 0, 0, 0);
 
   const [{ data: newsData }, { data: eventsData }] = await Promise.all([
-    supabase.from('news').select('*').order('created_at', { ascending: false }).limit(20),
+    supabase.from('news').select('*').order('created_at', { ascending: false }).limit(7),
     supabase.from('events').select('*').gte('event_date', todayStart.toISOString()).order('event_date', { ascending: true }).limit(30),
   ]);
 
