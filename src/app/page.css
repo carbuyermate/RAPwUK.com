@@ -57,12 +57,12 @@
   min-width: 0;
 }
 
-.bottom-banner-wrapper {
+.promo-zone-bottom {
   margin-top: 2rem;
 }
 
-/* Sidebar ad – hidden on mobile */
-.sidebar-ad-wrapper {
+/* Promo side zone – hidden on mobile */
+.promo-zone-side {
   flex-shrink: 0;
   width: 160px;
 }
@@ -71,7 +71,7 @@
   .homepage-outer {
     flex-direction: column;
   }
-  .sidebar-ad-wrapper {
+  .promo-zone-side {
     display: none;
   }
 }

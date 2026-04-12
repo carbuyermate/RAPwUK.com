@@ -2,7 +2,7 @@ import Link from "next/link";
 import "./page.css";
 import { CalendarDays, ExternalLink, Newspaper, Clock, MapPin, ArrowRight, Tag } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import { BannerAd } from "@/components/BannerAd";
+import { PromoWidget } from "@/components/PromoWidget";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -200,15 +200,15 @@ export default async function Home() {
           </div>{/* /.main-layout */}
 
           {/* Bottom horizontal banner — BELOW news+events */}
-          <div className="bottom-banner-wrapper">
-            <BannerAd position="homepage_bottom" />
+          <div className="promo-zone-bottom">
+            <PromoWidget position="homepage_bottom" />
           </div>
 
         </div>{/* /.homepage-centre */}
 
         {/* Far-right: vertical sidebar ad */}
-        <div className="sidebar-ad-wrapper">
-          <BannerAd position="homepage_sidebar" />
+        <div className="promo-zone-side">
+          <PromoWidget position="homepage_sidebar" />
         </div>
 
       </div>{/* /.homepage-outer */}

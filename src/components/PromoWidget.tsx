@@ -28,17 +28,17 @@ const PLACEHOLDER_SIDEBAR = {
 
 type AdPosition = 'homepage_bottom' | 'homepage_sidebar';
 
-interface BannerAdProps {
+interface PromoWidgetProps {
     position?: AdPosition;
 }
 
-export function BannerAd({ position = 'homepage_bottom' }: BannerAdProps) {
+export function PromoWidget({ position = 'homepage_bottom' }: PromoWidgetProps) {
     const isSidebar = position === 'homepage_sidebar';
     const [ad, setAd] = useState<Ad>(isSidebar ? PLACEHOLDER_SIDEBAR : PLACEHOLDER_BOTTOM);
 
     useEffect(() => {
-        // Use our own /api/banners endpoint — avoids ad-blocker blocking Supabase REST /ads URL
-        fetch(`/api/banners?position=${position}`)
+        // Use our own /api/promo endpoint — avoids ad-blocker blocking Supabase REST /ads or /banners URL
+        fetch(`/api/promo?position=${position}`)
             .then(async (res) => {
                 if (res.ok) {
                     const data = await res.json();
@@ -72,7 +72,7 @@ export function BannerAd({ position = 'homepage_bottom' }: BannerAdProps) {
                         textAlign: 'center',
                         padding: '4px 0',
                     }}>
-                        Reklama
+                        Polecamy
                     </div>
                     <a
                         href={ad.link_url || '#'}
@@ -83,7 +83,7 @@ export function BannerAd({ position = 'homepage_bottom' }: BannerAdProps) {
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                             src={ad.image_url}
-                            alt="Reklama"
+                            alt="Polecane"
                             style={{
                                 width: '160px',
                                 height: '600px',
