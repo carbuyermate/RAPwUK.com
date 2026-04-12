@@ -127,7 +127,7 @@ export default async function Home() {
                   </div>
 
                   <Link href="/news" className="btn-secondary btn-block">
-                    Więcej newsów <ArrowRight size={16} />
+                    WIĘCEJ NEWSÓW <ArrowRight size={16} />
                   </Link>
                 </div>
               )}
