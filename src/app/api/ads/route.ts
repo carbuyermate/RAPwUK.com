@@ -1,80 +1,95 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { createServerClient } from '@supabase/ssr';
 
-async function getServerSupabase() {
-    const cookieStore = await cookies();
-    return createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-            cookies: {
-                getAll: () => cookieStore.getAll(),
-                setAll: () => {},
-            },
-        }
-    );
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+// Helper to call Supabase REST directly with the best available key
+function supabaseHeaders(authToken?: string) {
+    const key = serviceKey || anonKey;
+    return {
+        apikey: key,
+        Authorization: `Bearer ${authToken || key}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=representation',
+    };
 }
 
 // DELETE /api/ads?id=xxx
 export async function DELETE(req: NextRequest) {
-    const supabase = await getServerSupabase();
-
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const id = req.nextUrl.searchParams.get('id');
     if (!id) {
         return NextResponse.json({ error: 'Missing id' }, { status: 400 });
     }
 
-    const { error } = await supabase.from('ads').delete().eq('id', id);
-    if (error) {
-        console.error('[DELETE /api/ads]', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+    // Get user's JWT from Authorization header (sent from client)
+    const authToken = req.headers.get('x-supabase-token') || undefined;
+
+    const res = await fetch(`${supabaseUrl}/rest/v1/ads?id=eq.${id}`, {
+        method: 'DELETE',
+        headers: {
+            ...supabaseHeaders(authToken),
+            Prefer: 'return=minimal',
+        },
+    });
+
+    if (!res.ok) {
+        const text = await res.text();
+        console.error('[DELETE /api/ads]', res.status, text);
+        return NextResponse.json({ error: `Supabase: ${res.status} ${text}` }, { status: res.status });
     }
+
     return NextResponse.json({ success: true });
 }
 
 // PATCH /api/ads?id=xxx
 export async function PATCH(req: NextRequest) {
-    const supabase = await getServerSupabase();
-
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const id = req.nextUrl.searchParams.get('id');
     if (!id) {
         return NextResponse.json({ error: 'Missing id' }, { status: 400 });
     }
 
+    const authToken = req.headers.get('x-supabase-token') || undefined;
     const body = await req.json();
-    const { error } = await supabase.from('ads').update(body).eq('id', id);
-    if (error) {
-        console.error('[PATCH /api/ads]', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+
+    const res = await fetch(`${supabaseUrl}/rest/v1/ads?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: {
+            ...supabaseHeaders(authToken),
+            Prefer: 'return=minimal',
+        },
+        body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+        const text = await res.text();
+        console.error('[PATCH /api/ads]', res.status, text);
+        return NextResponse.json({ error: `Supabase: ${res.status} ${text}` }, { status: res.status });
     }
+
     return NextResponse.json({ success: true });
 }
 
-// POST /api/ads - insert new ad
+// POST /api/ads
 export async function POST(req: NextRequest) {
-    const supabase = await getServerSupabase();
-
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
+    const authToken = req.headers.get('x-supabase-token') || undefined;
     const body = await req.json();
-    const { data, error } = await supabase.from('ads').insert(body).select().single();
-    if (error) {
-        console.error('[POST /api/ads]', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+
+    const res = await fetch(`${supabaseUrl}/rest/v1/ads`, {
+        method: 'POST',
+        headers: {
+            ...supabaseHeaders(authToken),
+            Prefer: 'return=representation',
+        },
+        body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+        const text = await res.text();
+        console.error('[POST /api/ads]', res.status, text);
+        return NextResponse.json({ error: `Supabase: ${res.status} ${text}` }, { status: res.status });
     }
-    return NextResponse.json({ data });
+
+    const data = await res.json();
+    return NextResponse.json({ data: data[0] || data });
 }
