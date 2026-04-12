@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Calendar, MapPin, Clock, ArrowLeft, Ticket, Zap } from "lucide-react";
+import { Calendar, MapPin, Clock, ArrowLeft, Ticket } from "lucide-react";
 import { EventPoster } from "@/components/EventPoster";
 import { ViewTracker } from "@/components/ViewTracker";
 import "./event.css";
@@ -93,7 +93,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
                         <div>
                             {event.is_premium && (
                                 <div className="event-tag-premium-large mb-4">
-                                    <Zap size={14} fill="black" /> Polecane
+                                    PATRONAT!
                                 </div>
                             )}
                             <h1 className="event-detail-title">{event.title}</h1>

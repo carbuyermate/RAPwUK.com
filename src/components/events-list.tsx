@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Calendar, MapPin, Ticket, ExternalLink, Zap, Search, ChevronUp, ChevronDown } from 'lucide-react';
+import { Calendar, MapPin, Ticket, ExternalLink, Search, ChevronUp, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import './events-list.css';
 
@@ -141,7 +141,7 @@ export default function EventsList({ initialEvents }: EventsListProps) {
                                         <div className="text-secondary" style={{ fontSize: '0.7rem' }}>{year}</div>
                                     </div>
                                     <div className="event-main-info">
-                                        {event.is_premium && <div className="event-tag-premium">Premium</div>}
+                                        {event.is_premium && <div className="event-tag-premium">PATRONAT!</div>}
                                         <div className="text-secondary font-bold uppercase tracking-wider" style={{ fontSize: '0.7rem', marginBottom: '4px' }}>{event.city}</div>
                                         <h3 className="text-xl font-bold">{event.title}</h3>
                                         <p className="text-secondary text-sm mt-1 line-clamp-2">
@@ -159,7 +159,7 @@ export default function EventsList({ initialEvents }: EventsListProps) {
                                                 Kup bilet
                                             </div>
                                         )}
-                                        {event.is_premium && <Zap size={18} className="text-accent" />}
+
                                     </div>
                                 </Link>
                         );
