@@ -154,9 +154,11 @@ export default function EventsList({ initialEvents }: EventsListProps) {
                                         </div>
                                     </div>
                                     <div className="event-actions">
-                                        <div className="btn-secondary py-2 px-6 flex items-center gap-2 text-sm" style={{ pointerEvents: 'none' }}>
-                                            Szczegóły
-                                        </div>
+                                        {event.ticket_link && (
+                                            <div className="btn-secondary py-2 px-6 flex items-center gap-2 text-sm" style={{ pointerEvents: 'none' }}>
+                                                Kup bilet
+                                            </div>
+                                        )}
                                         {event.is_premium && <Zap size={18} className="text-accent" />}
                                     </div>
                                 </Link>
