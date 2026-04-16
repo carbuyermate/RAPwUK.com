@@ -75,7 +75,7 @@ export default async function Home() {
           Rapowe Wibracje<br />na Wyspach
         </h1>
         <p className="hero-subtitle">
-          Najświeższe newsy ze sceny, kalendarz imprez i wszystko o polskim hip-hopie w UK.
+          Centrum hip-hopu w UK: sprawdzaj newsy, planuj imprezy, oglądaj klipy i czytaj konkrety
         </p>
       </section>
 

@@ -1,10 +1,10 @@
+'use client';
+
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { Clock, Newspaper, ArrowLeft } from "lucide-react";
+import { useEffect, useState } from "react";
 import "./news.css";
-
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
 
 interface NewsItem {
   id: string;
@@ -25,13 +25,37 @@ function timeAgo(dateStr: string) {
   return new Date(dateStr).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-export default async function NewsPage() {
-  const { data, error } = await supabase
-    .from('news')
-    .select('*')
-    .order('created_at', { ascending: false });
+export default function NewsPage() {
+  const [news, setNews] = useState<NewsItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  const news = (data || []) as NewsItem[];
+  useEffect(() => {
+    async function fetchNews() {
+      try {
+        const { data, error } = await supabase
+          .from('news')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        setNews(data || []);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchNews();
+  }, []);
+
+  // Extract unique categories from actual news data
+  const publishedCategories = Array.from(new Set(news.map(item => item.category).filter(Boolean)));
+
+  const filteredNews = selectedCategory 
+    ? news.filter(item => item.category === selectedCategory)
+    : news;
 
   return (
     <div className="news-page container animate-fade-in">
@@ -42,22 +66,53 @@ export default async function NewsPage() {
         <p className="news-page__subtitle">
           Bądź na bieżąco z kulturą Hip-Hop w UK.
         </p>
+
+        {!loading && news.length > 0 && (
+          <div className="news-filters">
+            <button 
+              className={`filter-btn ${selectedCategory === null ? 'filter-btn--active' : ''}`}
+              onClick={() => setSelectedCategory(null)}
+            >
+              Wszystkie
+            </button>
+            {publishedCategories.map(cat => (
+              <button 
+                key={cat}
+                className={`filter-btn ${selectedCategory === cat ? 'filter-btn--active' : ''}`}
+                onClick={() => setSelectedCategory(cat)}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        )}
       </header>
 
       {error && (
-        <div className="news-error">Błąd ładowania: {error.message}</div>
+        <div className="news-error">Błąd ładowania: {error}</div>
       )}
 
-      {news.length === 0 ? (
+      {loading ? (
+         <div className="news-empty">
+            <div className="animate-pulse flex flex-col items-center">
+                <Newspaper size={64} className="opacity-20 mb-4" />
+                <p>Ładowanie newsów...</p>
+            </div>
+         </div>
+      ) : filteredNews.length === 0 ? (
         <div className="news-empty">
           <Newspaper size={64} strokeWidth={1} />
           <h2>Brak newsów</h2>
-          <p>Nie ma jeszcze żadnych newsów. Wróć wkrótce!</p>
-          <Link href="/" className="btn-primary">← Wróć na stronę główną</Link>
+          <p>Nie znaleziono newsów w tej kategorii.</p>
+          {selectedCategory && (
+             <button onClick={() => setSelectedCategory(null)} className="btn-primary" style={{ marginTop: '1rem' }}>
+                Pokaż wszystkie newsy
+             </button>
+          )}
         </div>
       ) : (
         <div className="news-page__grid">
-          {news.map((item) => (
+          {filteredNews.map((item) => (
             <Link
               key={item.id}
               href={`/news/${item.id}`}
