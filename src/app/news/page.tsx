@@ -40,7 +40,7 @@ export default async function NewsPage() {
           <Newspaper size={32} /> Newsy
         </h1>
         <p className="news-page__subtitle">
-          Najświeższe informacje ze sceny polskiego hip-hopu na Wyspach.
+          Bądź na bieżąco z kulturą Hip-Hop w UK.
         </p>
       </header>
 
