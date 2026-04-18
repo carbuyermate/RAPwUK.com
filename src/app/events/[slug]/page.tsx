@@ -33,13 +33,26 @@ function formatDate(dateStr: string) {
 export default async function EventDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
     
-    const { data, error } = await supabase
+    let { data, error } = await supabase
         .from('events')
         .select('*')
         .eq('slug', slug)
-        .single();
+        .maybeSingle();
 
-    if (error || !data) notFound();
+    // Fallback search by ID if slug lookup fails
+    if (!data) {
+        const { data: idData } = await supabase
+            .from('events')
+            .select('*')
+            .eq('id', slug)
+            .maybeSingle();
+        
+        if (idData) {
+            data = idData;
+        }
+    }
+
+    if (!data) notFound();
 
     const event = data as EventDetail;
     const dateInfo = formatDate(event.event_date);

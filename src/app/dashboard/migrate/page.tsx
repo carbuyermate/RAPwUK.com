@@ -23,10 +23,12 @@ export default function MigratePage() {
             const { data: newsData } = await supabase.from('news').select('id, title, slug');
             if (newsData) {
                 for (const item of newsData) {
-                    if (!item.slug || item.slug === 'null') {
+                    if (!item.slug || item.slug === 'null' || !item.slug.trim()) {
                         const newSlug = createSlug(item.title);
-                        log(`Aktualizuje News: ${newSlug}`);
-                        await supabase.from('news').update({ slug: newSlug }).eq('id', item.id);
+                        log(`Próba aktualizacji News: ${item.title} -> ${newSlug}`);
+                        const { error: updateError } = await supabase.from('news').update({ slug: newSlug }).eq('id', item.id);
+                        if (updateError) log(`BŁĄD (News: ${item.title}): ${updateError.message}`);
+                        else log(`SUKCES (News: ${item.title})`);
                     }
                 }
             }
@@ -36,10 +38,12 @@ export default function MigratePage() {
             const { data: eventsData } = await supabase.from('events').select('id, title, slug');
             if (eventsData) {
                 for (const item of eventsData) {
-                    if (!item.slug || item.slug === 'null') {
+                    if (!item.slug || item.slug === 'null' || !item.slug.trim()) {
                         const newSlug = createSlug(item.title);
-                        log(`Aktualizuje Wydarzenie: ${newSlug}`);
-                        await supabase.from('events').update({ slug: newSlug }).eq('id', item.id);
+                        log(`Próba aktualizacji Wydarzenia: ${item.title} -> ${newSlug}`);
+                        const { error: updateError } = await supabase.from('events').update({ slug: newSlug }).eq('id', item.id);
+                        if (updateError) log(`BŁĄD (Wydarzenie: ${item.title}): ${updateError.message}`);
+                        else log(`SUKCES (Wydarzenie: ${item.title})`);
                     }
                 }
             }
@@ -49,10 +53,12 @@ export default function MigratePage() {
             const { data: rappersData } = await supabase.from('rappers').select('id, name, slug');
             if (rappersData) {
                 for (const item of rappersData) {
-                    if (!item.slug || item.slug === 'null') {
+                    if (!item.slug || item.slug === 'null' || !item.slug.trim()) {
                         const newSlug = createSlug(item.name);
-                        log(`Aktualizuje Artystę: ${newSlug}`);
-                        await supabase.from('rappers').update({ slug: newSlug }).eq('id', item.id);
+                        log(`Próba aktualizacji Artysty: ${item.name} -> ${newSlug}`);
+                        const { error: updateError } = await supabase.from('rappers').update({ slug: newSlug }).eq('id', item.id);
+                        if (updateError) log(`BŁĄD (Artysta: ${item.name}): ${updateError.message}`);
+                        else log(`SUKCES (Artysta: ${item.name})`);
                     }
                 }
             }

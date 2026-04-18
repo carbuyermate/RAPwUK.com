@@ -22,13 +22,26 @@ export const dynamic = 'force-dynamic';
 export default async function RapperDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
 
-    const { data, error } = await supabase
+    let { data, error } = await supabase
         .from('rappers')
         .select('*')
         .eq('slug', slug)
-        .single();
+        .maybeSingle();
 
-    if (error || !data) notFound();
+    // Fallback search by ID if slug lookup fails
+    if (!data) {
+        const { data: idData } = await supabase
+            .from('rappers')
+            .select('*')
+            .eq('id', slug)
+            .maybeSingle();
+        
+        if (idData) {
+            data = idData;
+        }
+    }
+
+    if (!data) notFound();
 
     const entry = data as RapperDetail;
 

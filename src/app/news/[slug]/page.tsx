@@ -20,13 +20,26 @@ export const dynamic = 'force-dynamic';
 
 export default async function NewsArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const { data, error } = await supabase
+  let { data, error } = await supabase
     .from('news')
     .select('*')
     .eq('slug', slug)
-    .single();
+    .maybeSingle();
 
-  if (error || !data) notFound();
+  // Fallback search by ID if slug lookup fails
+  if (!data) {
+    const { data: idData } = await supabase
+      .from('news')
+      .select('*')
+      .eq('id', slug)
+      .maybeSingle();
+    
+    if (idData) {
+        data = idData;
+    }
+  }
+
+  if (!data) notFound();
 
   const article = data as NewsDetail;
   const date = new Date(article.created_at).toLocaleDateString('pl-PL', {
