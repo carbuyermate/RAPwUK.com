@@ -57,7 +57,7 @@ export default function RappersList({ initialRappers }: { initialRappers: Rapper
 
     return (
         <>
-            <div className="section-filters animate-fade-in" style={{ marginBottom: '1.5rem', display: 'flex', gap: '0.8rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
+            <div className="section-filters animate-fade-in" style={{ marginBottom: '1.5rem', display: 'flex', flexWrap: 'wrap', gap: '0.8rem', paddingBottom: '0.5rem' }}>
                 {CATEGORIES.map(cat => (
                     <button 
                         key={cat} 
