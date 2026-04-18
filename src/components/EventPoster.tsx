@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Maximize2, Download } from 'lucide-react';
+import { Download } from 'lucide-react';
 
 interface EventPosterProps {
     src: string;
@@ -144,12 +144,6 @@ export function EventPoster({ src, alt }: EventPosterProps) {
                     alt={alt}
                     className="w-full h-auto block object-cover"
                 />
-
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
-                    <div className="bg-white/20 backdrop-blur-md p-3 rounded-full">
-                        <Maximize2 size={28} className="text-white" />
-                    </div>
-                </div>
             </div>
 
             {mounted && isOpen ? createPortal(modalContent, document.body) : null}
