@@ -3,6 +3,7 @@ import "./page.css";
 import { CalendarDays, ExternalLink, Newspaper, Clock, MapPin, ArrowRight, Tag } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { PromoWidget } from "@/components/PromoWidget";
+import { FacebookWidget } from "@/components/FacebookWidget";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -70,12 +71,17 @@ export default async function Home() {
 
       {/* Hero */}
       <section className="hero animate-fade-in">
-        <h1 className="hero-title">
-          Centrum kultury<br />Hip-Hop w UK
-        </h1>
-        <p className="hero-subtitle">
-          Sprawdzaj newsy, planuj imprezy, oglądaj klipy i czytaj
-        </p>
+        <div className="hero-content-left">
+          <h1 className="hero-title">
+            Centrum kultury<br />Hip-Hop w UK
+          </h1>
+          <p className="hero-subtitle">
+            Sprawdzaj newsy, planuj imprezy, oglądaj klipy i czytaj
+          </p>
+        </div>
+        <div className="hero-content-right">
+          <FacebookWidget />
+        </div>
       </section>
 
       {/* Main Layout: [News+Events] | [Sidebar Ad] */}

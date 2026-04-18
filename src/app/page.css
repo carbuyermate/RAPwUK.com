@@ -6,6 +6,28 @@
 /* Hero */
 .hero {
   padding: 3.5rem 0 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.hero-content-left {
+  flex: 1;
+  min-width: 280px;
+}
+
+.hero-content-right {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+  .hero-content-right {
+    justify-content: flex-start;
+    width: 100%;
+  }
 }
 
 .hero-eyebrow {
