@@ -5,11 +5,13 @@ import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { Tag, FileText, ChevronLeft, Upload, X, Instagram, Youtube, Facebook, MapPin } from 'lucide-react';
 import Link from 'next/link';
+import { createSlug } from '@/lib/utils';
 import '../../dashboard.css';
 
 export default function EditRapperPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
     const [name, setName] = useState('');
+    const [slug, setSlug] = useState('');
     const [category, setCategory] = useState('Raper/Skład');
     const [bio, setBio] = useState('');
     const [socialYt, setSocialYt] = useState('');
@@ -30,6 +32,7 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
                 setError("Nie znaleziono profilu rapera!");
             } else if (data) {
                 setName(data.name);
+                setSlug(data.slug || '');
                 if (data.category) setCategory(data.category);
                 setBio(data.bio || '');
                 setSocialYt(data.social_yt || '');
@@ -99,6 +102,7 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
             .from('rappers')
             .update({ 
                 name, 
+                slug: slug || createSlug(name),
                 category,
                 bio, 
                 social_yt: socialYt || null, 
@@ -151,6 +155,23 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
                             onChange={(e) => setName(e.target.value)}
                             required
                         />
+                    </div>
+
+                    <div className="form-group">
+                        <label className="form-label flex items-center gap-2">
+                            <Tag size={16} /> Przyjazny URL (Slug)
+                        </label>
+                        <div className="flex items-center gap-2">
+                            <span className="text-secondary text-sm">/rappers/</span>
+                            <input
+                                type="text"
+                                className="form-input"
+                                placeholder="nazwa-wykonawcy"
+                                value={slug}
+                                onChange={(e) => setSlug(createSlug(e.target.value))}
+                                required
+                            />
+                        </div>
                     </div>
 
                     <div className="form-group">

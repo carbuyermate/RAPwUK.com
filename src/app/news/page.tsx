@@ -8,6 +8,7 @@ import "./news.css";
 
 interface NewsItem {
   id: string;
+  slug: string;
   title: string;
   content: string;
   category: string;
@@ -115,7 +116,7 @@ export default function NewsPage() {
           {filteredNews.map((item) => (
             <Link
               key={item.id}
-              href={`/news/${item.id}`}
+              href={`/news/${item.slug}`}
               className={`news-page__card glass-panel ${item.category === 'Sponsorowane' ? 'sponsored-card' : ''}`}
             >
               {item.image_url && (

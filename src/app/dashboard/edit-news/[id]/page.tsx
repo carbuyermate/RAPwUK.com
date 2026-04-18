@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Newspaper, Tag, FileText, Image as ImageIcon, ChevronLeft, Upload, X, Youtube } from 'lucide-react';
 import Link from 'next/link';
 import { RichTextEditor } from '@/components/RichTextEditor';
+import { createSlug } from '@/lib/utils';
 import '../../dashboard.css';
 import { use } from 'react';
 
@@ -14,6 +15,7 @@ const CATEGORIES = ['News', 'Teledysk', 'Nowość', 'Sponsorowane', 'Muzyka', 'E
 export default function EditNewsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
     const [title, setTitle] = useState('');
+    const [slug, setSlug] = useState('');
     const [content, setContent] = useState('');
     const [category, setCategory] = useState('');
     const [youtubeUrl, setYoutubeUrl] = useState('');
@@ -32,6 +34,7 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
                 setError("Nie znaleziono wpisu!");
             } else if (data) {
                 setTitle(data.title);
+                setSlug(data.slug || '');
                 setContent(data.content || '');
                 setCategory(data.category);
                 setYoutubeUrl(data.youtube_url || '');
@@ -95,7 +98,14 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
         setUploadProgress('Zapisuję zmiany...');
         const { error: updateError } = await supabase
             .from('news')
-            .update({ title, content, category, image_url, youtube_url: youtubeUrl || null })
+            .update({ 
+                title, 
+                slug: slug || createSlug(title),
+                content, 
+                category, 
+                image_url, 
+                youtube_url: youtubeUrl || null 
+            })
             .eq('id', id);
 
         if (updateError) {
@@ -142,6 +152,24 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
                             onChange={(e) => setTitle(e.target.value)}
                             required
                         />
+                    </div>
+
+                    {/* Slug / Przyjazny URL */}
+                    <div className="form-group">
+                        <label className="form-label flex items-center gap-2">
+                            <Tag size={16} /> Przyjazny URL (Slug)
+                        </label>
+                        <div className="flex items-center gap-2">
+                            <span className="text-secondary text-sm">/news/</span>
+                            <input
+                                type="text"
+                                className="form-input"
+                                placeholder="moj-tytul-newsa"
+                                value={slug}
+                                onChange={(e) => setSlug(createSlug(e.target.value))}
+                                required
+                            />
+                        </div>
                     </div>
 
                     {/* Kategoria */}

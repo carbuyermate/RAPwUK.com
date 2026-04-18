@@ -5,11 +5,13 @@ import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { Calendar, MapPin, Tag, FileText, Link as LinkIcon, ChevronLeft, Upload, X } from 'lucide-react';
 import Link from 'next/link';
+import { createSlug } from '@/lib/utils';
 import '../../dashboard.css';
 
 export default function EditEventPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
     const [title, setTitle] = useState('');
+    const [slug, setSlug] = useState('');
     const [description, setDescription] = useState('');
     const [date, setDate] = useState('');
     const [time, setTime] = useState('');
@@ -40,10 +42,9 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
             }
 
             const { data, error } = await supabase.from('events').select('*').eq('id', id).single();
-            if (error) {
-                setError("Nie znaleziono wydarzenia!");
             } else if (data) {
                 setTitle(data.title);
+                setSlug(data.slug || '');
                 setDescription(data.description || '');
                 if (data.event_date) {
                     const evtDate = new Date(data.event_date);
@@ -127,7 +128,8 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
                     city,
                     ticket_url: ticketUrl,
                     is_premium: isPremium,
-                    image_url: finalImageUrl
+                    image_url: finalImageUrl,
+                    slug: slug || createSlug(title)
                 })
                 .eq('id', id);
 
@@ -174,6 +176,23 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
                             onChange={(e) => setTitle(e.target.value)}
                             required
                         />
+                    </div>
+
+                    <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                        <label className="form-label flex items-center gap-2">
+                            <Tag size={16} /> Przyjazny URL (Slug)
+                        </label>
+                        <div className="flex items-center gap-2">
+                            <span className="text-secondary text-sm">/events/</span>
+                            <input
+                                type="text"
+                                className="form-input"
+                                placeholder="nazwa-imprezy"
+                                value={slug}
+                                onChange={(e) => setSlug(createSlug(e.target.value))}
+                                required
+                            />
+                        </div>
                     </div>
 
                     <div className="form-group" style={{ gridColumn: 'span 2' }}>

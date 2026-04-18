@@ -6,10 +6,13 @@ import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { Calendar, MapPin, Tag, FileText, Link as LinkIcon, ChevronLeft, Upload, X } from 'lucide-react';
 import Link from 'next/link';
+import { createSlug } from '@/lib/utils';
 import '../dashboard.css';
 
 export default function AddEventPage() {
     const [title, setTitle] = useState('');
+    const [slug, setSlug] = useState('');
+    const [manualSlug, setManualSlug] = useState(false);
     const [description, setDescription] = useState('');
     const [date, setDate] = useState('');
     const [time, setTime] = useState('');
@@ -97,10 +100,10 @@ export default function AddEventPage() {
                         event_date: eventDateTime,
                         venue,
                         city,
-                        ticket_url: ticketUrl,
                         is_premium: isPremium,
                         promoter_id: userId,
-                        image_url: finalImageUrl
+                        image_url: finalImageUrl,
+                        slug: slug || `${createSlug(title)}-${Date.now()}`
                     }
                 ]);
 
@@ -140,9 +143,32 @@ export default function AddEventPage() {
                             className="form-input"
                             placeholder="np. O.S.T.R. w Londynie"
                             value={title}
-                            onChange={(e) => setTitle(e.target.value)}
+                            onChange={(e) => {
+                                setTitle(e.target.value);
+                                if (!manualSlug) setSlug(createSlug(e.target.value));
+                            }}
                             required
                         />
+                    </div>
+
+                    <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                        <label className="form-label flex items-center gap-2">
+                            <Tag size={16} /> Przyjazny URL (Slug)
+                        </label>
+                        <div className="flex items-center gap-2">
+                            <span className="text-secondary text-sm">/events/</span>
+                            <input
+                                type="text"
+                                className="form-input"
+                                placeholder="nazwa-imprezy"
+                                value={slug}
+                                onChange={(e) => {
+                                    setSlug(createSlug(e.target.value));
+                                    setManualSlug(true);
+                                }}
+                                required
+                            />
+                        </div>
                     </div>
 
                     <div className="form-group" style={{ gridColumn: 'span 2' }}>

@@ -6,12 +6,15 @@ import { useRouter } from 'next/navigation';
 import { Newspaper, Tag, FileText, Image as ImageIcon, ChevronLeft, Upload, X, Youtube } from 'lucide-react';
 import Link from 'next/link';
 import { RichTextEditor } from '@/components/RichTextEditor';
+import { createSlug } from '@/lib/utils';
 import '../dashboard.css';
 
 const CATEGORIES = ['News', 'Teledysk', 'Nowość', 'Sponsorowane', 'Muzyka', 'Event', 'Wywiad', 'Premiera', 'Relacja', 'Konkurs', 'Publicystyka', 'Recenzja', 'Inne'];
 
 export default function AddNewsPage() {
     const [title, setTitle] = useState('');
+    const [slug, setSlug] = useState('');
+    const [manualSlug, setManualSlug] = useState(false);
     const [content, setContent] = useState('');
     const [category, setCategory] = useState('');
     const [youtubeUrl, setYoutubeUrl] = useState('');
@@ -32,6 +35,19 @@ export default function AddNewsPage() {
         setImageFile(file);
         setImagePreview(URL.createObjectURL(file));
         setError(null);
+    };
+
+    const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+        setTitle(val);
+        if (!manualSlug) {
+            setSlug(createSlug(val));
+        }
+    };
+
+    const handleSlugChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSlug(createSlug(e.target.value));
+        setManualSlug(true);
     };
 
     const removeImage = () => {
@@ -71,7 +87,15 @@ export default function AddNewsPage() {
         setUploadProgress('Zapisuję news...');
         const { error: insertError } = await supabase
             .from('news')
-            .insert([{ title, content, category, image_url, youtube_url: youtubeUrl || null, is_auto_generated: false }]);
+            .insert([{ 
+                title, 
+                slug: slug || createSlug(title),
+                content, 
+                category, 
+                image_url, 
+                youtube_url: youtubeUrl || null, 
+                is_auto_generated: false 
+            }]);
 
         if (insertError) {
             setError(insertError.message);
@@ -110,9 +134,28 @@ export default function AddNewsPage() {
                             className="form-input"
                             placeholder="np. O.S.T.R. zapowiada nowy album"
                             value={title}
-                            onChange={(e) => setTitle(e.target.value)}
+                            onChange={handleTitleChange}
                             required
                         />
+                    </div>
+
+                    {/* Slug / Przyjazny URL */}
+                    <div className="form-group">
+                        <label className="form-label flex items-center gap-2">
+                            <Tag size={16} /> Przyjazny URL (Slug)
+                        </label>
+                        <div className="flex items-center gap-2">
+                            <span className="text-secondary text-sm">/news/</span>
+                            <input
+                                type="text"
+                                className="form-input"
+                                placeholder="moj-tytul-newsa"
+                                value={slug}
+                                onChange={handleSlugChange}
+                                required
+                            />
+                        </div>
+                        <p className="text-xs text-secondary mt-1">Tak będzie wyglądać adres Twojego newsa w przeglądarce.</p>
                     </div>
 
                     {/* Kategoria */}

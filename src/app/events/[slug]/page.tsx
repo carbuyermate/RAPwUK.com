@@ -30,13 +30,13 @@ function formatDate(dateStr: string) {
     };
 }
 
-export default async function EventDetailPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
+export default async function EventDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
     
     const { data, error } = await supabase
         .from('events')
         .select('*')
-        .eq('id', id)
+        .eq('slug', slug)
         .single();
 
     if (error || !data) notFound();

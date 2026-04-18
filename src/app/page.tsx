@@ -10,6 +10,7 @@ export const revalidate = 0;
 
 interface NewsItem {
   id: string;
+  slug: string;
   title: string;
   content: string;
   category: string;
@@ -19,6 +20,7 @@ interface NewsItem {
 
 interface EventItem {
   id: string;
+  slug: string;
   title: string;
   event_date: string;
   venue: string;
@@ -110,7 +112,7 @@ export default async function Home() {
                 <div className="news-feed">
                   <div className="news-grid">
                     {news.map((item) => (
-                      <Link key={item.id} href={`/news/${item.id}`} className={`news-card glass-panel ${item.category === 'Sponsorowane' ? 'sponsored-card' : ''}`}>
+                      <Link key={item.id} href={`/news/${item.slug}`} className={`news-card glass-panel ${item.category === 'Sponsorowane' ? 'sponsored-card' : ''}`}>
                         {item.image_url && (
                           <div className="news-card__image news-card__image--small">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -158,7 +160,7 @@ export default async function Home() {
                     return (
                       <Link
                         key={ev.id}
-                        href={`/events/${ev.id}`}
+                        href={`/events/${ev.slug}`}
                         className={`event-row${ev.is_premium ? ' event-row--premium' : ''}${i < events.length - 1 ? ' event-row--border' : ''}`}
                         style={{ textDecoration: 'none', color: 'inherit' }}
                       >

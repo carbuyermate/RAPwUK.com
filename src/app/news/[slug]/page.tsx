@@ -18,12 +18,12 @@ interface NewsDetail {
 
 export const dynamic = 'force-dynamic';
 
-export default async function NewsArticlePage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+export default async function NewsArticlePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const { data, error } = await supabase
     .from('news')
     .select('*')
-    .eq('id', id)
+    .eq('slug', slug)
     .single();
 
   if (error || !data) notFound();
