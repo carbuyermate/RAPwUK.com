@@ -9,6 +9,7 @@ import '../dashboard.css';
 
 export default function AddRapperPage() {
     const [name, setName] = useState('');
+    const [category, setCategory] = useState('Raper/Skład');
     const [bio, setBio] = useState('');
     const [socialYt, setSocialYt] = useState('');
     const [socialIg, setSocialIg] = useState('');
@@ -71,6 +72,7 @@ export default function AddRapperPage() {
             .from('rappers')
             .insert([{ 
                 name, 
+                category,
                 bio, 
                 social_yt: socialYt || null, 
                 social_ig: socialIg || null, 
@@ -117,6 +119,24 @@ export default function AddRapperPage() {
                             onChange={(e) => setName(e.target.value)}
                             required
                         />
+                    </div>
+
+                    <div className="form-group">
+                        <label className="form-label flex items-center gap-2">
+                            <Tag size={16} /> Kategoria na Scenie
+                        </label>
+                        <select
+                            className="form-input"
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                        >
+                            <option value="Raper/Skład">Raper/Skład</option>
+                            <option value="Studio nagraniowe">Studio nagraniowe</option>
+                            <option value="Label">Label</option>
+                            <option value="Zarówno DJ jak i Producent">DJ / Producent (Oba)</option>
+                            <option value="Tylko DJ">Tylko DJ</option>
+                            <option value="Tylko Producent">Tylko Producent</option>
+                        </select>
                     </div>
 
                     <div className="form-group">

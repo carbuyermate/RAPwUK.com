@@ -46,11 +46,11 @@ export default function ManagingRappersPage() {
                         <ChevronLeft size={24} />
                     </Link>
                     <h1 className="text-2xl font-bold flex items-center gap-2">
-                        <Users size={24} /> Zarządzaj Raperami
+                        <Users size={24} /> Zarządzaj Sceną
                     </h1>
                 </div>
                 <Link href="/dashboard/add-rapper" className="btn-primary">
-                    + Dodaj Rapera
+                    + Dodaj Element Sceny
                 </Link>
             </header>
 
@@ -58,9 +58,8 @@ export default function ManagingRappersPage() {
                 <table className="events-table">
                     <thead>
                         <tr>
-                            <th>Imię / Ksywa</th>
-                            <th>Miasto PL</th>
-                            <th>Miasto UK</th>
+                            <th>Imię / Nazwa</th>
+                            <th>Kategoria</th>
                             <th>Akcje</th>
                         </tr>
                     </thead>
@@ -71,8 +70,7 @@ export default function ManagingRappersPage() {
                             rappers.map((rapper) => (
                                 <tr key={rapper.id} className="event-row">
                                     <td className="font-semibold">{rapper.name}</td>
-                                    <td><span className="text-secondary">{rapper.city_pl || '-'}</span></td>
-                                    <td>{rapper.city_uk || '-'}</td>
+                                    <td><span className="text-secondary">{rapper.category || 'Raper/Skład'}</span></td>
                                     <td>
                                         <div className="action-btns">
                                             <Link href={`/dashboard/edit-rapper/${rapper.id}`} className="action-btn" title="Edytuj">

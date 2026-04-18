@@ -26,7 +26,7 @@ export function Navbar() {
                 <div className={`navbar-links ${mobileOpen ? "open" : ""}`}>
                     <Link href="/news" onClick={() => setMobileOpen(false)}>Newsy</Link>
                     <Link href="/events" onClick={() => setMobileOpen(false)}>Imprezy</Link>
-                    <Link href="/rappers" onClick={() => setMobileOpen(false)}>Raperzy</Link>
+                    <Link href="/rappers" onClick={() => setMobileOpen(false)}>Scena</Link>
                     <Link href="/contact" onClick={() => setMobileOpen(false)}>Kontakt</Link>
 
                     <div className="navbar-actions">
