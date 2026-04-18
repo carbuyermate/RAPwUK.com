@@ -92,16 +92,15 @@
   }
 }
 
-/* ── SECTION HEADER ── */
 .section-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   margin-top: 0;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--border-color);
-  min-height: 48px;
+  height: 3rem;
 }
 
 .section-title {
