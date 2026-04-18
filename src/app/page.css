@@ -513,3 +513,58 @@
   font-weight: 600;
   text-decoration: underline;
 }
+
+/* ── MOBILE RESPONSIVE ── */
+@media (max-width: 768px) {
+  /* Main news+events grid → single column */
+  .main-layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  /* News grid: 1 card per row on phones */
+  .news-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Events sidebar: remove sticky, show below news */
+  .events-sidebar {
+    position: static;
+  }
+
+  /* Events list: remove fixed max-height so all events show */
+  .events-list {
+    max-height: none;
+  }
+
+  /* Hero: tighter padding on phones */
+  .hero {
+    padding: 2rem 0 1.5rem;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .hero-title {
+    font-size: clamp(1.8rem, 7vw, 2.5rem);
+    letter-spacing: -1px;
+  }
+}
+
+@media (max-width: 480px) {
+  .news-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .news-card__body {
+    padding: 14px;
+  }
+
+  .hero-title {
+    font-size: 1.75rem;
+  }
+
+  .section-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}

@@ -47,6 +47,28 @@
     }
 }
 
+@media (max-width: 768px) {
+    .event-detail-grid {
+        max-width: 100%;
+        gap: 1.5rem;
+    }
+
+    .event-detail-title {
+        font-size: clamp(1.6rem, 6vw, 2.5rem);
+        letter-spacing: -1px;
+    }
+
+    .event-detail-meta-group {
+        grid-template-columns: 1fr;
+        padding: 1.2rem;
+        gap: 1rem;
+    }
+
+    .ticket-cta-box {
+        padding: 1.5rem;
+    }
+}
+
 /* ── LEFT SIDE: Poster ── */
 .event-detail-poster-sec {
     position: sticky;

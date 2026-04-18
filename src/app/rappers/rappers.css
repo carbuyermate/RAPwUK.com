@@ -161,3 +161,56 @@
     color: var(--text-secondary);
     font-weight: 800;
 }
+
+/* ── MOBILE RESPONSIVE ── */
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 2rem;
+        letter-spacing: -0.5px;
+    }
+
+    .directory-header {
+        margin-bottom: 2rem;
+    }
+
+    .alphabet-nav {
+        padding: 0.5rem;
+        gap: 4px;
+        margin-bottom: 2rem;
+        top: 75px;
+    }
+
+    .letter-link {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+    }
+
+    .letter-section {
+        margin-bottom: 2.5rem;
+    }
+
+    .letter-header {
+        font-size: 2.5rem;
+    }
+
+    .directory-item-row {
+        padding: 1rem 1rem;
+    }
+
+    .directory-item-name {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .alphabet-nav {
+        gap: 2px;
+    }
+
+    .letter-link {
+        width: 24px;
+        height: 24px;
+        font-size: 0.7rem;
+    }
+}
