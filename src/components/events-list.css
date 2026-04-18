@@ -40,8 +40,8 @@
 }
 
 .filter-select option {
-    background-color: #1a1a1a;
-    color: white;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
 }
 
 .filter-select:focus,
