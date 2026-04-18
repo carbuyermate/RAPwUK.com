@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { Calendar, MapPin, Tag, FileText, Link as LinkIcon, ChevronLeft, Upload, X } from 'lucide-react';
 import Link from 'next/link';
-import { createSlug } from '@/lib/utils';
+import { createSlug, shortenSlug } from '@/lib/utils';
 import '../dashboard.css';
 
 export default function AddEventPage() {

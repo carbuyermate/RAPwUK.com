@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Newspaper, Tag, FileText, Image as ImageIcon, ChevronLeft, Upload, X, Youtube } from 'lucide-react';
 import Link from 'next/link';
 import { RichTextEditor } from '@/components/RichTextEditor';
-import { createSlug } from '@/lib/utils';
+import { createSlug, shortenSlug } from '@/lib/utils';
 import '../../dashboard.css';
 import { use } from 'react';
 
@@ -169,6 +169,14 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
                                 onChange={(e) => setSlug(createSlug(e.target.value))}
                                 required
                             />
+                            <button
+                                type="button"
+                                onClick={() => setSlug(shortenSlug(slug))}
+                                className="btn-secondary text-xs px-3 py-2 whitespace-nowrap"
+                                title="Skróć usuwając łączniki i słabiej znaczące słowa"
+                            >
+                                ✂️ Skróć
+                            </button>
                         </div>
                     </div>
 

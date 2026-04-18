@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { Tag, FileText, ChevronLeft, Upload, X, MapPin, Youtube, Instagram, Facebook } from 'lucide-react';
 import Link from 'next/link';
-import { createSlug } from '@/lib/utils';
+import { createSlug, shortenSlug } from '@/lib/utils';
 import '../dashboard.css';
 
 export default function AddRapperPage() {

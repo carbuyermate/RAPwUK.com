@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { Tag, FileText, ChevronLeft, Upload, X, Instagram, Youtube, Facebook, MapPin } from 'lucide-react';
 import Link from 'next/link';
-import { createSlug } from '@/lib/utils';
+import { createSlug, shortenSlug } from '@/lib/utils';
 import '../../dashboard.css';
 
 export default function EditRapperPage({ params }: { params: Promise<{ id: string }> }) {
@@ -166,11 +166,19 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
                             <input
                                 type="text"
                                 className="form-input"
-                                placeholder="nazwa-wykonawcy"
+                                placeholder="moja-ksywa"
                                 value={slug}
                                 onChange={(e) => setSlug(createSlug(e.target.value))}
                                 required
                             />
+                            <button
+                                type="button"
+                                onClick={() => setSlug(shortenSlug(slug))}
+                                className="btn-secondary text-xs px-3 py-2 whitespace-nowrap"
+                                title="Skróć usuwając łączniki i słabiej znaczące słowa"
+                            >
+                                ✂️ Skróć
+                            </button>
                         </div>
                     </div>
 

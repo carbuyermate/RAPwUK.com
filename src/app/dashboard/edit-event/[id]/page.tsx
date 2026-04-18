@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { Calendar, MapPin, Tag, FileText, Link as LinkIcon, ChevronLeft, Upload, X } from 'lucide-react';
 import Link from 'next/link';
-import { createSlug } from '@/lib/utils';
+import { createSlug, shortenSlug } from '@/lib/utils';
 import '../../dashboard.css';
 
 export default function EditEventPage({ params }: { params: Promise<{ id: string }> }) {
@@ -189,11 +189,19 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
                             <input
                                 type="text"
                                 className="form-input"
-                                placeholder="nazwa-imprezy"
+                                placeholder="moj-tytul-wydarzenia"
                                 value={slug}
                                 onChange={(e) => setSlug(createSlug(e.target.value))}
                                 required
                             />
+                            <button
+                                type="button"
+                                onClick={() => setSlug(shortenSlug(slug))}
+                                className="btn-secondary text-xs px-3 py-2 whitespace-nowrap"
+                                title="Skróć usuwając łączniki i słabiej znaczące słowa"
+                            >
+                                ✂️ Skróć
+                            </button>
                         </div>
                     </div>
 
