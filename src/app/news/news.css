@@ -232,6 +232,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 0.9rem;
+  text-transform: uppercase;
 }
 
 .pagination-btn:hover:not(:disabled) {
