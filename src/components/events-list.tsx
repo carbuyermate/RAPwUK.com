@@ -72,7 +72,7 @@ export default function EventsList({ initialEvents }: EventsListProps) {
     return (
         <div className="events-list-wrapper">
             <div className="search-filters glass-panel animate-fade-in">
-                <div className="filter-group" style={{ gridColumn: 'span 2' }}>
+                <div className="filter-group search-filter-primary">
                     <label className="filter-label">Szukaj (Raper, Klub, Miasto)</label>
                     <div className="relative" style={{ position: 'relative' }}>
                         <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
