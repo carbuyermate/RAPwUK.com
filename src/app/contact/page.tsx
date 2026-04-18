@@ -58,19 +58,19 @@ export default function ContactPage() {
                     <div className="info-card glass-panel">
                         <h3><Mail size={20} className="text-secondary" /> Email</h3>
                         <p>Możesz też napisać bezpośrednio na:</p>
-                        <a href="mailto:kontakt@rapwuk.com" style={{ color: 'var(--text-primary)', fontWeight: '700', textDecoration: 'none' }}>
-                            kontakt@rapwuk.com
+                        <a href="mailto:rapwuktv@gmail.com" style={{ color: 'var(--text-primary)', fontWeight: '700', textDecoration: 'none' }}>
+                            rapwuktv@gmail.com
                         </a>
                     </div>
                     
                     <div className="info-card glass-panel">
                         <h3><MessageSquare size={20} className="text-secondary" /> Współpraca</h3>
-                        <p>Jesteś promotorem, raperem lub prowadzisz lokal? Odezwij się w sprawie promocji i patronatów.</p>
+                        <p>Jesteś promotorem, raperem, producentem, DJ'em, prowadzisz studio nagrań lub robisz mix/master? Odezwij się w sprawie promocji i patronatów.</p>
                     </div>
 
                     <div className="info-card glass-panel">
                         <h3><Info size={20} className="text-secondary" /> O nas</h3>
-                        <p>RAPwUK.com to największe centrum polskiego i światowego hip-hopu na Wyspach. Jesteśmy tu od 2012 roku.</p>
+                        <p>RAPwUK.com to jedyne centrum polskiego i światowego hip-hopu na Wyspach. Działamy od 2012 roku.</p>
                     </div>
                 </aside>
 
