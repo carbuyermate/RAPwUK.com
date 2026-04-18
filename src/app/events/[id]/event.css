@@ -220,6 +220,7 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
+    cursor: pointer;
 }
 
 .event-poster-container img {
@@ -230,4 +231,5 @@
     object-fit: contain;
     border-radius: 12px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    cursor: pointer;
 }
