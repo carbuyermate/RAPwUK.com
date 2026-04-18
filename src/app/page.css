@@ -97,9 +97,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 0;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--border-color);
+  min-height: 48px;
 }
 
 .section-title {
@@ -108,9 +110,11 @@
   align-items: center;
   gap: 10px;
   margin: 0;
+  padding: 0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 700;
+  line-height: 1;
 }
 
 .view-all-link {
@@ -127,6 +131,8 @@
 /* ── NEWS FEED ── */
 .news-main {
   min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .news-feed {
