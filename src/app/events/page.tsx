@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import EventsList from '@/components/events-list';
 import { CalendarDays } from 'lucide-react';
+import { ViewTracker } from "@/components/ViewTracker";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -41,6 +42,7 @@ export default async function EventsPage() {
 
     return (
         <div className="events-container container">
+            <ViewTracker type="page" id="events" />
             <header className="page-header animate-fade-in">
                 <h1 className="page-header-title">
                     <CalendarDays size={32} /> LISTA IMPREZ

@@ -4,11 +4,12 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ChevronLeft, BarChart2, Newspaper, CalendarDays, Users, MonitorPlay, ArrowUpDown, Eye, MousePointer } from 'lucide-react';
+import { ChevronLeft, BarChart2, Newspaper, CalendarDays, Users, MonitorPlay, ArrowUpDown, Eye, MousePointer, Globe } from 'lucide-react';
 import '../dashboard.css';
 
 type SortDir = 'desc' | 'asc';
-type Tab = 'news' | 'events' | 'rappers' | 'ads';
+type Tab = 'pages' | 'news' | 'events' | 'rappers' | 'ads';
+type TimeRange = 'all' | 'week' | 'month';
 
 interface Row {
     id: string;
@@ -22,6 +23,7 @@ interface Row {
 }
 
 const TAB_CONFIG: { id: Tab; label: string; icon: React.ReactNode; viewCol: string; nameCol: string; dateCol: string }[] = [
+    { id: 'pages', label: 'Ruch (Podstrony)', icon: <Globe size={16} />, viewCol: 'views', nameCol: 'page_name', dateCol: 'date' },
     { id: 'news', label: 'Newsy', icon: <Newspaper size={16} />, viewCol: 'views', nameCol: 'title', dateCol: 'created_at' },
     { id: 'events', label: 'Eventy', icon: <CalendarDays size={16} />, viewCol: 'views', nameCol: 'title', dateCol: 'event_date' },
     { id: 'rappers', label: 'Raperzy', icon: <Users size={16} />, viewCol: 'views', nameCol: 'name', dateCol: 'created_at' },
@@ -30,7 +32,8 @@ const TAB_CONFIG: { id: Tab; label: string; icon: React.ReactNode; viewCol: stri
 
 export default function StatsPage() {
     const router = useRouter();
-    const [activeTab, setActiveTab] = useState<Tab>('news');
+    const [activeTab, setActiveTab] = useState<Tab>('pages');
+    const [timeRange, setTimeRange] = useState<TimeRange>('all');
     const [data, setData] = useState<Row[]>([]);
     const [loading, setLoading] = useState(true);
     const [sortDir, setSortDir] = useState<SortDir>('desc');
@@ -44,15 +47,67 @@ export default function StatsPage() {
     useEffect(() => {
         const tab = TAB_CONFIG.find(t => t.id === activeTab)!;
         setLoading(true);
-        supabase
-            .from(activeTab)
-            .select('*')
-            .order(tab.viewCol, { ascending: sortDir === 'asc' })
+
+        if (activeTab === 'pages') {
+            let query = supabase.from('daily_page_views').select('*');
+            
+            if (timeRange === 'week') {
+                const oneWeekAgo = new Date();
+                oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+                query = query.gte('date', oneWeekAgo.toISOString());
+            } else if (timeRange === 'month') {
+                const oneMonthAgo = new Date();
+                oneMonthAgo.setDate(oneMonthAgo.getDate() - 30);
+                query = query.gte('date', oneMonthAgo.toISOString());
+            }
+
+            query.then(({ data: rows, error }) => {
+                if (error) {
+                    console.error('Error fetching pages:', error);
+                    setData([]);
+                    setLoading(false);
+                    return;
+                }
+                const agg: Record<string, number> = {};
+                (rows || []).forEach(r => {
+                    agg[r.page_name] = (agg[r.page_name] || 0) + (r.views || 0);
+                });
+                
+                const finalData = Object.entries(agg).map(([page_name, views]) => ({
+                    id: page_name,
+                    title: page_name === 'home' ? 'Strona Główna' : 
+                           page_name === 'news' ? 'Newsy' :
+                           page_name === 'events' ? 'Imprezy' :
+                           page_name === 'rappers' ? 'Scena' :
+                           page_name === 'contact' ? 'Kontakt' : page_name,
+                    views,
+                    page_name
+                }));
+                
+                finalData.sort((a, b) => sortDir === 'desc' ? b.views - a.views : a.views - b.views);
+                setData(finalData as any);
+                setLoading(false);
+            });
+            return;
+        }
+
+        let query = supabase.from(activeTab).select('*');
+        if (timeRange === 'week') {
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            query = query.gte(tab.dateCol, oneWeekAgo.toISOString());
+        } else if (timeRange === 'month') {
+            const oneMonthAgo = new Date();
+            oneMonthAgo.setDate(oneMonthAgo.getDate() - 30);
+            query = query.gte(tab.dateCol, oneMonthAgo.toISOString());
+        }
+
+        query.order(tab.viewCol, { ascending: sortDir === 'asc' })
             .then(({ data: rows }) => {
                 setData(rows || []);
                 setLoading(false);
             });
-    }, [activeTab, sortDir]);
+    }, [activeTab, sortDir, timeRange]);
 
     const tab = TAB_CONFIG.find(t => t.id === activeTab)!;
     const totalViews = data.reduce((sum, r) => sum + ((r.views || r.clicks || 0)), 0);
@@ -103,7 +158,30 @@ export default function StatsPage() {
             </div>
 
             {/* Summary card */}
-            <div className="glass-panel" style={{ padding: '1.25rem 2rem', marginBottom: '1.5rem', display: 'flex', gap: '3rem', alignItems: 'center' }}>
+            <div className="glass-panel" style={{ padding: '1.25rem 2rem', marginBottom: '1.5rem', display: 'flex', gap: '3rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                <div>
+                    <p className="text-secondary text-sm">Zasięg czasu</p>
+                    <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+                        {(['all', 'week', 'month'] as const).map(tr => (
+                            <button
+                                key={tr}
+                                onClick={() => setTimeRange(tr)}
+                                style={{
+                                    padding: '6px 12px',
+                                    borderRadius: '6px',
+                                    fontSize: '0.8rem',
+                                    fontWeight: 600,
+                                    border: timeRange === tr ? '1px solid var(--text-primary)' : '1px solid var(--border-color)',
+                                    background: timeRange === tr ? 'var(--text-primary)' : 'transparent',
+                                    color: timeRange === tr ? 'var(--bg-primary)' : 'var(--text-secondary)',
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                {tr === 'all' ? 'Cały czas' : tr === 'week' ? 'Ostatnie 7 dni' : 'Ostatnie 30 dni'}
+                            </button>
+                        ))}
+                    </div>
+                </div>
                 <div>
                     <p className="text-secondary text-sm">Łącznie {tab.viewCol === 'clicks' ? 'kliknięć' : 'wyświetleń'}</p>
                     <p style={{ fontSize: '2rem', fontWeight: 800, lineHeight: 1.2 }}>{totalViews.toLocaleString('pl-PL')}</p>
@@ -174,7 +252,7 @@ export default function StatsPage() {
                                             </div>
                                         </td>
                                         <td style={{ padding: '14px 20px', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-                                            {formatDate((row[tab.dateCol as keyof Row] as string) || undefined)}
+                                            {activeTab === 'pages' ? '—' : formatDate((row[tab.dateCol as keyof Row] as string) || undefined)}
                                         </td>
                                         {activeTab === 'ads' && (
                                             <td style={{ padding: '14px 20px', color: 'var(--text-secondary)', fontSize: '0.75rem' }}>

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Send, Mail, MessageSquare, Info, CheckCircle2 } from 'lucide-react';
+import { ViewTracker } from "@/components/ViewTracker";
 import './contact.css';
 
 export default function ContactPage() {
@@ -45,6 +46,7 @@ export default function ContactPage() {
 
     return (
         <div className="contact-container container animate-fade-in">
+            <ViewTracker type="page" id="contact" />
             <header className="page-header animate-fade-in">
                 <h1 className="page-header-title">
                     <Mail size={32} /> KONTAKT

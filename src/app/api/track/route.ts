@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
-const VALID_TABLES = ['news', 'events', 'rappers', 'ads'] as const;
+const VALID_TABLES = ['news', 'events', 'rappers', 'ads', 'page'] as const;
 type ValidTable = typeof VALID_TABLES[number];
 
-const COLUMN_MAP: Record<ValidTable, string> = {
+const COLUMN_MAP: Record<string, string> = {
     news: 'views',
     events: 'views',
     rappers: 'views',
@@ -32,7 +32,12 @@ export async function POST(request: NextRequest) {
             }
         );
 
-        const column = COLUMN_MAP[type as ValidTable];
+        if (type === 'page') {
+            await supabase.rpc('increment_page_view', { p_page_name: id });
+            return NextResponse.json({ ok: true });
+        }
+
+        const column = COLUMN_MAP[type];
 
         // Use RPC to atomically increment
         const { error } = await supabase.rpc('increment_counter', {

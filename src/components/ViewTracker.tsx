@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 
 interface ViewTrackerProps {
-    type: 'news' | 'events' | 'rappers' | 'ads';
+    type: 'news' | 'events' | 'rappers' | 'ads' | 'page';
     id: string;
 }
 

@@ -3,6 +3,7 @@ import "./page.css";
 import { CalendarDays, ExternalLink, Newspaper, Clock, MapPin, ArrowRight, Tag } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { PromoWidget } from "@/components/PromoWidget";
+import { ViewTracker } from "@/components/ViewTracker";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -69,6 +70,7 @@ export default async function Home() {
 
   return (
     <div className="home-container container">
+      <ViewTracker type="page" id="home" />
 
       {/* Hero */}
       <section className="hero animate-fade-in">

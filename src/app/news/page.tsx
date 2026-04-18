@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { Clock, Newspaper, ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import "./news.css";
+import { ViewTracker } from "@/components/ViewTracker";
 
 interface NewsItem {
   id: string;
@@ -97,6 +98,7 @@ export default function NewsPage() {
 
   return (
     <div className="news-page container animate-fade-in">
+      <ViewTracker type="page" id="news" />
       <header className="page-header">
         <h1 className="page-header-title">
           <Newspaper size={32} /> NEWSY
