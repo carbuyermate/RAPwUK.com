@@ -154,7 +154,7 @@ export default function EventsList({ initialEvents }: EventsListProps) {
                                         </div>
                                     </div>
                                     <div className="event-actions">
-                                        {event.ticket_link && (
+                                        {event.ticket_url && (
                                             <div className="btn-secondary py-2 px-6 flex items-center gap-2 text-sm" style={{ pointerEvents: 'none' }}>
                                                 Kup bilet
                                             </div>

@@ -18,10 +18,14 @@ interface Event {
 }
 
 export default async function EventsPage() {
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
     // Pobieranie danych z bazy Supabase w czasie rzeczywistym
     const { data: events, error } = await supabase
         .from('events')
         .select('*')
+        .gte('event_date', todayStart.toISOString())
         .order('event_date', { ascending: true });
 
     console.log(`[EventsPage] Pobrano ${events?.length || 0} wydarzeń z Supabase.`);
@@ -38,7 +42,7 @@ export default async function EventsPage() {
         <div className="events-container container">
             <header className="events-header animate-fade-in">
                 <h1 className="page-title">Lista Imprez</h1>
-                <p className="page-subtitle">Rap bez granic na Wyspach – od polskiego podziemia po światowe gwiazdy w jednym miejscu.</p>
+                <p className="page-subtitle">Hip-Hop w UK - od polskiego podziemia po światowe gwiazdy w jednym miejscu.</p>
             </header>
 
             <EventsList initialEvents={displayEvents} />
