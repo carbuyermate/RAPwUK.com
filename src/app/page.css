@@ -214,8 +214,8 @@
 /* News grid for secondary items */
 .news-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
-  gap: 1rem;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
   min-width: 0;
   width: 100%;
 }
