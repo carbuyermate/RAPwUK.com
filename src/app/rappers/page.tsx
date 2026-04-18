@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import "./rappers.css";
 import RappersList from "@/components/rappers-list";
+import { Mic2 } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -17,10 +18,12 @@ export default async function RappersDirectory() {
 
     return (
         <div className="directory-container container">
-            <div className="directory-header animate-fade-in">
-                <h1 className="page-title">Scena</h1>
-                <p className="page-subtitle">Alfabetyczny spis twórców, studiów, labeli i DJ-ów polskiego rapu na Wyspach.</p>
-            </div>
+            <header className="page-header animate-fade-in">
+                <h1 className="page-header-title">
+                    <Mic2 size={32} /> SCENA
+                </h1>
+                <p className="page-header-subtitle">Alfabetyczny spis twórców, studiów, labeli i DJ-ów polskiego rapu na Wyspach.</p>
+            </header>
             
             <RappersList initialRappers={rappers || []} />
         </div>

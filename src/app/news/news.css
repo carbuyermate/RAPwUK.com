@@ -2,28 +2,6 @@
   padding-bottom: 4rem;
 }
 
-.news-page__header {
-  padding: 3rem 0 2rem;
-  border-bottom: 1px solid var(--border-color);
-  margin-bottom: 2.5rem;
-}
-
-.news-page__title {
-  font-size: clamp(2rem, 4vw, 3rem);
-  text-transform: uppercase;
-  letter-spacing: -1px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 0.75rem;
-}
-
-.news-page__subtitle {
-  font-size: 1rem;
-  color: var(--text-secondary);
-  max-width: 560px;
-}
-
 .news-filters {
   display: flex;
   flex-wrap: wrap;

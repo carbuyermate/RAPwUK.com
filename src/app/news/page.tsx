@@ -97,11 +97,11 @@ export default function NewsPage() {
 
   return (
     <div className="news-page container animate-fade-in">
-      <header className="news-page__header">
-        <h1 className="news-page__title">
-          <Newspaper size={32} /> Newsy
+      <header className="page-header">
+        <h1 className="page-header-title">
+          <Newspaper size={32} /> NEWSY
         </h1>
-        <p className="news-page__subtitle">
+        <p className="page-header-subtitle">
           Bądź na bieżąco z kulturą Hip-Hop w UK.
         </p>
 

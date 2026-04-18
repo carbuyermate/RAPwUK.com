@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import EventsList from '@/components/events-list';
+import { CalendarDays } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -40,9 +41,11 @@ export default async function EventsPage() {
 
     return (
         <div className="events-container container">
-            <header className="events-header animate-fade-in">
-                <h1 className="page-title">Lista Imprez</h1>
-                <p className="page-subtitle">Hip-Hop w UK - od polskiego podziemia po światowe gwiazdy w jednym miejscu.</p>
+            <header className="page-header animate-fade-in">
+                <h1 className="page-header-title">
+                    <CalendarDays size={32} /> LISTA IMPREZ
+                </h1>
+                <p className="page-header-subtitle">Hip-Hop w UK - od polskiego podziemia po światowe gwiazdy w jednym miejscu.</p>
             </header>
 
             <EventsList initialEvents={displayEvents} />

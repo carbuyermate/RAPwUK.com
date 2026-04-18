@@ -45,9 +45,11 @@ export default function ContactPage() {
 
     return (
         <div className="contact-container container animate-fade-in">
-            <header className="contact-hero">
-                <h1 className="contact-title">Kontakt</h1>
-                <p className="contact-subtitle">
+            <header className="page-header animate-fade-in">
+                <h1 className="page-header-title">
+                    <Mail size={32} /> KONTAKT
+                </h1>
+                <p className="page-header-subtitle">
                     Masz pytania? Chcesz nawiązać współpracę lub zgłosić błąd? 
                     Napisz do nas, a odpowiemy tak szybko, jak to możliwe.
                 </p>
