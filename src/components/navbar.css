@@ -73,9 +73,31 @@
     transform: scale(1.1);
 }
 
+.fb-widget-container--compact {
+    padding: 8px 12px 8px 8px;
+    gap: 10px;
+    border-radius: 50px;
+}
+
+.fb-widget-container--compact .fb-icon-wrapper {
+    width: 34px;
+    height: 34px;
+}
+
 .login-btn {
     padding: 8px 16px;
     font-size: 0.9rem;
+}
+
+.navbar-fb {
+    display: flex;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .navbar-fb {
+        display: none;
+    }
 }
 
 .mobile-toggle {

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Moon, Sun, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { FacebookWidget } from "./FacebookWidget";
 import "./navbar.css";
 
 export function Navbar() {
@@ -40,6 +41,10 @@ export function Navbar() {
                             </button>
                         )}
                     </div>
+                </div>
+
+                <div className="navbar-fb">
+                    <FacebookWidget compact />
                 </div>
 
                 <button

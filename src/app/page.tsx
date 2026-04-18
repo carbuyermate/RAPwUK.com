@@ -3,7 +3,6 @@ import "./page.css";
 import { CalendarDays, ExternalLink, Newspaper, Clock, MapPin, ArrowRight, Tag } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { PromoWidget } from "@/components/PromoWidget";
-import { FacebookWidget } from "@/components/FacebookWidget";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -80,9 +79,6 @@ export default async function Home() {
           <p className="hero-subtitle">
             Sprawdzaj newsy, planuj imprezy, oglądaj klipy i czytaj
           </p>
-          <div className="hero-fb-cta">
-            <FacebookWidget />
-          </div>
         </div>
       </section>
 
