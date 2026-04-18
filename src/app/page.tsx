@@ -70,12 +70,11 @@ export default async function Home() {
 
       {/* Hero */}
       <section className="hero animate-fade-in">
-        <p className="hero-eyebrow">🎤 Polski rap na Wyspach</p>
         <h1 className="hero-title">
-          Rapowe Wibracje<br />na Wyspach
+          Centrum kultury<br />Hip-Hop w UK
         </h1>
         <p className="hero-subtitle">
-          Centrum hip-hopu w UK: sprawdzaj newsy, planuj imprezy, oglądaj klipy i czytaj konkrety
+          Sprawdzaj newsy, planuj imprezy, oglądaj klipy i czytaj
         </p>
       </section>
 
