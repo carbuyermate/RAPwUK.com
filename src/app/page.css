@@ -264,20 +264,12 @@
 
 /* ── EVENTS SIDEBAR ── */
 .events-sidebar {
-  position: sticky;
-  top: 110px;
   display: flex;
   flex-direction: column;
   gap: 0;
   min-width: 0;
   max-width: 100%;
   overflow: hidden;
-}
-
-@media (max-width: 960px) {
-  .events-sidebar {
-    position: static;
-  }
 }
 
 .events-list {
