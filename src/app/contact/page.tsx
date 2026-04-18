@@ -118,7 +118,7 @@ export default function ContactPage() {
                                 />
                             </div>
 
-                            <div className="form-group">
+                            <div className="form-group message-group">
                                 <label htmlFor="message">Wiadomość</label>
                                 <textarea 
                                     id="message" 
