@@ -1,0 +1,120 @@
+.rapper-detail-page {
+    padding: 3rem 0;
+    min-height: 80vh;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    margin-bottom: 2rem;
+    transition: color 0.2s;
+    text-decoration: none;
+}
+
+.back-btn:hover {
+    color: var(--text-primary);
+}
+
+.rapper-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 4rem;
+    align-items: start;
+}
+
+@media (max-width: 1000px) {
+    .rapper-detail-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
+
+/* Info Section */
+.rapper-detail-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.rapper-detail-header {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1.5rem;
+}
+
+.rapper-category-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    margin-bottom: 0.8rem;
+}
+
+.rapper-detail-name {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 900;
+    letter-spacing: -2px;
+    margin: 0;
+    line-height: 1;
+}
+
+.rapper-detail-bio {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: var(--text-primary);
+    white-space: pre-wrap;
+    opacity: 0.9;
+}
+
+/* Social Links */
+.rapper-detail-socials {
+    display: flex;
+    gap: 1rem;
+    padding-top: 1rem;
+}
+
+.social-link-item {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.social-link-item:hover {
+    transform: scale(1.1) translateY(-3px);
+    color: #fff;
+}
+
+.social-link-item.yt:hover { background: #ff0000; border-color: #ff0000; }
+.social-link-item.ig:hover { background: #e1306c; border-color: #e1306c; }
+.social-link-item.fb:hover { background: #1877f2; border-color: #1877f2; }
+
+/* Sticky Gallery Column */
+.rapper-detail-gallery-col {
+    position: sticky;
+    top: 100px;
+}
+
+@media (max-width: 1000px) {
+    .rapper-detail-gallery-col {
+        position: static;
+        order: -1; /* Image first on mobile */
+    }
+}
