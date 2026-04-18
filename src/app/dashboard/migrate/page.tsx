@@ -17,6 +17,29 @@ export default function MigratePage() {
         setStatus('Migracja w toku...');
         setProgress([]);
 
+        const updateWithUniqueSlug = async (table: string, itemName: string, itemId: string, titleKey: string) => {
+            const baseSlug = createSlug(itemName);
+            let slug = baseSlug;
+            let counter = 1;
+
+            while (true) {
+                const { error: updateError } = await supabase.from(table).update({ slug }).eq('id', itemId);
+                
+                if (updateError) {
+                    if (updateError.code === '23505' || updateError.message?.includes('duplicate key')) {
+                        slug = `${baseSlug}-${counter}`;
+                        counter++;
+                    } else {
+                        log(`BŁĄD (${table}: ${itemName}): ${updateError.message}`);
+                        return false;
+                    }
+                } else {
+                    log(`SUKCES (${table}: ${itemName} -> ${slug})`);
+                    return true;
+                }
+            }
+        };
+
         try {
             // 1. News
             log('Pobieram Newsy...');
@@ -24,11 +47,8 @@ export default function MigratePage() {
             if (newsData) {
                 for (const item of newsData) {
                     if (!item.slug || item.slug === 'null' || !item.slug.trim()) {
-                        const newSlug = createSlug(item.title);
-                        log(`Próba aktualizacji News: ${item.title} -> ${newSlug}`);
-                        const { error: updateError } = await supabase.from('news').update({ slug: newSlug }).eq('id', item.id);
-                        if (updateError) log(`BŁĄD (News: ${item.title}): ${updateError.message}`);
-                        else log(`SUKCES (News: ${item.title})`);
+                        log(`Rozpoczynam aktualizację News: ${item.title}`);
+                        await updateWithUniqueSlug('news', item.title, item.id, 'title');
                     }
                 }
             }
@@ -39,11 +59,8 @@ export default function MigratePage() {
             if (eventsData) {
                 for (const item of eventsData) {
                     if (!item.slug || item.slug === 'null' || !item.slug.trim()) {
-                        const newSlug = createSlug(item.title);
-                        log(`Próba aktualizacji Wydarzenia: ${item.title} -> ${newSlug}`);
-                        const { error: updateError } = await supabase.from('events').update({ slug: newSlug }).eq('id', item.id);
-                        if (updateError) log(`BŁĄD (Wydarzenie: ${item.title}): ${updateError.message}`);
-                        else log(`SUKCES (Wydarzenie: ${item.title})`);
+                        log(`Rozpoczynam aktualizację Wydarzenia: ${item.title}`);
+                        await updateWithUniqueSlug('events', item.title, item.id, 'title');
                     }
                 }
             }
@@ -54,11 +71,8 @@ export default function MigratePage() {
             if (rappersData) {
                 for (const item of rappersData) {
                     if (!item.slug || item.slug === 'null' || !item.slug.trim()) {
-                        const newSlug = createSlug(item.name);
-                        log(`Próba aktualizacji Artysty: ${item.name} -> ${newSlug}`);
-                        const { error: updateError } = await supabase.from('rappers').update({ slug: newSlug }).eq('id', item.id);
-                        if (updateError) log(`BŁĄD (Artysta: ${item.name}): ${updateError.message}`);
-                        else log(`SUKCES (Artysta: ${item.name})`);
+                        log(`Rozpoczynam aktualizację Artysty: ${item.name}`);
+                        await updateWithUniqueSlug('rappers', item.name, item.id, 'name');
                     }
                 }
             }

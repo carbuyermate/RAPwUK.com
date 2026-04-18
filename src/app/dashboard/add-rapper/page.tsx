@@ -85,7 +85,11 @@ export default function AddRapperPage() {
             }]);
 
         if (insertError) {
-            setError(insertError.message);
+            if (insertError.code === '23505' || insertError.message?.includes('duplicate key value')) {
+                setError('Taki przyjazny URL (Slug) już istnieje w bazie (np. dla innego artysty). Dodaj na końcu cyfrę lub inny znak (np. kowalski-2), aby był unikalny.');
+            } else {
+                setError(insertError.message);
+            }
             setLoading(false);
             setUploadProgress('');
             return;

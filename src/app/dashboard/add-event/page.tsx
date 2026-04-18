@@ -112,7 +112,11 @@ export default function AddEventPage() {
             router.push('/dashboard/events');
             router.refresh();
         } catch (err: any) {
-            setError(err.message || 'Wystąpił błąd podczas dodawania wydarzenia');
+            if (err.code === '23505' || err.message?.includes('duplicate key value')) {
+                setError('Taki przyjazny URL (Slug) już istnieje w bazie (np. dla innego wydarzenia o tej samej nazwie). Dodaj na końcu myślnik i nazwę miasta (np. d12-londyn) lub cyfrę, aby był unikalny.');
+            } else {
+                setError(err.message || 'Wystąpił błąd podczas dodawania wydarzenia');
+            }
         } finally {
             setLoading(false);
             setUploadProgress('');

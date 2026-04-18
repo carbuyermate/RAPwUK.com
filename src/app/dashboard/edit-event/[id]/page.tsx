@@ -140,7 +140,11 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
             router.push('/dashboard/events');
             router.refresh();
         } catch (err: any) {
-            setError(err.message || 'Wystąpił błąd podczas edycji wydarzenia');
+            if (err.code === '23505' || err.message?.includes('duplicate key value')) {
+                setError('Taki przyjazny URL (Slug) już istnieje w bazie (np. dla innego wydarzenia o tej samej nazwie). Zmień go, aby był unikalny.');
+            } else {
+                setError(err.message || 'Wystąpił błąd podczas edycji wydarzenia');
+            }
         } finally {
             setLoading(false);
             setUploadProgress('');
