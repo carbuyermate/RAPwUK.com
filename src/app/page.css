@@ -211,8 +211,10 @@
 /* News grid for secondary items */
 .news-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
   gap: 1rem;
+  min-width: 0;
+  width: 100%;
 }
 
 /* Base news card */
@@ -525,11 +527,20 @@
   .main-layout {
     grid-template-columns: 1fr;
     gap: 2rem;
+    min-width: 0;
+    width: 100%;
   }
 
-  /* News grid: 1 card per row on phones */
+  /* News grid: 1 card per row on phones — hard override */
   .news-grid {
     grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  /* News feed full width */
+  .news-feed {
+    width: 100%;
+    min-width: 0;
   }
 
   /* Events sidebar: remove sticky, show below news */
@@ -547,6 +558,18 @@
     padding: 2rem 0 1.5rem;
     flex-direction: column;
     gap: 1.2rem;
+  }
+
+  /* Prevent FacebookWidget from overflowing */
+  .hero-content-right {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .fb-widget-container {
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .hero-title {
