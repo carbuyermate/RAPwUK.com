@@ -67,7 +67,7 @@ export default function ContactPage() {
                     
                     <div className="info-card glass-panel">
                         <h3><MessageSquare size={20} className="text-secondary" /> Współpraca</h3>
-                        <p>Jesteś promotorem, raperem, producentem, DJ'em, prowadzisz studio nagrań lub robisz mix/master? Odezwij się w sprawie promocji i patronatów.</p>
+                        <p>Jesteś promotorem, raperem, producentem, DJ'em, prowadzisz studio nagrań, robisz mix/master, organizujesz event lub kręcisz klipy? Odezwij się w sprawie współpracy, promocji i patronatów.</p>
                     </div>
 
                     <div className="info-card glass-panel">
