@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { createSlug } from '@/lib/utils';
-import '../../dashboard.css';
+import '../dashboard.css';
 
 export default function MigratePage() {
     const [status, setStatus] = useState<string>('Gotowy do rozpoczęcia');
