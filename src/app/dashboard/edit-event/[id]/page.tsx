@@ -42,6 +42,8 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
             }
 
             const { data, error } = await supabase.from('events').select('*').eq('id', id).single();
+            if (error) {
+                setError("Nie znaleziono wydarzenia!");
             } else if (data) {
                 setTitle(data.title);
                 setSlug(data.slug || '');
