@@ -26,22 +26,54 @@ function timeAgo(dateStr: string) {
   return new Date(dateStr).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
+const ITEMS_PER_PAGE = 12;
+
 export default function NewsPage() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [categories, setCategories] = useState<string[]>([]);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
+  // Fetch unique categories once
+  useEffect(() => {
+    async function fetchCategories() {
+      const { data } = await supabase.from('news').select('category');
+      if (data) {
+        const unique = Array.from(new Set(data.map(i => i.category).filter(Boolean)));
+        setCategories(unique as string[]);
+      }
+    }
+    fetchCategories();
+  }, []);
+
+  // Fetch news when page or category changes
   useEffect(() => {
     async function fetchNews() {
+      setLoading(true);
       try {
-        const { data, error } = await supabase
+        const from = (currentPage - 1) * ITEMS_PER_PAGE;
+        const to = from + ITEMS_PER_PAGE - 1;
+
+        let query = supabase
           .from('news')
-          .select('*')
-          .order('created_at', { ascending: false });
+          .select('*', { count: 'exact' });
+
+        if (selectedCategory) {
+          query = query.eq('category', selectedCategory);
+        }
+
+        const { data, error, count } = await query
+          .order('created_at', { ascending: false })
+          .range(from, to);
 
         if (error) throw error;
         setNews(data || []);
+        setTotalCount(count || 0);
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -49,14 +81,19 @@ export default function NewsPage() {
       }
     }
     fetchNews();
-  }, []);
+  }, [currentPage, selectedCategory]);
 
-  // Extract unique categories from actual news data
-  const publishedCategories = Array.from(new Set(news.map(item => item.category).filter(Boolean)));
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
-  const filteredNews = selectedCategory 
-    ? news.filter(item => item.category === selectedCategory)
-    : news;
+  const handleCategoryChange = (cat: string | null) => {
+    setSelectedCategory(cat);
+    setCurrentPage(1); // Reset to page 1
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div className="news-page container animate-fade-in">
@@ -68,25 +105,23 @@ export default function NewsPage() {
           Bądź na bieżąco z kulturą Hip-Hop w UK.
         </p>
 
-        {!loading && news.length > 0 && (
-          <div className="news-filters">
+        <div className="news-filters">
+          <button 
+            className={`filter-btn ${selectedCategory === null ? 'filter-btn--active' : ''}`}
+            onClick={() => handleCategoryChange(null)}
+          >
+            Wszystkie
+          </button>
+          {categories.map(cat => (
             <button 
-              className={`filter-btn ${selectedCategory === null ? 'filter-btn--active' : ''}`}
-              onClick={() => setSelectedCategory(null)}
+              key={cat}
+              className={`filter-btn ${selectedCategory === cat ? 'filter-btn--active' : ''}`}
+              onClick={() => handleCategoryChange(cat)}
             >
-              Wszystkie
+              {cat}
             </button>
-            {publishedCategories.map(cat => (
-              <button 
-                key={cat}
-                className={`filter-btn ${selectedCategory === cat ? 'filter-btn--active' : ''}`}
-                onClick={() => setSelectedCategory(cat)}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        )}
+          ))}
+        </div>
       </header>
 
       {error && (
@@ -100,51 +135,83 @@ export default function NewsPage() {
                 <p>Ładowanie newsów...</p>
             </div>
          </div>
-      ) : filteredNews.length === 0 ? (
+      ) : news.length === 0 ? (
         <div className="news-empty">
           <Newspaper size={64} strokeWidth={1} />
           <h2>Brak newsów</h2>
           <p>Nie znaleziono newsów w tej kategorii.</p>
           {selectedCategory && (
-             <button onClick={() => setSelectedCategory(null)} className="btn-primary" style={{ marginTop: '1rem' }}>
+             <button onClick={() => handleCategoryChange(null)} className="btn-primary" style={{ marginTop: '1rem' }}>
                 Pokaż wszystkie newsy
              </button>
           )}
         </div>
       ) : (
-        <div className="news-page__grid">
-          {filteredNews.map((item) => (
-            <Link
-              key={item.id}
-              href={`/news/${item.slug || item.id}`}
-              className={`news-page__card glass-panel ${item.category === 'Sponsorowane' ? 'sponsored-card' : ''}`}
-            >
-              {item.image_url && (
-                <div className="news-page__card-image">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={item.image_url} alt={item.title} />
+        <>
+          <div className="news-page__grid">
+            {news.map((item) => (
+              <Link
+                key={item.id}
+                href={`/news/${item.slug || item.id}`}
+                className={`news-page__card glass-panel ${item.category === 'Sponsorowane' ? 'sponsored-card' : ''}`}
+              >
+                {item.image_url && (
+                  <div className="news-page__card-image">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={item.image_url} alt={item.title} />
+                  </div>
+                )}
+                <div className="news-page__card-body">
+                  {item.category && (
+                    <span className={`news-tag ${item.category === 'Sponsorowane' ? 'news-tag--sponsored' : ''}`}>
+                      {item.category}
+                    </span>
+                  )}
+                  <h2 className="news-page__card-title">{item.title}</h2>
+                  {item.content && (
+                    <p className="news-page__card-excerpt">
+                      {item.content.replace(/<[^>]*>?/gm, '').slice(0, 160)}…
+                    </p>
+                  )}
+                  <div className="news-meta">
+                    <Clock size={12} />
+                    {timeAgo(item.created_at)}
+                  </div>
                 </div>
-              )}
-              <div className="news-page__card-body">
-                {item.category && (
-                  <span className={`news-tag ${item.category === 'Sponsorowane' ? 'news-tag--sponsored' : ''}`}>
-                    {item.category}
-                  </span>
-                )}
-                <h2 className="news-page__card-title">{item.title}</h2>
-                {item.content && (
-                  <p className="news-page__card-excerpt">
-                    {item.content.replace(/<[^>]*>?/gm, '').slice(0, 200)}…
-                  </p>
-                )}
-                <p className="news-meta">
-                  <Clock size={12} />
-                  {timeAgo(item.created_at)}
-                </p>
-              </div>
-            </Link>
-          ))}
-        </div>
+              </Link>
+            ))}
+          </div>
+
+          {totalPages > 1 && (
+            <div className="news-pagination">
+              <button 
+                className="pagination-btn"
+                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+              >
+                Poprzednia
+              </button>
+              
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <button
+                  key={page}
+                  className={`pagination-btn ${currentPage === page ? 'pagination-btn--active' : ''}`}
+                  onClick={() => handlePageChange(page)}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button 
+                className="pagination-btn"
+                disabled={currentPage === totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+              >
+                Następna
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
