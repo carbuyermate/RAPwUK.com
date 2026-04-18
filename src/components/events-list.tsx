@@ -126,7 +126,7 @@ export default function EventsList({ initialEvents }: EventsListProps) {
                     filteredEvents.map((event) => {
                         const { day, month, year } = formatDate(event.event_date);
                         return (
-                                <Link href={`/events/${event.slug}`} className={`event-card glass-panel ${event.is_premium ? 'premium' : ''}`}>
+                                <Link href={`/events/${event.slug || event.id}`} className={`event-card glass-panel ${event.is_premium ? 'premium' : ''}`}>
                                     <div className="event-image-container">
                                         {event.image_url ? (
                                             <img src={event.image_url} alt={event.title} className="event-poster" />

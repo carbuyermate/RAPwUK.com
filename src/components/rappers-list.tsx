@@ -99,7 +99,7 @@ export default function RappersList({ initialRappers }: { initialRappers: Rapper
                             <h2 className="letter-header">{letter}</h2>
                             <div className="directory-items-list glass-panel">
                                 {groupedRappers[letter].map(rapper => (
-                                    <Link key={rapper.id} href={`/rappers/${rapper.slug}`} className="directory-item-row">
+                                    <Link key={rapper.id} href={`/rappers/${rapper.slug || rapper.id}`} className="directory-item-row">
                                         <span className="directory-item-name">{rapper.name}</span>
                                         {rapper.category && rapper.category !== 'Raper/Skład' && (
                                             <span className="directory-item-badge">{rapper.category}</span>

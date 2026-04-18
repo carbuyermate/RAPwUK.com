@@ -116,7 +116,7 @@ export default function NewsPage() {
           {filteredNews.map((item) => (
             <Link
               key={item.id}
-              href={`/news/${item.slug}`}
+              href={`/news/${item.slug || item.id}`}
               className={`news-page__card glass-panel ${item.category === 'Sponsorowane' ? 'sponsored-card' : ''}`}
             >
               {item.image_url && (
