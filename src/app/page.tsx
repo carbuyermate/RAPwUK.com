@@ -80,9 +80,9 @@ export default async function Home() {
           <p className="hero-subtitle">
             Sprawdzaj newsy, planuj imprezy, oglądaj klipy i czytaj
           </p>
-        </div>
-        <div className="hero-content-right">
-          <FacebookWidget />
+          <div className="hero-fb-cta">
+            <FacebookWidget />
+          </div>
         </div>
       </section>
 
