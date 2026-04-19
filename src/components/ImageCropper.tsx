@@ -81,7 +81,9 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
     <div className="cropper-modal-overlay">
       <div className="cropper-modal-content glass-panel">
         <header className="cropper-header">
-          <h3 className="text-lg font-bold">Dostosuj kadr (16:9)</h3>
+          <h3 className="text-lg font-bold">
+            Dostosuj kadr {aspectRatio === 16/9 ? '(16:9)' : aspectRatio === 3/4 ? '(3:4)' : ''}
+          </h3>
           <button onClick={onCancel} className="close-btn">
             <X size={20} />
           </button>
@@ -100,6 +102,9 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
         </div>
 
         <div className="cropper-controls p-6">
+          <p className="text-secondary text-xs mb-4 text-center">
+            Powiększ suwakiem i przesuń zdjęcie, aby wybrać idealny kadr.
+          </p>
           <div className="flex items-center gap-4 mb-6">
             <ZoomOut size={18} className="text-secondary" />
             <input
