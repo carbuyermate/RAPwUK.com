@@ -3,7 +3,7 @@
 import { useState, useEffect, use } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { Tag, FileText, ChevronLeft, Upload, X, Instagram, Youtube, Facebook, MapPin } from 'lucide-react';
+import { Tag, FileText, ChevronLeft, Upload, X, Instagram, Youtube, Facebook, MapPin, Globe, Music, Star } from 'lucide-react';
 import Link from 'next/link';
 import { createSlug, shortenSlug } from '@/lib/utils';
 import '../../dashboard.css';
@@ -17,6 +17,11 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
     const [socialYt, setSocialYt] = useState('');
     const [socialIg, setSocialIg] = useState('');
     const [socialFb, setSocialFb] = useState('');
+    const [cityPl, setCityPl] = useState('');
+    const [cityUk, setCityUk] = useState('');
+    const [spotifyUrl, setSpotifyUrl] = useState('');
+    const [websiteUrl, setWebsiteUrl] = useState('');
+    const [isPremium, setIsPremium] = useState(false);
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
@@ -38,6 +43,11 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
                 setSocialYt(data.social_yt || '');
                 setSocialIg(data.social_ig || '');
                 setSocialFb(data.social_fb || '');
+                setCityPl(data.city_pl || '');
+                setCityUk(data.city_uk || '');
+                setSpotifyUrl(data.spotify_url || '');
+                setWebsiteUrl(data.website_url || '');
+                setIsPremium(data.is_premium || false);
                 
                 if (data.images && data.images.length > 0) {
                     setImagePreview(data.images[0]);
@@ -108,6 +118,11 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
                 social_yt: socialYt || null, 
                 social_ig: socialIg || null, 
                 social_fb: socialFb || null, 
+                city_pl: cityPl || null,
+                city_uk: cityUk || null,
+                spotify_url: spotifyUrl || null,
+                website_url: websiteUrl || null,
+                is_premium: isPremium,
                 images: imageUrls 
             })
             .eq('id', id);
@@ -194,9 +209,11 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
                             <option value="Raper/Skład">Raper/Skład</option>
                             <option value="Studio nagraniowe">Studio nagraniowe</option>
                             <option value="Label">Label</option>
-                            <option value="Zarówno DJ jak i Producent">DJ / Producent (Oba)</option>
-                            <option value="Tylko DJ">Tylko DJ</option>
-                            <option value="Tylko Producent">Tylko Producent</option>
+                            <option value="DJ">DJ</option>
+                            <option value="Producent">Producent</option>
+                            <option value="DJ/Producent">DJ / Producent (Oba)</option>
+                            <option value="Produkcja wideo">Produkcja wideo</option>
+                            <option value="Fotograf">Fotograf</option>
                         </select>
                     </div>
 
@@ -250,6 +267,81 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
                                 onChange={(e) => setSocialFb(e.target.value)}
                             />
                         </div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
+                        {(['Raper/Skład', 'DJ', 'Producent', 'DJ/Producent'].includes(category)) && (
+                            <div className="form-group">
+                                <label className="form-label flex items-center gap-2">
+                                    <MapPin size={16} /> Miasto PL (Opcjonalnie)
+                                </label>
+                                <input
+                                    type="text"
+                                    className="form-input"
+                                    placeholder="np. Warszawa"
+                                    value={cityPl}
+                                    onChange={(e) => setCityPl(e.target.value)}
+                                />
+                            </div>
+                        )}
+                        <div className="form-group">
+                            <label className="form-label flex items-center gap-2">
+                                <MapPin size={16} /> Miasto UK (Opcjonalnie)
+                            </label>
+                            <input
+                                type="text"
+                                className="form-input"
+                                placeholder="np. Londyn"
+                                value={cityUk}
+                                onChange={(e) => setCityUk(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '0.5rem' }}>
+                        {(['Raper/Skład', 'DJ', 'Producent', 'DJ/Producent'].includes(category)) && (
+                            <div className="form-group">
+                                <label className="form-label flex items-center gap-2">
+                                    <Music size={16} /> Spotify (URL - Opcjonalnie)
+                                </label>
+                                <input
+                                    type="url"
+                                    className="form-input"
+                                    placeholder="https://open.spotify.com/artist/..."
+                                    value={spotifyUrl}
+                                    onChange={(e) => setSpotifyUrl(e.target.value)}
+                                />
+                            </div>
+                        )}
+                        <div className="form-group">
+                            <label className="form-label flex items-center gap-2">
+                                <Globe size={16} /> Strona WWW (Opcjonalnie)
+                            </label>
+                            <input
+                                type="url"
+                                className="form-input"
+                                placeholder="https://..."
+                                value={websiteUrl}
+                                onChange={(e) => setWebsiteUrl(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="form-group mt-4 p-4 glass-panel border border-yellow-500/30 bg-yellow-500/5 rounded-xl" style={{ borderColor: 'rgba(234, 179, 8, 0.3)', background: 'rgba(234, 179, 8, 0.05)' }}>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                checked={isPremium}
+                                onChange={(e) => setIsPremium(e.target.checked)}
+                                style={{ width: '20px', height: '20px', accentColor: '#eab308' }}
+                            />
+                            <div className="flex flex-col">
+                                <span className="font-bold flex items-center gap-2" style={{ color: '#eab308' }}>
+                                    <Star size={18} /> Promowany profil (Premium)
+                                </span>
+                                <span className="text-secondary text-sm">Zaznacz, aby kafel został przypięty na górze listy Sceny i oznaczony ekskluzywnym obramowaniem.</span>
+                            </div>
+                        </label>
                     </div>
 
                     <div className="form-group mt-4">

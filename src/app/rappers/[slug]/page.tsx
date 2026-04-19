@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, Youtube, Instagram, Facebook, User } from "lucide-react";
+import { ChevronLeft, Youtube, Instagram, Facebook, User, MapPin, Globe, Star } from "lucide-react";
 import { RapperGallery } from "@/components/rapper-gallery";
 import { ViewTracker } from "@/components/ViewTracker";
 import "../rapper-detail.css";
@@ -15,7 +15,37 @@ interface RapperDetail {
     social_fb?: string;
     social_ig?: string;
     images: string[];
+    city_pl?: string;
+    city_uk?: string;
+    spotify_url?: string;
+    website_url?: string;
+    is_premium?: boolean;
 }
+
+const renderSpotifyEmbed = (url?: string) => {
+    if (!url || !url.includes('spotify.com')) return null;
+    try {
+        const match = url.match(/(artist|album|track|playlist)\/([a-zA-Z0-9]+)/);
+        if (match) {
+            const type = match[1];
+            const id = match[2];
+            return (
+                <div className="spotify-embed-container" style={{ marginTop: '2rem', width: '100%' }}>
+                    <iframe
+                        style={{ borderRadius: '12px' }}
+                        src={`https://open.spotify.com/embed/${type}/${id}?utm_source=generator&theme=0`}
+                        width="100%"
+                        height="152"
+                        frameBorder="0"
+                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                        loading="lazy"
+                    ></iframe>
+                </div>
+            );
+        }
+    } catch (e) {}
+    return null;
+};
 
 export const dynamic = 'force-dynamic';
 
@@ -57,11 +87,21 @@ export default async function RapperDetailPage({ params }: { params: Promise<{ s
                     {/* INFO SIDE */}
                     <div className="rapper-detail-info">
                         <header className="rapper-detail-header">
-                            <span className="rapper-category-badge">
+                            <span className="rapper-category-badge" style={entry.is_premium ? { borderColor: 'rgba(234, 179, 8, 0.4)', color: '#eab308' } : {}}>
                                 {entry.category || 'Raper/Skład'}
                             </span>
-                            <h1 className="rapper-detail-name">{entry.name}</h1>
+                            {(entry.city_pl || entry.city_uk) && (
+                                <span className="rapper-city-badge text-secondary flex items-center gap-1 text-sm border border-[var(--border-color)] px-3 py-1 rounded-full bg-[rgba(255,255,255,0.03)]">
+                                    <MapPin size={14} /> {entry.city_uk ? `${entry.city_uk} (UK)` : ''}{entry.city_pl && entry.city_uk ? ' / ' : ''}{entry.city_pl ? `${entry.city_pl} (PL)` : ''}
+                                </span>
+                            )}
+                            {entry.is_premium && (
+                                <span className="text-yellow-500 flex items-center gap-1 text-sm font-bold border border-yellow-500/30 px-3 py-1 rounded-full bg-yellow-500/10 tracking-wider">
+                                    <Star size={14} /> PROMUJEMY
+                                </span>
+                            )}
                         </header>
+                        <h1 className="rapper-detail-name" style={{ marginTop: '1rem', color: entry.is_premium ? '#eab308' : 'inherit' }}>{entry.name}</h1>
 
                         <div className="rapper-detail-bio">
                             {entry.bio || "Brak opisu dla tego twórcy."}
@@ -83,7 +123,14 @@ export default async function RapperDetailPage({ params }: { params: Promise<{ s
                                     <Facebook size={24} />
                                 </a>
                             )}
+                            {entry.website_url && (
+                                <a href={entry.website_url} target="_blank" rel="noreferrer" className="social-link-item web" aria-label="Website" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                                    <Globe size={24} />
+                                </a>
+                            )}
                         </div>
+
+                        {renderSpotifyEmbed(entry.spotify_url)}
                     </div>
 
                     {/* GALLERY SIDE */}

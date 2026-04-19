@@ -1,0 +1,8 @@
+ALTER TABLE public.rappers
+ADD COLUMN IF NOT EXISTS city_pl TEXT,
+ADD COLUMN IF NOT EXISTS city_uk TEXT,
+ADD COLUMN IF NOT EXISTS spotify_url TEXT,
+ADD COLUMN IF NOT EXISTS website_url TEXT,
+ADD COLUMN IF NOT EXISTS is_premium BOOLEAN DEFAULT false;
+
+NOTIFY pgrst, 'reload schema';

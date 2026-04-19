@@ -14,9 +14,12 @@ interface Rapper {
     social_fb?: string;
     social_yt?: string;
     images?: string[];
+    is_premium?: boolean;
+    city_pl?: string;
+    city_uk?: string;
 }
 
-const CATEGORIES = ['Wszystkie', 'Raper/Skład', 'Studio nagraniowe', 'DJ/Producent', 'Label'];
+const CATEGORIES = ['Wszystkie', 'Raper/Skład', 'Studio nagraniowe', 'DJ/Producent', 'Label', 'Produkcja wideo', 'Fotograf'];
 
 export default function RappersList({ initialRappers }: { initialRappers: Rapper[] }) {
     const [search, setSearch] = useState('');
@@ -27,12 +30,10 @@ export default function RappersList({ initialRappers }: { initialRappers: Rapper
             // Category Match
             let matchCategory = true;
             if (activeCategory !== 'Wszystkie') {
+                const cat = r.category || 'Raper/Skład';
                 if (activeCategory === 'DJ/Producent') {
-                    // DJ/Producent aggregates all three specific subcategories
-                    matchCategory = ['Zarówno DJ jak i Producent', 'Tylko DJ', 'Tylko Producent'].includes(r.category || '');
+                    matchCategory = cat === 'DJ/Producent' || cat.includes('DJ') || cat.includes('Producent');
                 } else {
-                    // The rest should match strictly, or default old rows to 'Raper/Skład'
-                    const cat = r.category || 'Raper/Skład';
                     matchCategory = cat === activeCategory;
                 }
             }
@@ -44,13 +45,21 @@ export default function RappersList({ initialRappers }: { initialRappers: Rapper
         });
     }, [initialRappers, search, activeCategory]);
 
-    const groupedRappers = useMemo(() => {
-        return filtered.reduce((acc, rapper) => {
-            const letter = rapper.name.charAt(0).toUpperCase();
-            if (!acc[letter]) acc[letter] = [];
-            acc[letter].push(rapper);
-            return acc;
-        }, {} as Record<string, Rapper[]>);
+    const [premiumRappers, groupedRappers] = useMemo(() => {
+        const premium: Rapper[] = [];
+        const standardGrouped: Record<string, Rapper[]> = {};
+        
+        filtered.forEach(rapper => {
+            if (rapper.is_premium) {
+                premium.push(rapper);
+            } else {
+                const letter = rapper.name.charAt(0).toUpperCase();
+                if (!standardGrouped[letter]) standardGrouped[letter] = [];
+                standardGrouped[letter].push(rapper);
+            }
+        });
+        
+        return [premium, standardGrouped];
     }, [filtered]);
 
     const letters = Object.keys(groupedRappers).sort();
@@ -80,6 +89,29 @@ export default function RappersList({ initialRappers }: { initialRappers: Rapper
                 />
             </div>
 
+            {premiumRappers.length > 0 && (
+                <div className="premium-rappers-section animate-fade-in" style={{ marginBottom: '1.5rem' }}>
+                    <div className="directory-items-list glass-panel" style={{ borderColor: 'rgba(234, 179, 8, 0.4)', background: 'linear-gradient(145deg, rgba(234, 179, 8, 0.08) 0%, transparent 100%)' }}>
+                        {premiumRappers.map(rapper => (
+                            <Link key={rapper.id} href={`/rappers/${rapper.slug || rapper.id}`} className="directory-item-row" style={{ borderBottomColor: 'rgba(234,179,8,0.1)' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                                    <span className="text-yellow-500" style={{ fontSize: '0.65rem', fontWeight: 800, padding: '2px 6px', background: 'rgba(234, 179, 8, 0.15)', borderRadius: '4px', border: '1px solid rgba(234, 179, 8, 0.3)', letterSpacing: '0.5px' }}>★ PROMUJEMY</span>
+                                    <span className="directory-item-name font-bold text-white">{rapper.name}</span>
+                                </div>
+                                <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
+                                    {(rapper.city_pl || rapper.city_uk) && (
+                                        <span className="text-secondary text-sm hidden sm:inline-block">📍 {rapper.city_uk || rapper.city_pl}</span>
+                                    )}
+                                    {rapper.category && rapper.category !== 'Raper/Skład' && (
+                                        <span className="directory-item-badge" style={{ borderColor: 'rgba(234, 179, 8, 0.3)', color: '#eab308', background: 'rgba(234,179,8,0.05)' }}>{rapper.category}</span>
+                                    )}
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            )}
+
             {letters.length > 0 && (
                 <div className="alphabet-nav glass-panel animate-fade-in">
                     {letters.map(l => (
@@ -101,9 +133,14 @@ export default function RappersList({ initialRappers }: { initialRappers: Rapper
                                 {groupedRappers[letter].map(rapper => (
                                     <Link key={rapper.id} href={`/rappers/${rapper.slug || rapper.id}`} className="directory-item-row">
                                         <span className="directory-item-name">{rapper.name}</span>
-                                        {rapper.category && rapper.category !== 'Raper/Skład' && (
-                                            <span className="directory-item-badge">{rapper.category}</span>
-                                        )}
+                                        <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
+                                            {(rapper.city_pl || rapper.city_uk) && (
+                                                <span className="text-secondary text-sm hidden sm:inline-block">📍 {rapper.city_uk || rapper.city_pl}</span>
+                                            )}
+                                            {rapper.category && rapper.category !== 'Raper/Skład' && (
+                                                <span className="directory-item-badge">{rapper.category}</span>
+                                            )}
+                                        </div>
                                     </Link>
                                 ))}
                             </div>
