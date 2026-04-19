@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Tag, FileText, ChevronLeft, Upload, X, MapPin, Youtube, Instagram, Facebook, Globe, Music, Star } from 'lucide-react';
 import Link from 'next/link';
 import { createSlug, shortenSlug } from '@/lib/utils';
+import { ImageCropper } from '@/components/ImageCropper';
 import '../dashboard.css';
 
 export default function AddRapperPage() {
@@ -27,6 +28,7 @@ export default function AddRapperPage() {
     const [newDiscTitle, setNewDiscTitle] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [showCropper, setShowCropper] = useState(false);
     const [loading, setLoading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState('');
     const [error, setError] = useState<string | null>(null);
@@ -41,7 +43,14 @@ export default function AddRapperPage() {
         }
         setImageFile(file);
         setImagePreview(URL.createObjectURL(file));
+        setShowCropper(true); // Open cropper immediately
         setError(null);
+    };
+
+    const handleCropComplete = (croppedFile: File) => {
+        setImageFile(croppedFile);
+        setImagePreview(URL.createObjectURL(croppedFile));
+        setShowCropper(false);
     };
 
     const removeImage = () => {
@@ -387,9 +396,14 @@ export default function AddRapperPage() {
                             <div className="image-preview-wrapper">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img src={imagePreview} alt="Podgląd" className="image-preview" />
-                                <button type="button" className="image-remove-btn" onClick={removeImage}>
-                                    <X size={18} /> Usuń
-                                </button>
+                                <div className="flex gap-2">
+                                    <button type="button" className="btn-secondary text-sm" onClick={() => setShowCropper(true)}>
+                                        ✂️ Dostosuj kadr
+                                    </button>
+                                    <button type="button" className="image-remove-btn" onClick={removeImage}>
+                                        <X size={18} /> Usuń
+                                    </button>
+                                </div>
                             </div>
                         ) : (
                             <label className="upload-zone" htmlFor="image-upload">
@@ -426,6 +440,15 @@ export default function AddRapperPage() {
                     </Link>
                 </div>
             </form>
+
+            {showCropper && imagePreview && (
+                <ImageCropper
+                    image={imagePreview}
+                    onCropComplete={handleCropComplete}
+                    onCancel={() => setShowCropper(false)}
+                    aspectRatio={3 / 4}
+                />
+            )}
         </div>
     );
 }
