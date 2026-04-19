@@ -26,7 +26,6 @@ function timeAgo(dateStr: string) {
   if (diffD < 7) return `${diffD} dni temu`;
   return new Date(dateStr).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' });
 }
-
 const ITEMS_PER_PAGE = 12;
 
 export default function NewsPage() {
@@ -200,7 +199,7 @@ export default function NewsPage() {
           </div>
 
           {totalPages > 1 && (
-            <div className="news-pagination">
+            <div className="pagination-container">
               <button 
                 className="pagination-btn"
                 disabled={currentPage === 1}

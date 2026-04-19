@@ -27,6 +27,8 @@ export default function EventsList({ initialEvents }: EventsListProps) {
     const [cityFilter, setCityFilter] = useState('all');
     const [venueFilter, setVenueFilter] = useState('all');
     const [sortBy, setSortBy] = useState<'date-asc' | 'date-desc'>('date-asc');
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 10;
 
     const cities = useMemo(() => {
         const set = new Set(initialEvents.map(e => e.city));
@@ -60,6 +62,22 @@ export default function EventsList({ initialEvents }: EventsListProps) {
 
         return result;
     }, [initialEvents, search, cityFilter, venueFilter, sortBy]);
+
+    // Reset pagination when filters change
+    useMemo(() => {
+        setCurrentPage(1);
+    }, [search, cityFilter, venueFilter, sortBy]);
+
+    const totalPages = Math.ceil(filteredEvents.length / ITEMS_PER_PAGE);
+    const paginatedEvents = filteredEvents.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     const formatDate = (dateStr: string) => {
         const date = new Date(dateStr);
@@ -122,11 +140,11 @@ export default function EventsList({ initialEvents }: EventsListProps) {
             </div>
 
             <div className="events-grid animate-fade-in">
-                {filteredEvents.length > 0 ? (
-                    filteredEvents.map((event) => {
+                {paginatedEvents.length > 0 ? (
+                    paginatedEvents.map((event) => {
                         const { day, month, year } = formatDate(event.event_date);
                         return (
-                                <Link href={`/events/${event.slug || event.id}`} className={`event-card glass-panel ${event.is_premium ? 'premium' : ''}`}>
+                                <Link key={event.id} href={`/events/${event.slug || event.id}`} className={`event-card glass-panel ${event.is_premium ? 'premium' : ''}`}>
                                     <div className="event-image-container">
                                         {event.image_url ? (
                                             <img src={event.image_url} alt={event.title} className="event-poster" />
@@ -176,6 +194,36 @@ export default function EventsList({ initialEvents }: EventsListProps) {
                     </div>
                 )}
             </div>
+
+            {totalPages > 1 && (
+                <div className="pagination-container">
+                    <button
+                        className="pagination-btn"
+                        disabled={currentPage === 1}
+                        onClick={() => handlePageChange(currentPage - 1)}
+                    >
+                        Poprzednia
+                    </button>
+
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                        <button
+                            key={page}
+                            className={`pagination-btn ${currentPage === page ? 'pagination-btn--active' : ''}`}
+                            onClick={() => handlePageChange(page)}
+                        >
+                            {page}
+                        </button>
+                    ))}
+
+                    <button
+                        className="pagination-btn"
+                        disabled={currentPage === totalPages}
+                        onClick={() => handlePageChange(currentPage + 1)}
+                    >
+                        Następna
+                    </button>
+                </div>
+            )}
         </div>
     );
 }
