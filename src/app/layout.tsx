@@ -48,6 +48,12 @@ export default function RootLayout({
             gtag('config', 'G-7HN9S9HRRP');
           `}
         </Script>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4469181519523237"
+          crossorigin="anonymous"
+          strategy="beforeInteractive"
+        />
       </head>
       <body className={`${inter.variable} ${outfit.variable}`}>
         <ThemeProvider
