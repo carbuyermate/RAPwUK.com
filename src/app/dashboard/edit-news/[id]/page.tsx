@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Newspaper, Tag, FileText, Image as ImageIcon, ChevronLeft, Upload, X, Youtube } from 'lucide-react';
 import Link from 'next/link';
 import { RichTextEditor } from '@/components/RichTextEditor';
+import { ImageCropper } from '@/components/ImageCropper';
 import { createSlug, shortenSlug } from '@/lib/utils';
 import '../../dashboard.css';
 import { use } from 'react';
@@ -21,6 +22,7 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
     const [youtubeUrl, setYoutubeUrl] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [showCropper, setShowCropper] = useState(false);
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(true);
     const [uploadProgress, setUploadProgress] = useState('');
@@ -56,7 +58,14 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
         }
         setImageFile(file);
         setImagePreview(URL.createObjectURL(file));
+        setShowCropper(true); // Open cropper for new image
         setError(null);
+    };
+
+    const handleCropComplete = (croppedFile: File) => {
+        setImageFile(croppedFile);
+        setImagePreview(URL.createObjectURL(croppedFile));
+        setShowCropper(false);
     };
 
     const removeImage = () => {
@@ -233,9 +242,14 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
                             <div className="image-preview-wrapper">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img src={imagePreview} alt="Podgląd" className="image-preview" />
-                                <button type="button" className="image-remove-btn" onClick={removeImage}>
-                                    <X size={18} /> Usuń zdjęcie
-                                </button>
+                                <div className="flex gap-2">
+                                    <button type="button" className="btn-secondary text-sm" onClick={() => setShowCropper(true)}>
+                                        ✂️ Dostosuj kadr
+                                    </button>
+                                    <button type="button" className="image-remove-btn" onClick={removeImage}>
+                                        <X size={18} /> Usuń zdjęcie
+                                    </button>
+                                </div>
                             </div>
                         ) : (
                             <label className="upload-zone" htmlFor="image-upload">
@@ -272,6 +286,14 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
                     </Link>
                 </div>
             </form>
+
+            {showCropper && imagePreview && (
+                <ImageCropper
+                    image={imagePreview}
+                    onCropComplete={handleCropComplete}
+                    onCancel={() => setShowCropper(false)}
+                />
+            )}
         </div>
     );
 }
