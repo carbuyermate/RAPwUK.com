@@ -116,9 +116,10 @@
 }
 .directory-item-row {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.2rem 1.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 1.25rem 1.5rem;
     text-decoration: none;
     color: var(--text-primary);
     border-bottom: 1px solid var(--border-color);
@@ -134,12 +135,30 @@
     font-size: 1.15rem;
     font-weight: 700;
 }
+
+.directory-item-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
 .directory-item-badge {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 1px;
     color: var(--text-secondary);
     font-weight: 800;
+    opacity: 0.8;
+}
+
+.directory-item-location {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    opacity: 0.6;
 }
 
 /* ── MOBILE RESPONSIVE ── */

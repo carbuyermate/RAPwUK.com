@@ -98,9 +98,9 @@ export default function RappersList({ initialRappers }: { initialRappers: Rapper
                                     <span className="text-yellow-500" style={{ fontSize: '0.65rem', fontWeight: 800, padding: '2px 6px', background: 'rgba(234, 179, 8, 0.15)', borderRadius: '4px', border: '1px solid rgba(234, 179, 8, 0.3)', letterSpacing: '0.5px' }}>★ PROMUJEMY</span>
                                     <span className="directory-item-name font-bold text-white">{rapper.name}</span>
                                 </div>
-                                <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
+                                <div className="directory-item-meta">
                                     {(rapper.city_pl || rapper.city_uk) && (
-                                        <span className="text-secondary text-sm hidden sm:inline-block">📍 {rapper.city_uk || rapper.city_pl}</span>
+                                        <span className="directory-item-location">📍 {rapper.city_uk || rapper.city_pl}</span>
                                     )}
                                     {rapper.category && rapper.category !== 'Raper/Skład' && (
                                         <span className="directory-item-badge" style={{ borderColor: 'rgba(234, 179, 8, 0.3)', color: '#eab308', background: 'rgba(234,179,8,0.05)' }}>{rapper.category}</span>
@@ -133,9 +133,9 @@ export default function RappersList({ initialRappers }: { initialRappers: Rapper
                                 {groupedRappers[letter].map(rapper => (
                                     <Link key={rapper.id} href={`/rappers/${rapper.slug || rapper.id}`} className="directory-item-row">
                                         <span className="directory-item-name">{rapper.name}</span>
-                                        <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
+                                        <div className="directory-item-meta">
                                             {(rapper.city_pl || rapper.city_uk) && (
-                                                <span className="text-secondary text-sm hidden sm:inline-block">📍 {rapper.city_uk || rapper.city_pl}</span>
+                                                <span className="directory-item-location">📍 {rapper.city_uk || rapper.city_pl}</span>
                                             )}
                                             {rapper.category && rapper.category !== 'Raper/Skład' && (
                                                 <span className="directory-item-badge">{rapper.category}</span>
