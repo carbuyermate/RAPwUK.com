@@ -18,6 +18,58 @@ interface NewsDetail {
 
 export const dynamic = 'force-dynamic';
 
+async function getArticle(slug: string): Promise<NewsDetail | null> {
+  let { data } = await supabase
+    .from('news')
+    .select('*')
+    .eq('slug', slug)
+    .maybeSingle();
+
+  if (!data) {
+    const { data: idData } = await supabase
+      .from('news')
+      .select('*')
+      .eq('id', slug)
+      .maybeSingle();
+    data = idData;
+  }
+
+  return data as NewsDetail | null;
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const article = await getArticle(slug);
+
+  if (!article) return {};
+
+  const description = article.content
+    ? article.content.replace(/<[^>]*>?/gm, '').slice(0, 160)
+    : 'Przeczytaj najnowszy news na RAPwUK.com';
+
+  return {
+    title: `${article.title} | RAPwUK.com`,
+    description,
+    openGraph: {
+      title: article.title,
+      description,
+      url: `https://rapwuk.com/news/${slug}`,
+      siteName: 'RAPwUK.com',
+      images: article.image_url
+        ? [{ url: article.image_url, width: 1200, height: 630, alt: article.title }]
+        : [{ url: '/logo.jpg', width: 1080, height: 1080, alt: 'RAPwUK logo' }],
+      locale: 'pl_PL',
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.title,
+      description,
+      images: article.image_url ? [article.image_url] : ['/logo.jpg'],
+    },
+  };
+}
+
 export default async function NewsArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   let { data, error } = await supabase

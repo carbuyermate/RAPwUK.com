@@ -20,6 +20,61 @@ interface EventDetail {
 
 export const dynamic = 'force-dynamic';
 
+async function getEvent(slug: string): Promise<EventDetail | null> {
+  let { data } = await supabase
+    .from('events')
+    .select('*')
+    .eq('slug', slug)
+    .maybeSingle();
+
+  if (!data) {
+    const { data: idData } = await supabase
+      .from('events')
+      .select('*')
+      .eq('id', slug)
+      .maybeSingle();
+    data = idData;
+  }
+
+  return data as EventDetail | null;
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const event = await getEvent(slug);
+
+  if (!event) return {};
+
+  const date = new Date(event.event_date).toLocaleDateString('pl-PL', {
+    day: 'numeric', month: 'long', year: 'numeric',
+  });
+  const description = event.description
+    ? event.description.slice(0, 160)
+    : `${event.title} — ${event.venue}, ${event.city}, ${date}`;
+
+  return {
+    title: `${event.title} | RAPwUK.com`,
+    description,
+    openGraph: {
+      title: `${event.title} — ${event.city}, ${date}`,
+      description,
+      url: `https://rapwuk.com/events/${slug}`,
+      siteName: 'RAPwUK.com',
+      images: event.image_url
+        ? [{ url: event.image_url, width: 1200, height: 630, alt: event.title }]
+        : [{ url: '/logo.jpg', width: 1080, height: 1080, alt: 'RAPwUK logo' }],
+      locale: 'pl_PL',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${event.title} — ${event.city}`,
+      description,
+      images: event.image_url ? [event.image_url] : ['/logo.jpg'],
+    },
+  };
+}
+
 function formatDate(dateStr: string) {
     const d = new Date(dateStr);
     const isUnknownTime = dateStr.includes('T00:00:00+00:00') || dateStr.endsWith('T00:00:00Z') || dateStr.includes('T00:00:00.000Z');
