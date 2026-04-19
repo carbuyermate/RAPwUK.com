@@ -20,6 +20,7 @@ interface RapperDetail {
     spotify_url?: string;
     website_url?: string;
     is_premium?: boolean;
+    discography?: { year: string, title: string }[];
 }
 
 const renderSpotifyEmbed = (url?: string) => {
@@ -131,6 +132,27 @@ export default async function RapperDetailPage({ params }: { params: Promise<{ s
                         </div>
 
                         {renderSpotifyEmbed(entry.spotify_url)}
+
+                        {entry.discography && entry.discography.length > 0 && (
+                            <div className="rapper-discography">
+                                <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                                    <Music size={20} className="text-yellow-500" /> DYSKOGRAFIA
+                                </h3>
+                                <div className="discography-grid">
+                                    {entry.discography
+                                        .sort((a, b) => b.year.localeCompare(a.year))
+                                        .map((item, idx) => (
+                                            <div key={idx} className="glass-panel discography-item">
+                                                <span className="discography-year">
+                                                    {item.year || '—'}
+                                                </span>
+                                                <span className="discography-title">{item.title}</span>
+                                            </div>
+                                        ))
+                                    }
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* GALLERY SIDE */}

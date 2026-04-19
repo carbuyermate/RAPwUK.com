@@ -22,6 +22,9 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
     const [spotifyUrl, setSpotifyUrl] = useState('');
     const [websiteUrl, setWebsiteUrl] = useState('');
     const [isPremium, setIsPremium] = useState(false);
+    const [discography, setDiscography] = useState<{ year: string, title: string }[]>([]);
+    const [newDiscYear, setNewDiscYear] = useState('');
+    const [newDiscTitle, setNewDiscTitle] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
@@ -48,6 +51,7 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
                 setSpotifyUrl(data.spotify_url || '');
                 setWebsiteUrl(data.website_url || '');
                 setIsPremium(data.is_premium || false);
+                setDiscography(data.discography || []);
                 
                 if (data.images && data.images.length > 0) {
                     setImagePreview(data.images[0]);
@@ -73,6 +77,17 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
     const removeImage = () => {
         setImageFile(null);
         setImagePreview(null);
+    };
+
+    const addDiscographyItem = () => {
+        if (!newDiscYear || !newDiscTitle) return;
+        setDiscography(prev => [...prev, { year: newDiscYear, title: newDiscTitle }]);
+        setNewDiscYear('');
+        setNewDiscTitle('');
+    };
+
+    const removeDiscographyItem = (index: number) => {
+        setDiscography(prev => prev.filter((_, i) => i !== index));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -123,6 +138,7 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
                 spotify_url: spotifyUrl || null,
                 website_url: websiteUrl || null,
                 is_premium: isPremium,
+                discography: discography,
                 images: imageUrls 
             })
             .eq('id', id);
@@ -342,6 +358,62 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
                                 <span className="text-secondary text-sm">Zaznacz, aby kafel został przypięty na górze listy Sceny i oznaczony ekskluzywnym obramowaniem.</span>
                             </div>
                         </label>
+                    </div>
+
+                    {/* Discography Section */}
+                    <div className="form-group mt-6">
+                        <label className="form-label flex items-center gap-2 mb-4">
+                            <Music size={16} /> Dyskografia (Rok i Tytuł)
+                        </label>
+                        
+                        <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr auto', gap: '10px', marginBottom: '1rem' }}>
+                            <input
+                                type="text"
+                                className="form-input"
+                                placeholder="Rok"
+                                value={newDiscYear}
+                                onChange={(e) => setNewDiscYear(e.target.value)}
+                            />
+                            <input
+                                type="text"
+                                className="form-input"
+                                placeholder="Tytuł albumu / singla"
+                                value={newDiscTitle}
+                                onChange={(e) => setNewDiscTitle(e.target.value)}
+                            />
+                            <button 
+                                type="button" 
+                                className="btn-secondary"
+                                onClick={addDiscographyItem}
+                                style={{ padding: '0 15px' }}
+                            >
+                                Dodaj
+                            </button>
+                        </div>
+
+                        {discography.length > 0 && (
+                            <div className="discography-list" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                {discography
+                                    .sort((a, b) => b.year.localeCompare(a.year))
+                                    .map((item, index) => (
+                                        <div key={index} className="glass-panel" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 15px' }}>
+                                            <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                                                <span className="text-yellow-500 font-bold" style={{ fontSize: '0.85rem' }}>{item.year || '—'}</span>
+                                                <span style={{ fontWeight: 600 }}>{item.title}</span>
+                                            </div>
+                                            <button 
+                                                type="button" 
+                                                onClick={() => removeDiscographyItem(index)}
+                                                className="text-secondary hover:text-red-500 transition-colors"
+                                                title="Usuń"
+                                            >
+                                                <X size={16} />
+                                            </button>
+                                        </div>
+                                    ))
+                                }
+                            </div>
+                        )}
                     </div>
 
                     <div className="form-group mt-4">
