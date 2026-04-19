@@ -12,6 +12,20 @@ const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 export const metadata: Metadata = {
   title: "RAPwUK.com | Najlepiej o rapie na Wyspach",
   description: "Kalendarz imprez, światowy i polski hip-hop, newsy i premiery. Wszystkie rapowe wibracje w UK w jednym miejscu.",
+  icons: {
+    icon: "/logo.jpg",
+    apple: "/logo.jpg",
+    shortcut: "/logo.jpg",
+  },
+  openGraph: {
+    title: "RAPwUK.com | Najlepiej o rapie na Wyspach",
+    description: "Kalendarz imprez, światowy i polski hip-hop, newsy i premiery. Wszystkie rapowe wibracje w UK w jednym miejscu.",
+    url: "https://rapwuk.com",
+    siteName: "RAPwUK.com",
+    images: [{ url: "/logo.jpg", width: 1080, height: 1080, alt: "RAPwUK logo" }],
+    locale: "pl_PL",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
