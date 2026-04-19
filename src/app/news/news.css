@@ -155,6 +155,84 @@
   margin-bottom: 2rem;
 }
 
+/* ── PREMIUM CATEGORY CARDS ── */
+
+/* KONKURS */
+.news-page__card--konkurs {
+  border: 1px solid rgba(168, 85, 247, 0.4) !important;
+  background: linear-gradient(145deg, rgba(168, 85, 247, 0.08) 0%, var(--bg-secondary) 60%) !important;
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+.news-page__card--konkurs::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #a855f7, transparent);
+  animation: shimmer-purple 3s infinite;
+}
+
+@keyframes shimmer-purple {
+  0%   { opacity: 0.4; }
+  50%  { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+.news-page__card--konkurs:hover {
+  box-shadow: 0 8px 40px rgba(168, 85, 247, 0.25);
+  transform: translateY(-4px);
+}
+
+.news-tag--konkurs {
+  background: linear-gradient(135deg, #7c3aed, #a855f7) !important;
+  color: #fff !important;
+  border-color: transparent !important;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  box-shadow: 0 2px 12px rgba(168,85,247,0.4);
+}
+
+/* SPONSOROWANE */
+.news-page__card--sponsorowane {
+  border: 1px solid rgba(245, 158, 11, 0.4) !important;
+  background: linear-gradient(145deg, rgba(245, 158, 11, 0.08) 0%, var(--bg-secondary) 60%) !important;
+  box-shadow: 0 0 30px rgba(245, 158, 11, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.news-page__card--sponsorowane::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+  animation: shimmer-gold 3s infinite;
+}
+
+@keyframes shimmer-gold {
+  0%   { opacity: 0.4; }
+  50%  { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+.news-page__card--sponsorowane:hover {
+  box-shadow: 0 8px 40px rgba(245, 158, 11, 0.25);
+  transform: translateY(-4px);
+}
+
+.news-tag--sponsorowane {
+  background: linear-gradient(135deg, #b45309, #f59e0b) !important;
+  color: #fff !important;
+  border-color: transparent !important;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  box-shadow: 0 2px 12px rgba(245,158,11,0.4);
+}
+
 /* ── MOBILE RESPONSIVE ── */
 @media (max-width: 768px) {
   .news-page__header {

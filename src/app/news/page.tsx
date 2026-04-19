@@ -151,37 +151,52 @@ export default function NewsPage() {
       ) : (
         <>
           <div className="news-page__grid">
-            {news.map((item) => (
-              <Link
-                key={item.id}
-                href={`/news/${item.slug || item.id}`}
-                className={`news-page__card glass-panel ${item.category === 'Sponsorowane' ? 'sponsored-card' : ''}`}
-              >
-                {item.image_url && (
-                  <div className="news-page__card-image">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={item.image_url} alt={item.title} />
-                  </div>
-                )}
-                <div className="news-page__card-body">
-                  {item.category && (
-                    <span className={`news-tag ${item.category === 'Sponsorowane' ? 'news-tag--sponsored' : ''}`}>
-                      {item.category}
-                    </span>
+            {news.map((item) => {
+              const isKonkurs = item.category === 'Konkurs';
+              const isSponsorowane = item.category === 'Sponsorowane';
+              const premiumClass = isKonkurs
+                ? 'news-page__card--konkurs'
+                : isSponsorowane
+                ? 'news-page__card--sponsorowane'
+                : '';
+              const tagClass = isKonkurs
+                ? 'news-tag--konkurs'
+                : isSponsorowane
+                ? 'news-tag--sponsorowane'
+                : '';
+
+              return (
+                <Link
+                  key={item.id}
+                  href={`/news/${item.slug || item.id}`}
+                  className={`news-page__card glass-panel ${premiumClass}`}
+                >
+                  {item.image_url && (
+                    <div className="news-page__card-image">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={item.image_url} alt={item.title} />
+                    </div>
                   )}
-                  <h2 className="news-page__card-title">{item.title}</h2>
-                  {item.content && (
-                    <p className="news-page__card-excerpt">
-                      {item.content.replace(/<[^>]*>?/gm, '').slice(0, 160)}…
-                    </p>
-                  )}
-                  <div className="news-meta">
-                    <Clock size={12} />
-                    {timeAgo(item.created_at)}
+                  <div className="news-page__card-body">
+                    {item.category && (
+                      <span className={`news-tag ${tagClass}`}>
+                        {isKonkurs ? '🏆 ' : isSponsorowane ? '⭐ ' : ''}{item.category}
+                      </span>
+                    )}
+                    <h2 className="news-page__card-title">{item.title}</h2>
+                    {item.content && (
+                      <p className="news-page__card-excerpt">
+                        {item.content.replace(/<[^>]*>?/gm, '').slice(0, 160)}…
+                      </p>
+                    )}
+                    <div className="news-meta">
+                      <Clock size={12} />
+                      {timeAgo(item.created_at)}
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
 
           {totalPages > 1 && (
