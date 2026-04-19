@@ -175,7 +175,7 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
                                 className="form-input"
                                 placeholder="moj-tytul-newsa"
                                 value={slug}
-                                onChange={(e) => setSlug(createSlug(e.target.value))}
+                                onChange={(e) => setSlug(createSlug(e.target.value, true))}
                                 required
                             />
                             <button

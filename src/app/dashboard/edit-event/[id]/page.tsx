@@ -195,7 +195,7 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
                                 className="form-input"
                                 placeholder="moj-tytul-wydarzenia"
                                 value={slug}
-                                onChange={(e) => setSlug(createSlug(e.target.value))}
+                                onChange={(e) => setSlug(createSlug(e.target.value, true))}
                                 required
                             />
                             <button

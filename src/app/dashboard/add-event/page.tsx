@@ -167,7 +167,7 @@ export default function AddEventPage() {
                                 placeholder="nazwa-imprezy"
                                 value={slug}
                                 onChange={(e) => {
-                                    setSlug(createSlug(e.target.value));
+                                    setSlug(createSlug(e.target.value, true));
                                     setManualSlug(true);
                                 }}
                                 required

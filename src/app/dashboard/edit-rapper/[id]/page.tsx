@@ -208,7 +208,7 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
                                 className="form-input"
                                 placeholder="moja-ksywa"
                                 value={slug}
-                                onChange={(e) => setSlug(createSlug(e.target.value))}
+                                onChange={(e) => setSlug(createSlug(e.target.value, true))}
                                 required
                             />
                             <button

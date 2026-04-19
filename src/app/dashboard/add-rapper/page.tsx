@@ -178,7 +178,7 @@ export default function AddRapperPage() {
                                 placeholder="nazwa-wykopu"
                                 value={slug}
                                 onChange={(e) => {
-                                    setSlug(createSlug(e.target.value));
+                                    setSlug(createSlug(e.target.value, true));
                                     setManualSlug(true);
                                 }}
                                 required
