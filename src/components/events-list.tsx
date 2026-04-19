@@ -143,7 +143,6 @@ export default function EventsList({ initialEvents }: EventsListProps) {
                                     </div>
                                     <div className="event-main-info">
                                         {event.is_premium && <div className="event-tag-premium">PATRONAT!</div>}
-                                        <div className="text-secondary font-bold uppercase tracking-wider" style={{ fontSize: '0.7rem', marginBottom: '4px' }}>{event.city}</div>
                                         <h3 className="text-xl font-bold">{event.title}</h3>
                                         <p className="text-secondary text-sm mt-1 line-clamp-2">
                                             {event.description}
