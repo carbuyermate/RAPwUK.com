@@ -1,42 +1,45 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap');
 
 :root {
-  /* Default Light Mode Variables - B/W/Grey */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f4f4f5;
-  --text-primary: #000000;
-  --text-secondary: #52525b;
+  /* ── Light Mode ── */
+  --bg-primary: #f2f2f7;        /* Subtle warm off-white — cards will stand out */
+  --bg-secondary: #e8e8ed;      /* Slightly deeper for hover states, inputs etc. */
+  --text-primary: #0a0a0a;
+  --text-secondary: #6b6b80;
 
-  --accent-color: #000000;
+  --accent-color: #111111;
   --accent-hover: #3f3f46;
 
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(0, 0, 0, 0.1);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+  /* Cards — pure white on a grey background = clean contrast */
+  --glass-bg: #ffffff;
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-shadow: 0 2px 12px rgba(0, 0, 0, 0.07), 0 1px 3px rgba(0, 0, 0, 0.06);
 
-  --border-color: #e4e4e7;
+  --border-color: #dcdce4;
 
   --success: #10b981;
   --error: #ef4444;
 }
 
 [data-theme='dark'] {
-  /* Dark Mode Variables - B/W/Grey */
-  --bg-primary: #000000;
-  --bg-secondary: #111111;
-  --text-primary: #ffffff;
-  --text-secondary: #a1a1aa;
+  /* ── Dark Mode ── */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #111113;
+  --text-primary: #f5f5f7;
+  --text-secondary: #98989f;
 
-  --accent-color: #ffffff;
+  --accent-color: #f5f5f7;
   --accent-hover: #d4d4d8;
 
-  --glass-bg: rgba(17, 17, 17, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  /* Cards — dark glass with subtle glow */
+  --glass-bg: rgba(24, 24, 28, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.09);
+  --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(255, 255, 255, 0.04);
 
-  --border-color: #27272a;
+  --border-color: #2a2a30;
 }
 
+/* ── Global Reset ── */
 * {
   box-sizing: border-box;
   padding: 0;
@@ -62,12 +65,7 @@ img, video {
   height: auto;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1, h2, h3, h4, h5, h6 {
   font-family: 'Outfit', sans-serif;
   font-weight: 600;
   margin-bottom: 0.5rem;
@@ -83,14 +81,38 @@ a:hover {
   color: var(--accent-color);
 }
 
-/* Glassmorphism Utilities */
+/* ── Glassmorphism / Card Panel ── */
 .glass-panel {
   background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
   border-radius: 16px;
   box-shadow: var(--glass-shadow);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+/* Light mode: add backdrop blur for frosted feel */
+:root .glass-panel {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Dark mode: keep blur for glassmorphism */
+[data-theme='dark'] .glass-panel {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Hover lift — only on interactive cards (links) */
+a.glass-panel:hover,
+.glass-panel.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='dark'] a.glass-panel:hover,
+[data-theme='dark'] .glass-panel.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(255, 255, 255, 0.05);
 }
 
 /* Base Form Inputs */
