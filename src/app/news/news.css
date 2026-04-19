@@ -1,5 +1,5 @@
 .news-page {
-  padding-bottom: 4rem;
+  /* Padding-bottom removed to prevent double spacing with pagination */
 }
 
 .news-filters {
