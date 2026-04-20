@@ -80,7 +80,7 @@ export default async function Home() {
             Centrum kultury<br />Hip-Hop w UK
           </h1>
           <p className="hero-subtitle">
-            Scena, newsy, imprezy Wszystko w jednym miejscu.
+            Scena, newsy, imprezy. Wszystko w jednym miejscu.
           </p>
         </div>
       </section>
