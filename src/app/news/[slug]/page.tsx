@@ -13,6 +13,8 @@ interface NewsDetail {
   category: string;
   image_url?: string;
   youtube_url?: string;
+  youtube_url_2?: string;
+  youtube_url_3?: string;
   created_at: string;
 }
 
@@ -133,20 +135,22 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
         >
         </div>
 
-        {article.youtube_url && (
-            <div className="mt-12 rounded-xl overflow-hidden border border-white/10 shadow-2xl" style={{ aspectRatio: '16/9' }}>
+        {[article.youtube_url, article.youtube_url_2, article.youtube_url_3].map((url, index) => (
+          url && (
+            <div key={index} className="mt-8 rounded-xl overflow-hidden border border-white/10 shadow-2xl" style={{ aspectRatio: '16/9' }}>
                 <iframe
                     width="100%"
                     height="100%"
-                    src={getYouTubeEmbedUrl(article.youtube_url) || article.youtube_url}
-                    title="YouTube video player"
+                    src={getYouTubeEmbedUrl(url) || url}
+                    title={`YouTube video player ${index + 1}`}
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
                     style={{ display: 'block', background: '#000' }}
                 ></iframe>
             </div>
-        )}
+          )
+        ))}
       </article>
     </div>
   );

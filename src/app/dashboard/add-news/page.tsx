@@ -19,6 +19,8 @@ export default function AddNewsPage() {
     const [content, setContent] = useState('');
     const [category, setCategory] = useState('');
     const [youtubeUrl, setYoutubeUrl] = useState('');
+    const [youtubeUrl2, setYoutubeUrl2] = useState('');
+    const [youtubeUrl3, setYoutubeUrl3] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [showCropper, setShowCropper] = useState(false);
@@ -101,8 +103,10 @@ export default function AddNewsPage() {
                 slug: slug || createSlug(title),
                 content, 
                 category, 
-                image_url, 
+                image_url,
                 youtube_url: youtubeUrl || null, 
+                youtube_url_2: youtubeUrl2 || null,
+                youtube_url_3: youtubeUrl3 || null,
                 is_auto_generated: false 
             }]);
 
@@ -204,10 +208,10 @@ export default function AddNewsPage() {
                         />
                     </div>
 
-                    {/* YouTube URL */}
+                    {/* YouTube URL 1 */}
                     <div className="form-group">
                         <label className="form-label flex items-center gap-2">
-                            <Youtube size={16} /> Link do YouTube (opcjonalnie)
+                            <Youtube size={16} /> Link do YouTube 1 (opcjonalnie)
                         </label>
                         <input
                             type="url"
@@ -215,6 +219,34 @@ export default function AddNewsPage() {
                             placeholder="np. https://www.youtube.com/watch?v=..."
                             value={youtubeUrl}
                             onChange={(e) => setYoutubeUrl(e.target.value)}
+                        />
+                    </div>
+
+                    {/* YouTube URL 2 */}
+                    <div className="form-group">
+                        <label className="form-label flex items-center gap-2">
+                            <Youtube size={16} /> Link do YouTube 2 (opcjonalnie)
+                        </label>
+                        <input
+                            type="url"
+                            className="form-input"
+                            placeholder="np. https://www.youtube.com/watch?v=..."
+                            value={youtubeUrl2}
+                            onChange={(e) => setYoutubeUrl2(e.target.value)}
+                        />
+                    </div>
+
+                    {/* YouTube URL 3 */}
+                    <div className="form-group">
+                        <label className="form-label flex items-center gap-2">
+                            <Youtube size={16} /> Link do YouTube 3 (opcjonalnie)
+                        </label>
+                        <input
+                            type="url"
+                            className="form-input"
+                            placeholder="np. https://www.youtube.com/watch?v=..."
+                            value={youtubeUrl3}
+                            onChange={(e) => setYoutubeUrl3(e.target.value)}
                         />
                     </div>
 
