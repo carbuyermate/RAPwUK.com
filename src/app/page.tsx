@@ -4,6 +4,7 @@ import { CalendarDays, ExternalLink, Newspaper, Clock, MapPin, ArrowRight, Tag }
 import { supabase } from "@/lib/supabase";
 import { PromoWidget } from "@/components/PromoWidget";
 import { ViewTracker } from "@/components/ViewTracker";
+import { SocialBox } from "@/components/SocialBox";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -207,9 +208,12 @@ export default async function Home() {
 
         </div>{/* /.homepage-centre */}
 
-        {/* Far-right: vertical sidebar ad */}
+        {/* Far-right: vertical sidebar */}
         <div className="promo-zone-side">
-          <PromoWidget position="homepage_sidebar" />
+          <SocialBox />
+          <div className="promo-zone-side__ad">
+            <PromoWidget position="homepage_sidebar" />
+          </div>
         </div>
 
       </div>{/* /.homepage-outer */}

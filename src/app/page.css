@@ -81,6 +81,14 @@
 .promo-zone-side {
   flex-shrink: 0;
   width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.promo-zone-side__ad {
+  position: sticky;
+  top: 100px;
 }
 
 @media (max-width: 1100px) {
@@ -88,7 +96,8 @@
     flex-direction: column;
   }
   .promo-zone-side {
-    display: none;
+    width: 100%;
+    order: 3; /* Move to the end */
   }
 }
 
