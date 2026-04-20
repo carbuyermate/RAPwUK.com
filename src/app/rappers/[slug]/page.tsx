@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, Youtube, Instagram, Facebook, User, MapPin, Globe, Star } from "lucide-react";
+import { ChevronLeft, Youtube, Instagram, Facebook, User, MapPin, Globe, Star, Music } from "lucide-react";
 import { RapperGallery } from "@/components/rapper-gallery";
 import { ViewTracker } from "@/components/ViewTracker";
 import "../rapper-detail.css";

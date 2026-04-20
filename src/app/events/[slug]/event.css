@@ -192,14 +192,19 @@
 }
 
 .event-detail-description {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     line-height: 1.8;
-    color: var(--text-secondary);
+    color: var(--text-primary);
     white-space: pre-wrap;
 }
 
+.event-detail-description * {
+    background-color: transparent !important;
+    color: inherit !important;
+}
+
 [data-theme='dark'] .event-detail-description {
-    color: rgba(255, 255, 255, 0.85);
+    color: var(--text-primary);
 }
 
 /* Ticket Box */
