@@ -77,7 +77,7 @@ export default async function Home() {
       <section className="hero animate-fade-in">
         <div className="hero-content-left">
           <h1 className="hero-title">
-            Centrum kultury<br />Hip-Hop w UK
+            Centrum Hip-Hopu <br className="mobile-break" /> w UK
           </h1>
           <p className="hero-subtitle">
             Scena, newsy, imprezy. Wszystko w jednym miejscu.
