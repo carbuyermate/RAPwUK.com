@@ -49,17 +49,26 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     ? article.content.replace(/<[^>]*>?/gm, '').slice(0, 160)
     : 'Przeczytaj najnowszy news na RAPwUK.com';
 
+  const ogImage = article.image_url 
+    ? article.image_url 
+    : 'https://rapwuk.com/logo.jpg';
+
   return {
     title: `${article.title} | RAPwUK.com`,
     description,
     openGraph: {
       title: article.title,
       description,
-      url: `https://rapwuk.com/news/${slug}`,
+      url: `/news/${slug}`,
       siteName: 'RAPwUK.com',
-      images: article.image_url
-        ? [{ url: article.image_url, width: 1200, height: 630, alt: article.title }]
-        : [{ url: '/logo.jpg', width: 1080, height: 1080, alt: 'RAPwUK logo' }],
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: article.title,
+        },
+      ],
       locale: 'pl_PL',
       type: 'article',
     },
@@ -67,7 +76,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       card: 'summary_large_image',
       title: article.title,
       description,
-      images: article.image_url ? [article.image_url] : ['/logo.jpg'],
+      images: [ogImage],
     },
   };
 }

@@ -10,6 +10,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://rapwuk.com'),
   title: "RAPwUK.com | Najlepiej o rapie na Wyspach",
   description: "Kalendarz imprez, światowy i polski hip-hop, newsy i premiery. Wszystkie rapowe wibracje w UK w jednym miejscu.",
   icons: {
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
     description: "Kalendarz imprez, światowy i polski hip-hop, newsy i premiery. Wszystkie rapowe wibracje w UK w jednym miejscu.",
     url: "https://rapwuk.com",
     siteName: "RAPwUK.com",
-    images: [{ url: "/logo.jpg", width: 1080, height: 1080, alt: "RAPwUK logo" }],
+    images: [{ url: "https://rapwuk.com/logo.jpg", width: 1080, height: 1080, alt: "RAPwUK logo" }],
     locale: "pl_PL",
     type: "website",
   },
