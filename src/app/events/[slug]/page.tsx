@@ -20,6 +20,14 @@ interface EventDetail {
 
 export const dynamic = 'force-dynamic';
 
+const BASE_URL = 'https://rapwuk.com';
+
+function toAbsoluteUrl(url: string | undefined | null): string {
+  if (!url) return `${BASE_URL}/logo.jpg`;
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  return `${BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
+}
+
 async function getEvent(slug: string): Promise<EventDetail | null> {
   let { data } = await supabase
     .from('events')
@@ -49,28 +57,32 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     day: 'numeric', month: 'long', year: 'numeric',
   });
   const description = event.description
-    ? event.description.slice(0, 160)
+    ? event.description.replace(/\s+/g, ' ').trim().slice(0, 160)
     : `${event.title} — ${event.venue}, ${event.city}, ${date}`;
 
+  const ogImage = toAbsoluteUrl(event.image_url);
+  const pageUrl = `${BASE_URL}/events/${slug}`;
+
   return {
+    metadataBase: new URL(BASE_URL),
     title: `${event.title} | RAPwUK.com`,
     description,
     openGraph: {
       title: `${event.title} — ${event.city}, ${date}`,
       description,
-      url: `https://rapwuk.com/events/${slug}`,
+      url: pageUrl,
       siteName: 'RAPwUK.com',
-      images: event.image_url
-        ? [{ url: event.image_url, width: 1200, height: 630, alt: event.title }]
-        : [{ url: '/logo.jpg', width: 1080, height: 1080, alt: 'RAPwUK logo' }],
+      images: [{ url: ogImage, width: 1200, height: 630, alt: event.title }],
       locale: 'pl_PL',
       type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
+      site: '@RAPwUK',
+      creator: '@RAPwUK',
       title: `${event.title} — ${event.city}`,
       description,
-      images: event.image_url ? [event.image_url] : ['/logo.jpg'],
+      images: [ogImage],
     },
   };
 }

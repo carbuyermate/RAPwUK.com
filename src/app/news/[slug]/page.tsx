@@ -20,6 +20,14 @@ interface NewsDetail {
 
 export const dynamic = 'force-dynamic';
 
+const BASE_URL = 'https://rapwuk.com';
+
+function toAbsoluteUrl(url: string | undefined | null): string {
+  if (!url) return `${BASE_URL}/logo.jpg`;
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  return `${BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
+}
+
 async function getArticle(slug: string): Promise<NewsDetail | null> {
   let { data } = await supabase
     .from('news')
@@ -46,20 +54,20 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!article) return {};
 
   const description = article.content
-    ? article.content.replace(/<[^>]*>?/gm, '').slice(0, 160)
+    ? article.content.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 160)
     : 'Przeczytaj najnowszy news na RAPwUK.com';
 
-  const ogImage = article.image_url 
-    ? article.image_url 
-    : 'https://rapwuk.com/logo.jpg';
+  const ogImage = toAbsoluteUrl(article.image_url);
+  const pageUrl = `${BASE_URL}/news/${slug}`;
 
   return {
+    metadataBase: new URL(BASE_URL),
     title: `${article.title} | RAPwUK.com`,
     description,
     openGraph: {
       title: article.title,
       description,
-      url: `/news/${slug}`,
+      url: pageUrl,
       siteName: 'RAPwUK.com',
       images: [
         {
@@ -74,6 +82,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     },
     twitter: {
       card: 'summary_large_image',
+      site: '@RAPwUK',
+      creator: '@RAPwUK',
       title: article.title,
       description,
       images: [ogImage],

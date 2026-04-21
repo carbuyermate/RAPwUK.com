@@ -27,6 +27,14 @@ export const metadata: Metadata = {
     locale: "pl_PL",
     type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    site: "@RAPwUK",
+    creator: "@RAPwUK",
+    title: "RAPwUK.com | Najlepiej o rapie na Wyspach",
+    description: "Kalendarz imprez, światowy i polski hip-hop, newsy i premiery. Wszystkie rapowe wibracje w UK w jednym miejscu.",
+    images: ["https://rapwuk.com/logo.jpg"],
+  },
 };
 
 export default function RootLayout({

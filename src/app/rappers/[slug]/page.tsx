@@ -50,6 +50,67 @@ const renderSpotifyEmbed = (url?: string) => {
 
 export const dynamic = 'force-dynamic';
 
+const BASE_URL = 'https://rapwuk.com';
+
+function toAbsoluteUrl(url: string | undefined | null): string {
+  if (!url) return `${BASE_URL}/logo.jpg`;
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  return `${BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+
+  let { data } = await supabase
+    .from('rappers')
+    .select('id, name, bio, category, images, city_pl, city_uk')
+    .eq('slug', slug)
+    .maybeSingle();
+
+  if (!data) {
+    const { data: idData } = await supabase
+      .from('rappers')
+      .select('id, name, bio, category, images, city_pl, city_uk')
+      .eq('id', slug)
+      .maybeSingle();
+    data = idData;
+  }
+
+  if (!data) return {};
+
+  const rapper = data as Pick<RapperDetail, 'name' | 'bio' | 'category' | 'images' | 'city_pl' | 'city_uk'>;
+  const location = [rapper.city_uk ? `${rapper.city_uk} (UK)` : '', rapper.city_pl ? `${rapper.city_pl} (PL)` : ''].filter(Boolean).join(' / ');
+  const description = rapper.bio
+    ? rapper.bio.slice(0, 160)
+    : `${rapper.name} — ${rapper.category || 'Polski raper w UK'}${location ? ` | ${location}` : ''}. Sprawdź profil na RAPwUK.com`;
+
+  const ogImage = toAbsoluteUrl(rapper.images?.[0]);
+  const pageUrl = `${BASE_URL}/rappers/${slug}`;
+
+  return {
+    metadataBase: new URL(BASE_URL),
+    title: `${rapper.name} | RAPwUK.com`,
+    description,
+    openGraph: {
+      title: `${rapper.name}${location ? ` — ${location}` : ''} | RAPwUK.com`,
+      description,
+      url: pageUrl,
+      siteName: 'RAPwUK.com',
+      images: [{ url: ogImage, width: 1200, height: 630, alt: rapper.name }],
+      locale: 'pl_PL',
+      type: 'profile',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      site: '@RAPwUK',
+      creator: '@RAPwUK',
+      title: `${rapper.name} | RAPwUK.com`,
+      description,
+      images: [ogImage],
+    },
+  };
+}
+
 export default async function RapperDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
 
