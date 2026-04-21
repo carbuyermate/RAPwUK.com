@@ -52,8 +52,18 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
 
       if (!ctx) return;
 
-      canvas.width = croppedAreaPixels.width;
-      canvas.height = croppedAreaPixels.height;
+      // Scale output to max 1200px on the longer side to save storage
+      const MAX_PX = 1200;
+      let outW = croppedAreaPixels.width;
+      let outH = croppedAreaPixels.height;
+      if (outW > MAX_PX || outH > MAX_PX) {
+        const ratio = Math.min(MAX_PX / outW, MAX_PX / outH);
+        outW = Math.round(outW * ratio);
+        outH = Math.round(outH * ratio);
+      }
+
+      canvas.width = outW;
+      canvas.height = outH;
 
       ctx.drawImage(
         img,
@@ -63,19 +73,25 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
         croppedAreaPixels.height,
         0,
         0,
-        croppedAreaPixels.width,
-        croppedAreaPixels.height
+        outW,
+        outH
       );
+
+      // Use WebP at 0.82 quality — ~30% smaller than JPEG 0.9, visually identical
+      const supportsWebP = canvas.toDataURL('image/webp').startsWith('data:image/webp');
+      const mimeType = supportsWebP ? 'image/webp' : 'image/jpeg';
+      const ext = supportsWebP ? 'webp' : 'jpg';
 
       canvas.toBlob((blob) => {
         if (!blob) return;
-        const file = new File([blob], 'cropped-image.jpg', { type: 'image/jpeg' });
+        const file = new File([blob], `cropped-image.${ext}`, { type: mimeType });
         onCropComplete(file);
-      }, 'image/jpeg', 0.9);
+      }, mimeType, 0.82);
     } catch (e) {
       console.error('Error cropping image:', e);
     }
   };
+
 
   return (
     <div className="cropper-modal-overlay">

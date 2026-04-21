@@ -9,6 +9,38 @@ import Link from 'next/link';
 import { createSlug, shortenSlug } from '@/lib/utils';
 import '../dashboard.css';
 
+// Compress image to max 1200px, convert to WebP to save Supabase storage
+async function compressImage(file: File, maxPx = 1200, quality = 0.82): Promise<File> {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let w = img.naturalWidth;
+      let h = img.naturalHeight;
+      if (w > maxPx || h > maxPx) {
+        const ratio = Math.min(maxPx / w, maxPx / h);
+        w = Math.round(w * ratio);
+        h = Math.round(h * ratio);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d')!;
+      ctx.drawImage(img, 0, 0, w, h);
+      const supportsWebP = canvas.toDataURL('image/webp').startsWith('data:image/webp');
+      const mime = supportsWebP ? 'image/webp' : 'image/jpeg';
+      const ext = supportsWebP ? 'webp' : 'jpg';
+      canvas.toBlob((blob) => {
+        if (!blob) { resolve(file); return; }
+        resolve(new File([blob], `poster.${ext}`, { type: mime }));
+      }, mime, quality);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+    img.src = url;
+  });
+}
+
 export default function AddEventPage() {
     const [title, setTitle] = useState('');
     const [slug, setSlug] = useState('');
@@ -43,16 +75,19 @@ export default function AddEventPage() {
         getSession();
     }, [router]);
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
         if (file.size > 5 * 1024 * 1024) {
             setError('Zdjęcie nie może przekraczać 5MB.');
             return;
         }
-        setImageFile(file);
-        setImagePreview(URL.createObjectURL(file));
         setError(null);
+        setUploadProgress('Kompresuję zdjęcie...');
+        const compressed = await compressImage(file);
+        setUploadProgress('');
+        setImageFile(compressed);
+        setImagePreview(URL.createObjectURL(compressed));
     };
 
     const removeImage = () => {
