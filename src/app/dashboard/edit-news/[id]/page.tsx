@@ -24,6 +24,7 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
     const [youtubeUrl3, setYoutubeUrl3] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [oldImageUrl, setOldImageUrl] = useState<string | null>(null);
     const [showCropper, setShowCropper] = useState(false);
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(true);
@@ -46,6 +47,7 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
                 setYoutubeUrl3(data.youtube_url_3 || '');
                 if (data.image_url) {
                     setImagePreview(data.image_url);
+                    setOldImageUrl(data.image_url);
                 }
             }
             setFetching(false);
@@ -128,6 +130,14 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
             setLoading(false);
             setUploadProgress('');
             return;
+        }
+
+        // Usuń stare zdjęcie jeśli zostało podmienione lub usunięte
+        if (oldImageUrl && oldImageUrl !== image_url) {
+            const filePath = oldImageUrl.split('/uploads/')[1];
+            if (filePath) {
+                await supabase.storage.from('uploads').remove([filePath]);
+            }
         }
 
         router.push('/dashboard/news');

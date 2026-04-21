@@ -28,6 +28,7 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
     const [newDiscTitle, setNewDiscTitle] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [oldImageUrls, setOldImageUrls] = useState<string[]>([]);
     const [showCropper, setShowCropper] = useState(false);
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(true);
@@ -57,6 +58,7 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
                 
                 if (data.images && data.images.length > 0) {
                     setImagePreview(data.images[0]);
+                    setOldImageUrls(data.images);
                 }
             }
             setFetching(false);
@@ -157,6 +159,16 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
             setLoading(false);
             setUploadProgress('');
             return;
+        }
+
+        // Usuń stare zdjęcia jeśli zostały podmienione lub usunięte
+        for (const oldUrl of oldImageUrls) {
+            if (!imageUrls.includes(oldUrl)) {
+                const filePath = oldUrl.split('/uploads/')[1];
+                if (filePath) {
+                    await supabase.storage.from('uploads').remove([filePath]);
+                }
+            }
         }
 
         router.push('/dashboard/rappers');

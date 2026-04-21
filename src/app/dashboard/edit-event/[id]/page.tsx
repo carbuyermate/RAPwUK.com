@@ -23,6 +23,7 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
     // Image state
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [oldImageUrl, setOldImageUrl] = useState<string | null>(null);
     const [uploadProgress, setUploadProgress] = useState('');
     
     const [loading, setLoading] = useState(false);
@@ -63,6 +64,7 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
                 setIsPremium(data.is_premium);
                 if (data.image_url) {
                     setImagePreview(data.image_url);
+                    setOldImageUrl(data.image_url);
                 }
             }
             setFetching(false);
@@ -136,6 +138,14 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
                 .eq('id', id);
 
             if (updateError) throw updateError;
+
+            // Usuń stare zdjęcie jeśli zostało podmienione lub usunięte
+            if (oldImageUrl && oldImageUrl !== finalImageUrl) {
+                const filePath = oldImageUrl.split('/uploads/')[1];
+                if (filePath) {
+                    await supabase.storage.from('uploads').remove([filePath]);
+                }
+            }
 
             router.push('/dashboard/events');
             router.refresh();
