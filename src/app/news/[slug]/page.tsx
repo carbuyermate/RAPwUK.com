@@ -184,23 +184,24 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
 
       {/* Czytaj też: 5 najnowszych newsów (tylko tytuły) */}
       {relatedNews.length > 0 && (
-        <div className="mt-16 animate-fade-in related-news-simple">
-          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 border-b border-white/10 pb-3" style={{ color: 'var(--text-primary)' }}>
+        <div className="mt-12 animate-fade-in" style={{ fontSize: '1.05rem', lineHeight: '1.8' }}>
+          <p style={{ fontWeight: 'bold', color: 'var(--text-primary)', marginBottom: '0.8rem' }}>
             Czytaj też:
-          </h2>
-          <div className="related-links-list flex flex-col gap-4">
+          </p>
+          <ul style={{ listStyleType: 'none', paddingLeft: 0, margin: 0 }}>
             {relatedNews.map((item) => (
-              <Link 
-                key={item.id} 
-                href={`/news/${item.slug || item.id}`} 
-                className="related-link-item hover:text-primary transition-colors text-lg flex items-center gap-2"
-                style={{ textDecoration: 'none', color: 'var(--text-secondary)' }}
-              >
-                <span className="text-primary">•</span>
-                {item.title}
-              </Link>
+              <li key={item.id} style={{ marginBottom: '0.6rem', display: 'flex', alignItems: 'flex-start' }}>
+                <span style={{ color: 'var(--text-secondary)', marginRight: '0.5rem', opacity: 0.7 }}>•</span>
+                <Link 
+                  href={`/news/${item.slug || item.id}`} 
+                  className="hover-opacity"
+                  style={{ textDecoration: 'none', color: 'var(--text-secondary)', display: 'block' }}
+                >
+                  {item.title}
+                </Link>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       )}
     </div>
