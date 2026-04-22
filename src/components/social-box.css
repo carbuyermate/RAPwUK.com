@@ -60,3 +60,8 @@
     background: #FF0000;
     box-shadow: 0 4px 14px rgba(255, 0, 0, 0.35);
 }
+
+.social-box__link--ig {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    box-shadow: 0 4px 14px rgba(220, 39, 67, 0.35);
+}
