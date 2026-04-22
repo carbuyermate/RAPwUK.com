@@ -19,7 +19,7 @@ interface Rapper {
     city_uk?: string;
 }
 
-const CATEGORIES = ['Wszystkie', 'Raper/Skład', 'Studio nagraniowe', 'DJ/Producent', 'Label', 'Produkcja wideo', 'Fotograf'];
+const CATEGORIES = ['Wszystkie', 'DJ', 'Fotograf', 'Label', 'Mix/mastering', 'Producent', 'Produkcja wideo', 'Promotor', 'Raper', 'Skład', 'Studio nagraniowe'];
 
 export default function RappersList({ initialRappers }: { initialRappers: Rapper[] }) {
     const [search, setSearch] = useState('');
@@ -30,12 +30,9 @@ export default function RappersList({ initialRappers }: { initialRappers: Rapper
             // Category Match
             let matchCategory = true;
             if (activeCategory !== 'Wszystkie') {
-                const cat = r.category || 'Raper/Skład';
-                if (activeCategory === 'DJ/Producent') {
-                    matchCategory = cat === 'DJ/Producent' || cat.includes('DJ') || cat.includes('Producent');
-                } else {
-                    matchCategory = cat === activeCategory;
-                }
+                const catString = r.category || '';
+                const cats = catString.split(',').map(c => c.trim());
+                matchCategory = cats.includes(activeCategory);
             }
             if (!matchCategory) return false;
 
@@ -102,9 +99,9 @@ export default function RappersList({ initialRappers }: { initialRappers: Rapper
                                     {(rapper.city_pl || rapper.city_uk) && (
                                         <span className="directory-item-location">📍 {rapper.city_uk || rapper.city_pl}</span>
                                     )}
-                                    {rapper.category && rapper.category !== 'Raper/Skład' && (
-                                        <span className="directory-item-badge" style={{ borderColor: 'rgba(234, 179, 8, 0.3)', color: '#eab308', background: 'rgba(234,179,8,0.05)' }}>{rapper.category}</span>
-                                    )}
+                                    {rapper.category && rapper.category.split(',').map(c => c.trim()).map(cat => (
+                                        <span key={cat} className="directory-item-badge" style={{ borderColor: 'rgba(234, 179, 8, 0.3)', color: '#eab308', background: 'rgba(234,179,8,0.05)' }}>{cat}</span>
+                                    ))}
                                 </div>
                             </Link>
                         ))}
@@ -137,9 +134,9 @@ export default function RappersList({ initialRappers }: { initialRappers: Rapper
                                             {(rapper.city_pl || rapper.city_uk) && (
                                                 <span className="directory-item-location">📍 {rapper.city_uk || rapper.city_pl}</span>
                                             )}
-                                            {rapper.category && rapper.category !== 'Raper/Skład' && (
-                                                <span className="directory-item-badge">{rapper.category}</span>
-                                            )}
+                                            {rapper.category && rapper.category.split(',').map(c => c.trim()).map(cat => (
+                                                <span key={cat} className="directory-item-badge">{cat}</span>
+                                            ))}
                                         </div>
                                     </Link>
                                 ))}

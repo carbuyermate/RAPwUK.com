@@ -13,7 +13,28 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
     const { id } = use(params);
     const [name, setName] = useState('');
     const [slug, setSlug] = useState('');
-    const [category, setCategory] = useState('Raper/Skład');
+    const [categories, setCategories] = useState<string[]>([]);
+
+    const CATEGORY_OPTIONS = [
+        'DJ',
+        'Fotograf',
+        'Label',
+        'Mix/mastering',
+        'Producent',
+        'Produkcja wideo',
+        'Promotor',
+        'Raper',
+        'Skład',
+        'Studio nagraniowe'
+    ];
+
+    const handleCategoryChange = (cat: string) => {
+        setCategories(prev => 
+            prev.includes(cat) 
+                ? prev.filter(c => c !== cat)
+                : [...prev, cat]
+        );
+    };
     const [bio, setBio] = useState('');
     const [socialYt, setSocialYt] = useState('');
     const [socialIg, setSocialIg] = useState('');
@@ -44,7 +65,7 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
             } else if (data) {
                 setName(data.name);
                 setSlug(data.slug || '');
-                if (data.category) setCategory(data.category);
+                if (data.category) setCategories(data.category.split(',').map((c: string) => c.trim()));
                 setBio(data.bio || '');
                 setSocialYt(data.social_yt || '');
                 setSocialIg(data.social_ig || '');
@@ -139,7 +160,7 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
             .update({ 
                 name, 
                 slug: slug || createSlug(name),
-                category,
+                category: categories.join(', '),
                 bio, 
                 social_yt: socialYt || null, 
                 social_ig: socialIg || null, 
@@ -235,23 +256,22 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
                     </div>
 
                     <div className="form-group">
-                        <label className="form-label flex items-center gap-2">
-                            <Tag size={16} /> Kategoria na Scenie
+                        <label className="form-label flex items-center gap-2 mb-3">
+                            <Tag size={16} /> Kategorie na Scenie (Zaznacz minimum jedną)
                         </label>
-                        <select
-                            className="form-input"
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                        >
-                            <option value="Raper/Skład">Raper/Skład</option>
-                            <option value="Studio nagraniowe">Studio nagraniowe</option>
-                            <option value="Label">Label</option>
-                            <option value="DJ">DJ</option>
-                            <option value="Producent">Producent</option>
-                            <option value="DJ/Producent">DJ / Producent (Oba)</option>
-                            <option value="Produkcja wideo">Produkcja wideo</option>
-                            <option value="Fotograf">Fotograf</option>
-                        </select>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            {CATEGORY_OPTIONS.map(cat => (
+                                <label key={cat} className="flex items-center gap-2 cursor-pointer p-2 glass-panel hover:bg-white/5 transition-colors rounded-lg border border-white/5">
+                                    <input
+                                        type="checkbox"
+                                        checked={categories.includes(cat)}
+                                        onChange={() => handleCategoryChange(cat)}
+                                        style={{ width: '16px', height: '16px', accentColor: 'var(--primary)' }}
+                                    />
+                                    <span className="text-sm">{cat}</span>
+                                </label>
+                            ))}
+                        </div>
                     </div>
 
                     <div className="form-group">
@@ -307,7 +327,7 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
-                        {(['Raper/Skład', 'DJ', 'Producent', 'DJ/Producent'].includes(category)) && (
+                        {categories.some(c => ['Raper', 'Skład', 'DJ', 'Producent'].includes(c)) && (
                             <div className="form-group">
                                 <label className="form-label flex items-center gap-2">
                                     <MapPin size={16} /> Miasto PL (Opcjonalnie)
@@ -336,7 +356,7 @@ export default function EditRapperPage({ params }: { params: Promise<{ id: strin
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '0.5rem' }}>
-                        {(['Raper/Skład', 'DJ', 'Producent', 'DJ/Producent'].includes(category)) && (
+                        {categories.some(c => ['Raper', 'Skład', 'DJ', 'Producent'].includes(c)) && (
                             <div className="form-group">
                                 <label className="form-label flex items-center gap-2">
                                     <Music size={16} /> Spotify (URL - Opcjonalnie)

@@ -149,9 +149,15 @@ export default async function RapperDetailPage({ params }: { params: Promise<{ s
                     {/* INFO SIDE */}
                     <div className="rapper-detail-info">
                         <header className="rapper-detail-header">
-                            <span className="rapper-category-badge" style={entry.is_premium ? { borderColor: 'rgba(234, 179, 8, 0.4)', color: '#eab308' } : {}}>
-                                {entry.category || 'Raper/Skład'}
-                            </span>
+                            {entry.category ? entry.category.split(',').map(c => c.trim()).map(cat => (
+                                <span key={cat} className="rapper-category-badge" style={entry.is_premium ? { borderColor: 'rgba(234, 179, 8, 0.4)', color: '#eab308' } : {}}>
+                                    {cat}
+                                </span>
+                            )) : (
+                                <span className="rapper-category-badge" style={entry.is_premium ? { borderColor: 'rgba(234, 179, 8, 0.4)', color: '#eab308' } : {}}>
+                                    Raper
+                                </span>
+                            )}
                             {(entry.city_pl || entry.city_uk) && (
                                 <span className="rapper-city-badge text-secondary flex items-center gap-1 text-sm border border-[var(--border-color)] px-3 py-1 rounded-full bg-[rgba(255,255,255,0.03)]">
                                     <MapPin size={14} /> {entry.city_uk ? `${entry.city_uk} (UK)` : ''}{entry.city_pl && entry.city_uk ? ' / ' : ''}{entry.city_pl ? `${entry.city_pl} (PL)` : ''}
