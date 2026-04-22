@@ -184,7 +184,16 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
 
       {/* Czytaj też: 5 najnowszych newsów (tylko tytuły) */}
       {relatedNews.length > 0 && (
-        <div className="mt-16 pt-8 border-t border-white/10 animate-fade-in" style={{ fontSize: '1.05rem', lineHeight: '1.8' }}>
+        <div 
+          className="animate-fade-in" 
+          style={{ 
+            fontSize: '1.05rem', 
+            lineHeight: '1.8', 
+            marginTop: '3rem', 
+            paddingTop: '2rem', 
+            borderTop: '1px solid rgba(255, 255, 255, 0.1)' 
+          }}
+        >
           <p style={{ fontWeight: 'bold', color: 'var(--text-primary)', marginBottom: '1rem' }}>
             Czytaj też:
           </p>
