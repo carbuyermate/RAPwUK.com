@@ -119,6 +119,16 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
     day: 'numeric', month: 'long', year: 'numeric',
   });
 
+  // Fetch related news (5 latest, excluding current)
+  const { data: relatedNewsData } = await supabase
+    .from('news')
+    .select('id, title, slug, image_url, category, created_at')
+    .neq('id', article.id)
+    .order('created_at', { ascending: false })
+    .limit(5);
+
+  const relatedNews = relatedNewsData || [];
+
   return (
     <div className="article-page container animate-fade-in">
       <ViewTracker type="news" id={article.id} />
@@ -171,6 +181,50 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
           )
         ))}
       </article>
+
+      {/* Czytaj też: 5 najnowszych newsów */}
+      {relatedNews.length > 0 && (
+        <div className="mt-16 animate-fade-in">
+          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 border-b border-white/10 pb-3" style={{ color: 'var(--text-primary)' }}>
+            Czytaj też:
+          </h2>
+          <div className="news-grid">
+            {relatedNews.map((item) => {
+              const timeAgoDate = new Date(item.created_at);
+              const now = new Date();
+              const diffMs = now.getTime() - timeAgoDate.getTime();
+              const diffH = Math.floor(diffMs / (1000 * 60 * 60));
+              const diffD = Math.floor(diffH / 24);
+              let timeStr = '';
+              if (diffH < 1) timeStr = 'Przed chwilą';
+              else if (diffH < 24) timeStr = `${diffH}h temu`;
+              else if (diffD < 7) timeStr = `${diffD} dni temu`;
+              else timeStr = timeAgoDate.toLocaleDateString('pl-PL');
+
+              return (
+                <Link key={item.id} href={`/news/${item.slug || item.id}`} className="news-card glass-panel" style={{ textDecoration: 'none' }}>
+                  {item.image_url && (
+                    <div className="news-card__image news-card__image--small">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={item.image_url} alt={item.title} />
+                    </div>
+                  )}
+                  <div className="news-card__body">
+                    {item.category && (
+                      <span className="news-tag">{item.category}</span>
+                    )}
+                    <h3 className="news-card__title">{item.title}</h3>
+                    <p className="news-meta">
+                      <Clock size={12} />
+                      {timeStr}
+                    </p>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
