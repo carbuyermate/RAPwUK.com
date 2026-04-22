@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Moon, Sun, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { GlobalSearch } from "./GlobalSearch";
 import "./navbar.css";
 
 export function Navbar() {
@@ -30,6 +31,7 @@ export function Navbar() {
                     <Link href="/contact" onClick={() => setMobileOpen(false)}>Kontakt</Link>
 
                     <div className="navbar-actions">
+                        <GlobalSearch onClose={() => setMobileOpen(false)} />
                         {mounted && (
                             <button
                                 className="theme-toggle"
