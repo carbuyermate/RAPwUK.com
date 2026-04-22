@@ -184,8 +184,8 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
 
       {/* Czytaj też: 5 najnowszych newsów (tylko tytuły) */}
       {relatedNews.length > 0 && (
-        <div className="mt-12 animate-fade-in" style={{ fontSize: '1.05rem', lineHeight: '1.8' }}>
-          <p style={{ fontWeight: 'bold', color: 'var(--text-primary)', marginBottom: '0.8rem' }}>
+        <div className="mt-16 pt-8 border-t border-white/10 animate-fade-in" style={{ fontSize: '1.05rem', lineHeight: '1.8' }}>
+          <p style={{ fontWeight: 'bold', color: 'var(--text-primary)', marginBottom: '1rem' }}>
             Czytaj też:
           </p>
           <ul style={{ listStyleType: 'none', paddingLeft: 0, margin: 0 }}>
