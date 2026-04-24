@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Calendar, MapPin, Ticket, ExternalLink, Search, ChevronUp, ChevronDown } from 'lucide-react';
+import { Calendar, MapPin, Ticket, ExternalLink, Search, ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import './events-list.css';
 
@@ -198,11 +198,12 @@ export default function EventsList({ initialEvents }: EventsListProps) {
             {totalPages > 1 && (
                 <div className="pagination-container">
                     <button
-                        className="pagination-btn"
+                        className="pagination-btn pagination-btn--icon"
                         disabled={currentPage === 1}
                         onClick={() => handlePageChange(currentPage - 1)}
+                        aria-label="Poprzednia strona"
                     >
-                        Poprzednia
+                        <ChevronLeft size={20} />
                     </button>
 
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
@@ -216,11 +217,12 @@ export default function EventsList({ initialEvents }: EventsListProps) {
                     ))}
 
                     <button
-                        className="pagination-btn"
+                        className="pagination-btn pagination-btn--icon"
                         disabled={currentPage === totalPages}
                         onClick={() => handlePageChange(currentPage + 1)}
+                        aria-label="Następna strona"
                     >
-                        Następna
+                        <ChevronRight size={20} />
                     </button>
                 </div>
             )}
