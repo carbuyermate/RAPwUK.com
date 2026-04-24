@@ -300,6 +300,11 @@ a.glass-panel:hover,
   padding: 0 12px;
 }
 
+.pagination-btn--icon {
+  width: 40px;
+  padding: 0;
+}
+
 .pagination-btn:hover:not(:disabled) {
   background: var(--border-color);
   color: var(--text-primary);
@@ -326,5 +331,10 @@ a.glass-panel:hover,
     height: 36px;
     font-size: 0.85rem;
     padding: 0 8px;
+  }
+
+  .pagination-btn--icon {
+    width: 36px;
+    padding: 0;
   }
 }

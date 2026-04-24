@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
-import { Clock, Newspaper, ArrowLeft } from "lucide-react";
+import { Clock, Newspaper, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import "./news.css";
 import { ViewTracker } from "@/components/ViewTracker";
@@ -201,11 +201,12 @@ export default function NewsPage() {
           {totalPages > 1 && (
             <div className="pagination-container">
               <button 
-                className="pagination-btn"
+                className="pagination-btn pagination-btn--icon"
                 disabled={currentPage === 1}
                 onClick={() => handlePageChange(currentPage - 1)}
+                aria-label="Poprzednia strona"
               >
-                Poprzednia
+                <ChevronLeft size={20} />
               </button>
               
               {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
@@ -219,11 +220,12 @@ export default function NewsPage() {
               ))}
 
               <button 
-                className="pagination-btn"
+                className="pagination-btn pagination-btn--icon"
                 disabled={currentPage === totalPages}
                 onClick={() => handlePageChange(currentPage + 1)}
+                aria-label="Następna strona"
               >
-                Następna
+                <ChevronRight size={20} />
               </button>
             </div>
           )}
