@@ -341,37 +341,26 @@ a.glass-panel:hover,
 
 /* ── BACK BUTTON (GLOBAL) ── */
 .back-btn {
+  height: 40px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   color: var(--text-secondary);
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
-  font-size: 0.8rem;
-  letter-spacing: 1px;
+  font-size: 0.9rem;
   margin-bottom: 2rem;
-  padding: 8px 18px;
+  padding: 0 16px;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
-  border-radius: 99px;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-radius: 8px;
+  transition: all 0.2s ease;
   text-decoration: none;
   width: fit-content;
 }
 
-[data-theme='dark'] .back-btn {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
 .back-btn:hover {
-  color: var(--text-primary);
   background: var(--border-color);
-  transform: translateX(-4px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
-[data-theme='dark'] .back-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
 }
