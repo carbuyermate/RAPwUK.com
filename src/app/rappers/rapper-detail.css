@@ -23,7 +23,7 @@
 
 .rapper-detail-grid {
     display: grid;
-    grid-template-columns: 1fr 420px;
+    grid-template-columns: minmax(0, 1.3fr) 420px;
     gap: 4rem;
     align-items: start;
 }
@@ -43,8 +43,7 @@
 }
 
 .rapper-detail-header {
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 1.5rem;
+    /* Removed old border-bottom as we're handling it via Tailwind now */
 }
 
 .rapper-category-badge {
@@ -58,7 +57,6 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     color: var(--text-secondary);
-    margin-bottom: 0.8rem;
 }
 
 .rapper-detail-name {
@@ -85,7 +83,6 @@
 .rapper-detail-socials {
     display: flex;
     gap: 1rem;
-    padding-top: 1rem;
 }
 
 .social-link-item {

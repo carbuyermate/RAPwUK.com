@@ -148,69 +148,75 @@ export default async function RapperDetailPage({ params }: { params: Promise<{ s
                 <div className="rapper-detail-grid">
                     {/* INFO SIDE */}
                     <div className="rapper-detail-info">
-                        <header className="rapper-detail-header">
-                            {entry.category ? entry.category.split(',').map(c => c.trim()).map(cat => (
-                                <span key={cat} className="rapper-category-badge" style={entry.is_premium ? { borderColor: 'rgba(234, 179, 8, 0.4)', color: '#eab308' } : {}}>
-                                    {cat}
-                                </span>
-                            )) : (
-                                <span className="rapper-category-badge" style={entry.is_premium ? { borderColor: 'rgba(234, 179, 8, 0.4)', color: '#eab308' } : {}}>
-                                    Raper
-                                </span>
-                            )}
-                            {(entry.city_pl || entry.city_uk) && (
-                                <span className="rapper-city-badge text-secondary flex items-center gap-1 text-sm border border-[var(--border-color)] px-3 py-1 rounded-full bg-[rgba(255,255,255,0.03)]">
-                                    <MapPin size={14} /> {entry.city_uk ? `${entry.city_uk} (UK)` : ''}{entry.city_pl && entry.city_uk ? ' / ' : ''}{entry.city_pl ? `${entry.city_pl} (PL)` : ''}
-                                </span>
-                            )}
-                            {entry.is_premium && (
-                                <span className="text-yellow-500 flex items-center gap-1 text-sm font-bold border border-yellow-500/30 px-3 py-1 rounded-full bg-yellow-500/10 tracking-wider">
-                                    <Star size={14} /> PROMUJEMY
-                                </span>
-                            )}
+                        <header className="mb-6">
+                            <h1 className="rapper-detail-name" style={{ marginBottom: '1.2rem', color: entry.is_premium ? '#D4AF37' : 'inherit', textShadow: entry.is_premium ? '0 0 15px rgba(212, 175, 55, 0.4)' : 'none' }}>
+                                {entry.name}
+                            </h1>
+                            <div className="flex flex-wrap items-center gap-3">
+                                {entry.category ? entry.category.split(',').map(c => c.trim()).map(cat => (
+                                    <span key={cat} className="rapper-category-badge m-0" style={entry.is_premium ? { borderColor: 'rgba(212, 175, 55, 0.4)', color: '#D4AF37' } : {}}>
+                                        {cat}
+                                    </span>
+                                )) : (
+                                    <span className="rapper-category-badge m-0" style={entry.is_premium ? { borderColor: 'rgba(212, 175, 55, 0.4)', color: '#D4AF37' } : {}}>
+                                        Raper
+                                    </span>
+                                )}
+                                {(entry.city_pl || entry.city_uk) && (
+                                    <span className="rapper-city-badge text-secondary flex items-center gap-1.5 text-sm border border-[var(--border-color)] px-4 py-1.5 rounded-full bg-[rgba(255,255,255,0.03)] font-medium">
+                                        <MapPin size={14} className="opacity-70" /> {entry.city_uk ? `${entry.city_uk} (UK)` : ''}{entry.city_pl && entry.city_uk ? ' / ' : ''}{entry.city_pl ? `${entry.city_pl} (PL)` : ''}
+                                    </span>
+                                )}
+                                {entry.is_premium && (
+                                    <span className="flex items-center gap-1.5 text-sm font-bold border px-4 py-1.5 rounded-full tracking-wider" style={{ color: '#D4AF37', borderColor: 'rgba(212, 175, 55, 0.3)', background: 'linear-gradient(145deg, rgba(30,30,30,0.8) 0%, rgba(10,10,10,0.9) 100%)', boxShadow: '0 4px 15px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1)' }}>
+                                        <Star size={14} className="fill-current" /> PATRONUJEMY
+                                    </span>
+                                )}
+                            </div>
                         </header>
-                        <h1 className="rapper-detail-name" style={{ marginTop: '1rem', color: entry.is_premium ? '#eab308' : 'inherit' }}>{entry.name}</h1>
 
-                        <div className="rapper-detail-bio">
+                        {(entry.social_yt || entry.social_ig || entry.social_fb || entry.website_url) && (
+                            <div className="rapper-detail-socials mb-8 pb-8 border-b border-[var(--border-color)]">
+                                {entry.social_yt && (
+                                    <a href={entry.social_yt} target="_blank" rel="noreferrer" className="social-link-item yt" aria-label="YouTube">
+                                        <Youtube size={22} />
+                                    </a>
+                                )}
+                                {entry.social_ig && (
+                                    <a href={entry.social_ig} target="_blank" rel="noreferrer" className="social-link-item ig" aria-label="Instagram">
+                                        <Instagram size={22} />
+                                    </a>
+                                )}
+                                {entry.social_fb && (
+                                    <a href={entry.social_fb} target="_blank" rel="noreferrer" className="social-link-item fb" aria-label="Facebook">
+                                        <Facebook size={22} />
+                                    </a>
+                                )}
+                                {entry.website_url && (
+                                    <a href={entry.website_url} target="_blank" rel="noreferrer" className="social-link-item web" aria-label="Website" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                                        <Globe size={22} />
+                                    </a>
+                                )}
+                            </div>
+                        )}
+
+                        <div className="rapper-detail-bio mb-10">
                             {entry.bio || "Brak opisu dla tego twórcy."}
-                        </div>
-
-                        <div className="rapper-detail-socials">
-                            {entry.social_yt && (
-                                <a href={entry.social_yt} target="_blank" rel="noreferrer" className="social-link-item yt" aria-label="YouTube">
-                                    <Youtube size={24} />
-                                </a>
-                            )}
-                            {entry.social_ig && (
-                                <a href={entry.social_ig} target="_blank" rel="noreferrer" className="social-link-item ig" aria-label="Instagram">
-                                    <Instagram size={24} />
-                                </a>
-                            )}
-                            {entry.social_fb && (
-                                <a href={entry.social_fb} target="_blank" rel="noreferrer" className="social-link-item fb" aria-label="Facebook">
-                                    <Facebook size={24} />
-                                </a>
-                            )}
-                            {entry.website_url && (
-                                <a href={entry.website_url} target="_blank" rel="noreferrer" className="social-link-item web" aria-label="Website" style={{ background: 'rgba(255,255,255,0.05)' }}>
-                                    <Globe size={24} />
-                                </a>
-                            )}
                         </div>
 
                         {renderSpotifyEmbed(entry.spotify_url)}
 
                         {entry.discography && entry.discography.length > 0 && (
-                            <div className="rapper-discography">
+                            <div className="rapper-discography mt-8">
                                 <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                                    <Music size={20} className="text-yellow-500" /> DYSKOGRAFIA
+                                    <Music size={20} className="text-yellow-500" style={entry.is_premium ? {color: '#D4AF37'} : {}} /> DYSKOGRAFIA
                                 </h3>
                                 <div className="discography-grid">
                                     {entry.discography
                                         .sort((a, b) => b.year.localeCompare(a.year))
                                         .map((item, idx) => (
                                             <div key={idx} className="glass-panel discography-item">
-                                                <span className="discography-year">
+                                                <span className="discography-year" style={entry.is_premium ? {color: '#D4AF37'} : {}}>
                                                     {item.year || '—'}
                                                 </span>
                                                 <span className="discography-title">{item.title}</span>
