@@ -116,8 +116,7 @@ export default function RappersList({ initialRappers }: { initialRappers: Rapper
                         borderColor: 'rgba(56, 189, 248, 0.2)', 
                         background: 'linear-gradient(145deg, rgba(15, 23, 42, 0.6) 0%, rgba(2, 6, 23, 0.9) 100%)',
                         boxShadow: '0 15px 35px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.05)',
-                        borderRadius: '12px',
-                        paddingTop: '0.8rem'
+                        borderRadius: '12px'
                     }}>
                         {premiumRappers.map(rapper => (
                             <Link key={rapper.id} href={`/rappers/${rapper.slug || rapper.id}`} className="directory-item-row" style={{ borderBottomColor: 'rgba(56, 189, 248, 0.1)' }}>
