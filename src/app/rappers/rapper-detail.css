@@ -35,43 +35,117 @@
     }
 }
 
-/* Info Section */
+/* Info Column */
 .rapper-detail-info {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
 }
 
-.rapper-detail-header {
-    /* Removed old border-bottom as we're handling it via Tailwind now */
+/* Name */
+.rapper-detail-name {
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    font-weight: 900;
+    letter-spacing: -2px;
+    margin: 0 0 1rem 0;
+    line-height: 1;
+}
+
+/* Meta row: badges, city, patron all in one line */
+.rapper-detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.75rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .rapper-category-badge {
-    display: inline-block;
-    padding: 4px 12px;
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: 99px;
-    font-size: 0.75rem;
+    font-size: 0.68rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 1px;
     color: var(--text-secondary);
 }
 
-.rapper-detail-name {
-    font-size: clamp(2.5rem, 6vw, 4rem);
-    font-weight: 900;
-    letter-spacing: -2px;
-    margin: 0;
+.rapper-meta-sep {
+    color: var(--border-color);
+    font-size: 1rem;
+    opacity: 0.5;
+    user-select: none;
     line-height: 1;
 }
 
+.rapper-city-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.rapper-patron-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 12px;
+    border-radius: 99px;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    color: #38bdf8;
+    background: linear-gradient(145deg, rgba(15, 23, 42, 0.8) 0%, rgba(2, 6, 23, 0.9) 100%);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.1);
+}
+
+/* Social links row */
+.rapper-detail-socials {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 2rem;
+}
+
+.social-link-item {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.social-link-item:hover {
+    transform: translateY(-3px);
+    color: #fff;
+    border-color: transparent;
+}
+
+.social-link-item.yt:hover  { background: #ff0000; }
+.social-link-item.ig:hover  { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+.social-link-item.fb:hover  { background: #1877f2; }
+.social-link-item.web:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+/* Bio */
 .rapper-detail-bio {
     font-size: 1.05rem;
     line-height: 1.8;
     color: var(--text-primary);
     white-space: pre-wrap;
+    margin-bottom: 2rem;
 }
 
 .rapper-detail-bio * {
@@ -79,72 +153,68 @@
     color: inherit !important;
 }
 
-/* Social Links */
-.rapper-detail-socials {
-    display: flex;
-    gap: 1rem;
+/* Spotify embed */
+.spotify-embed-container {
+    margin-bottom: 2.5rem;
+    width: 100%;
 }
 
-.social-link-item {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
+/* Discography */
+.rapper-discography {
+    margin-top: 0;
+}
+
+.discography-section-header {
     display: flex;
     align-items: center;
-    justify-content: center;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    gap: 8px;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
 }
 
-.social-link-item:hover {
-    transform: scale(1.1) translateY(-3px);
-    color: #fff;
-}
-
-.social-link-item.yt:hover { background: #ff0000; border-color: #ff0000; }
-.social-link-item.ig:hover { background: #e1306c; border-color: #e1306c; }
-.social-link-item.fb:hover { background: #1877f2; border-color: #1877f2; }
-
-/* Discography Section */
-.rapper-discography {
-    margin-top: 3rem;
+.discography-section-header span {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-secondary);
 }
 
 .discography-grid {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 1px;
 }
 
 .discography-item {
-    padding: 1rem 1.5rem;
+    padding: 0.65rem 0.5rem;
     display: flex;
     align-items: center;
     gap: 1.5rem;
-    border-left: 3px solid transparent;
-    transition: all 0.3s ease;
+    border-radius: 6px;
+    background: transparent;
+    transition: background 0.15s ease;
     cursor: default;
 }
 
 .discography-item:hover {
-    border-left-color: var(--accent-color, #eab308);
-    background: rgba(255, 255, 255, 0.03);
-    transform: translateX(5px);
+    background: rgba(255, 255, 255, 0.04);
 }
 
 .discography-year {
-    color: var(--accent-color, #eab308);
-    font-weight: 900;
-    font-size: 0.9rem;
-    min-width: 50px;
-    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    font-weight: 700;
+    font-size: 0.78rem;
+    min-width: 38px;
+    opacity: 0.55;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
 }
 
 .discography-title {
-    font-weight: 600;
-    font-size: 1.05rem;
+    font-weight: 500;
+    font-size: 0.97rem;
     color: var(--text-primary);
 }
 
@@ -157,6 +227,6 @@
 @media (max-width: 1000px) {
     .rapper-detail-gallery-col {
         position: static;
-        order: -1; /* Image first on mobile */
+        order: -1;
     }
 }
