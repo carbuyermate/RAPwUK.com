@@ -87,41 +87,40 @@ export default function RappersList({ initialRappers }: { initialRappers: Rapper
             </div>
 
             {premiumRappers.length > 0 && (
-                <div className="premium-rappers-section animate-fade-in" style={{ marginBottom: '1.5rem', marginTop: '1rem' }}>
+                <div className="premium-rappers-section animate-fade-in" style={{ marginBottom: '1.5rem', marginTop: '1.5rem', position: 'relative' }}>
+                    <div style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: '2rem',
+                        transform: 'translateY(-50%)',
+                        background: 'linear-gradient(145deg, #0f172a 0%, #020617 100%)',
+                        padding: '4px 16px',
+                        borderRadius: '6px',
+                        border: '1px solid rgba(56, 189, 248, 0.4)',
+                        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 0 10px rgba(56, 189, 248, 0.15)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        zIndex: 20
+                    }}>
+                        <span style={{ 
+                            color: '#38bdf8', 
+                            fontSize: '0.7rem', 
+                            fontWeight: 800, 
+                            letterSpacing: '1px',
+                            textTransform: 'uppercase',
+                            textShadow: '0 0 15px rgba(56, 189, 248, 0.5)'
+                        }}>★ PATRONUJEMY</span>
+                    </div>
+
                     <div className="directory-items-list glass-panel" style={{ 
-                        position: 'relative',
-                        borderColor: 'rgba(212, 175, 55, 0.15)', 
-                        background: 'linear-gradient(145deg, rgba(30, 30, 30, 0.95) 0%, rgba(10, 10, 10, 0.98) 100%)',
+                        borderColor: 'rgba(56, 189, 248, 0.2)', 
+                        background: 'linear-gradient(145deg, rgba(15, 23, 42, 0.6) 0%, rgba(2, 6, 23, 0.9) 100%)',
                         boxShadow: '0 15px 35px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.05)',
                         borderRadius: '12px',
-                        paddingTop: '0.5rem'
+                        paddingTop: '0.8rem'
                     }}>
-                        <div style={{
-                            position: 'absolute',
-                            top: 0,
-                            left: '2rem',
-                            transform: 'translateY(-50%)',
-                            background: 'linear-gradient(145deg, #1f1f1f 0%, #0a0a0a 100%)',
-                            padding: '4px 16px',
-                            borderRadius: '6px',
-                            border: '1px solid rgba(212, 175, 55, 0.3)',
-                            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            zIndex: 10
-                        }}>
-                            <span style={{ 
-                                color: '#D4AF37', 
-                                fontSize: '0.7rem', 
-                                fontWeight: 800, 
-                                letterSpacing: '1px',
-                                textTransform: 'uppercase',
-                                textShadow: '0 0 15px rgba(212, 175, 55, 0.4)'
-                            }}>★ PATRONUJEMY</span>
-                        </div>
-
                         {premiumRappers.map(rapper => (
-                            <Link key={rapper.id} href={`/rappers/${rapper.slug || rapper.id}`} className="directory-item-row" style={{ borderBottomColor: 'rgba(212,175,55,0.05)' }}>
+                            <Link key={rapper.id} href={`/rappers/${rapper.slug || rapper.id}`} className="directory-item-row" style={{ borderBottomColor: 'rgba(56, 189, 248, 0.1)' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
                                     <span className="directory-item-name font-bold text-white" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>{rapper.name}</span>
                                 </div>
@@ -130,7 +129,7 @@ export default function RappersList({ initialRappers }: { initialRappers: Rapper
                                         <span className="directory-item-location">📍 {rapper.city_uk || rapper.city_pl}</span>
                                     )}
                                     {rapper.category && rapper.category.split(',').map(c => c.trim()).map(cat => (
-                                        <span key={cat} className="directory-item-badge" style={{ borderColor: 'rgba(212, 175, 55, 0.2)', color: '#D4AF37', background: 'rgba(212, 175, 55, 0.05)' }}>{cat}</span>
+                                        <span key={cat} className="directory-item-badge" style={{ borderColor: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', background: 'rgba(56, 189, 248, 0.05)' }}>{cat}</span>
                                     ))}
                                 </div>
                             </Link>

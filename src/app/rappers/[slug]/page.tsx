@@ -149,16 +149,16 @@ export default async function RapperDetailPage({ params }: { params: Promise<{ s
                     {/* INFO SIDE */}
                     <div className="rapper-detail-info">
                         <header className="mb-6">
-                            <h1 className="rapper-detail-name" style={{ marginBottom: '1.2rem', color: entry.is_premium ? '#D4AF37' : 'inherit', textShadow: entry.is_premium ? '0 0 15px rgba(212, 175, 55, 0.4)' : 'none' }}>
+                            <h1 className="rapper-detail-name" style={{ marginBottom: '1.2rem', color: entry.is_premium ? '#38bdf8' : 'inherit', textShadow: entry.is_premium ? '0 0 15px rgba(56, 189, 248, 0.4)' : 'none' }}>
                                 {entry.name}
                             </h1>
                             <div className="flex flex-wrap items-center gap-3">
                                 {entry.category ? entry.category.split(',').map(c => c.trim()).map(cat => (
-                                    <span key={cat} className="rapper-category-badge m-0" style={entry.is_premium ? { borderColor: 'rgba(212, 175, 55, 0.4)', color: '#D4AF37' } : {}}>
+                                    <span key={cat} className="rapper-category-badge m-0" style={entry.is_premium ? { borderColor: 'rgba(56, 189, 248, 0.4)', color: '#38bdf8' } : {}}>
                                         {cat}
                                     </span>
                                 )) : (
-                                    <span className="rapper-category-badge m-0" style={entry.is_premium ? { borderColor: 'rgba(212, 175, 55, 0.4)', color: '#D4AF37' } : {}}>
+                                    <span className="rapper-category-badge m-0" style={entry.is_premium ? { borderColor: 'rgba(56, 189, 248, 0.4)', color: '#38bdf8' } : {}}>
                                         Raper
                                     </span>
                                 )}
@@ -168,7 +168,7 @@ export default async function RapperDetailPage({ params }: { params: Promise<{ s
                                     </span>
                                 )}
                                 {entry.is_premium && (
-                                    <span className="flex items-center gap-1.5 text-sm font-bold border px-4 py-1.5 rounded-full tracking-wider" style={{ color: '#D4AF37', borderColor: 'rgba(212, 175, 55, 0.3)', background: 'linear-gradient(145deg, rgba(30,30,30,0.8) 0%, rgba(10,10,10,0.9) 100%)', boxShadow: '0 4px 15px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1)' }}>
+                                    <span className="flex items-center gap-1.5 text-sm font-bold border px-4 py-1.5 rounded-full tracking-wider" style={{ color: '#38bdf8', borderColor: 'rgba(56, 189, 248, 0.4)', background: 'linear-gradient(145deg, #0f172a 0%, #020617 100%)', boxShadow: '0 4px 15px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1), 0 0 10px rgba(56, 189, 248, 0.15)' }}>
                                         <Star size={14} className="fill-current" /> PATRONUJEMY
                                     </span>
                                 )}
@@ -209,14 +209,14 @@ export default async function RapperDetailPage({ params }: { params: Promise<{ s
                         {entry.discography && entry.discography.length > 0 && (
                             <div className="rapper-discography mt-8">
                                 <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                                    <Music size={20} className="text-yellow-500" style={entry.is_premium ? {color: '#D4AF37'} : {}} /> DYSKOGRAFIA
+                                    <Music size={20} style={entry.is_premium ? {color: '#38bdf8'} : {color: '#a1a1aa'}} /> DYSKOGRAFIA
                                 </h3>
                                 <div className="discography-grid">
                                     {entry.discography
                                         .sort((a, b) => b.year.localeCompare(a.year))
                                         .map((item, idx) => (
-                                            <div key={idx} className="glass-panel discography-item">
-                                                <span className="discography-year" style={entry.is_premium ? {color: '#D4AF37'} : {}}>
+                                            <div key={idx} className="glass-panel discography-item" style={entry.is_premium ? {borderLeftColor: 'rgba(56, 189, 248, 0.5)'} : {}}>
+                                                <span className="discography-year" style={entry.is_premium ? {color: '#38bdf8'} : {}}>
                                                     {item.year || '—'}
                                                 </span>
                                                 <span className="discography-title">{item.title}</span>
