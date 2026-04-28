@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Clock, ArrowLeft } from "lucide-react";
+import { Clock, ChevronLeft } from "lucide-react";
 import { ViewTracker } from "@/components/ViewTracker";
 import "../news.css";
 import "./article.css";
@@ -133,8 +133,8 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
     <div className="article-page container animate-fade-in">
       <ViewTracker type="news" id={article.id} />
       <div className="article-back">
-        <Link href="/news" className="back-link">
-          <ArrowLeft size={16} /> Wszystkie newsy
+        <Link href="/news" className="back-btn">
+          <ChevronLeft size={16} /> POWRÓT
         </Link>
       </div>
 

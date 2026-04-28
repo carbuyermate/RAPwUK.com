@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Calendar, MapPin, Clock, ArrowLeft, Ticket } from "lucide-react";
+import { Calendar, MapPin, Clock, ChevronLeft, Ticket } from "lucide-react";
 import { EventPoster } from "@/components/EventPoster";
 import { ViewTracker } from "@/components/ViewTracker";
 import "./event.css";
@@ -129,8 +129,8 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
             <ViewTracker type="events" id={event.id} />
             <div className="container">
                 <div className="event-detail-back">
-                    <Link href="/events" className="back-link">
-                        <ArrowLeft size={18} /> Powrót do listy
+                    <Link href="/events" className="back-btn">
+                        <ChevronLeft size={16} /> POWRÓT
                     </Link>
                 </div>
 

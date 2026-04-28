@@ -142,7 +142,7 @@ export default async function RapperDetailPage({ params }: { params: Promise<{ s
             <ViewTracker type="rappers" id={entry.id} />
             <div className="container">
                 <Link href="/rappers" className="back-btn">
-                    <ChevronLeft size={16} /> Powrót do Sceny
+                    <ChevronLeft size={16} /> POWRÓT
                 </Link>
 
                 <div className="rapper-detail-grid">
