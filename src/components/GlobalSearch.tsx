@@ -57,22 +57,22 @@ export function GlobalSearch({ onClose }: { onClose?: () => void }) {
                 .select('id, slug, title, category, image_url')
                 .ilike('title', `%${query}%`)
                 .order('created_at', { ascending: false })
-                .limit(3);
+                .limit(4);
 
             // Przeszukujemy bazę raperów
             const { data: rappersData } = await supabase
                 .from('rappers')
                 .select('id, slug, name, category, images')
                 .ilike('name', `%${query}%`)
-                .limit(2);
+                .limit(3);
 
             // Przeszukujemy bazę eventów
             const { data: eventsData } = await supabase
                 .from('events')
                 .select('id, slug, title, is_premium, image_url')
                 .ilike('title', `%${query}%`)
-                .order('date_start', { ascending: false })
-                .limit(2);
+                .order('event_date', { ascending: false })
+                .limit(3);
 
             const combinedResults: SearchResult[] = [];
 
