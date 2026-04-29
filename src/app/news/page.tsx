@@ -12,10 +12,14 @@ interface NewsItem {
   slug: string;
   title: string;
   content: string;
-  category: string;
+  category: string;       // legacy
+  tags?: string[];        // new
   image_url?: string;
   created_at: string;
 }
+
+// Fixed ordered filter tabs (new system)
+const FILTER_TAGS = ['VIDEO', 'TRACK', 'EVENT', 'PREMIERA', 'NEWS', 'SPONSOROWANE', 'WYWIAD', 'RELACJA', 'KONKURS', 'PUBLICYSTYKA', 'RECENZJA', 'INNE'];
 
 function timeAgo(dateStr: string) {
   const diffMs = Date.now() - new Date(dateStr).getTime();
@@ -26,32 +30,17 @@ function timeAgo(dateStr: string) {
   if (diffD < 7) return `${diffD} dni temu`;
   return new Date(dateStr).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' });
 }
+
 const ITEMS_PER_PAGE = 12;
 
 export default function NewsPage() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [categories, setCategories] = useState<string[]>([]);
-  
-  // Pagination state
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
 
-  // Fetch unique categories once
-  useEffect(() => {
-    async function fetchCategories() {
-      const { data } = await supabase.from('news').select('category');
-      if (data) {
-        const unique = Array.from(new Set(data.map(i => i.category).filter(Boolean)));
-        setCategories(unique as string[]);
-      }
-    }
-    fetchCategories();
-  }, []);
-
-  // Fetch news when page or category changes
   useEffect(() => {
     async function fetchNews() {
       setLoading(true);
@@ -61,10 +50,11 @@ export default function NewsPage() {
 
         let query = supabase
           .from('news')
-          .select('*', { count: 'exact' });
+          .select('id, slug, title, content, category, tags, image_url, created_at', { count: 'exact' });
 
-        if (selectedCategory) {
-          query = query.eq('category', selectedCategory);
+        if (selectedTag) {
+          // Filter by new tags[] OR legacy category for backward compat
+          query = query.or(`tags.cs.{"${selectedTag}"},category.ilike.${selectedTag}`);
         }
 
         const { data, error, count } = await query
@@ -81,13 +71,13 @@ export default function NewsPage() {
       }
     }
     fetchNews();
-  }, [currentPage, selectedCategory]);
+  }, [currentPage, selectedTag]);
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
-  const handleCategoryChange = (cat: string | null) => {
-    setSelectedCategory(cat);
-    setCurrentPage(1); // Reset to page 1
+  const handleTagChange = (tag: string | null) => {
+    setSelectedTag(tag);
+    setCurrentPage(1);
   };
 
   const handlePageChange = (page: number) => {
@@ -107,19 +97,19 @@ export default function NewsPage() {
         </p>
 
         <div className="news-filters">
-          <button 
-            className={`filter-btn ${selectedCategory === null ? 'filter-btn--active' : ''}`}
-            onClick={() => handleCategoryChange(null)}
+          <button
+            className={`filter-btn ${selectedTag === null ? 'filter-btn--active' : ''}`}
+            onClick={() => handleTagChange(null)}
           >
-            Wszystkie
+            WSZYSTKIE
           </button>
-          {categories.map(cat => (
-            <button 
-              key={cat}
-              className={`filter-btn ${selectedCategory === cat ? 'filter-btn--active' : ''}`}
-              onClick={() => handleCategoryChange(cat)}
+          {FILTER_TAGS.map(tag => (
+            <button
+              key={tag}
+              className={`filter-btn ${selectedTag === tag ? 'filter-btn--active' : ''}`}
+              onClick={() => handleTagChange(tag)}
             >
-              {cat}
+              {tag}
             </button>
           ))}
         </div>
@@ -141,8 +131,8 @@ export default function NewsPage() {
           <Newspaper size={64} strokeWidth={1} />
           <h2>Brak newsów</h2>
           <p>Nie znaleziono newsów w tej kategorii.</p>
-          {selectedCategory && (
-             <button onClick={() => handleCategoryChange(null)} className="btn-primary" style={{ marginTop: '1rem' }}>
+          {selectedTag && (
+             <button onClick={() => handleTagChange(null)} className="btn-primary" style={{ marginTop: '1rem' }}>
                 Pokaż wszystkie newsy
              </button>
           )}
@@ -151,8 +141,8 @@ export default function NewsPage() {
         <>
           <div className="news-page__grid">
             {news.map((item) => {
-              const isKonkurs = item.category === 'Konkurs';
-              const isSponsorowane = item.category === 'Sponsorowane';
+              const isKonkurs = item.tags?.includes('KONKURS') || item.category === 'Konkurs';
+              const isSponsorowane = item.tags?.includes('SPONSOROWANE') || item.category === 'Sponsorowane';
               const premiumClass = isKonkurs
                 ? 'news-page__card--konkurs'
                 : isSponsorowane
@@ -163,6 +153,11 @@ export default function NewsPage() {
                 : isSponsorowane
                 ? 'news-tag--sponsorowane'
                 : '';
+
+              // Display tag: use first from new tags[], fallback to legacy category
+              const displayTag = (item.tags && item.tags.length > 0)
+                ? item.tags[0].toUpperCase()
+                : item.category?.toUpperCase() || '';
 
               return (
                 <Link
@@ -177,9 +172,9 @@ export default function NewsPage() {
                     </div>
                   )}
                   <div className="news-page__card-body">
-                    {item.category && (
+                    {displayTag && (
                       <span className={`news-tag ${tagClass}`}>
-                        {isKonkurs ? '🏆 ' : isSponsorowane ? '⭐ ' : ''}{item.category}
+                        {isKonkurs ? '🏆 ' : isSponsorowane ? '⭐ ' : ''}{displayTag}
                       </span>
                     )}
                     <h2 className="news-page__card-title">{item.title}</h2>
@@ -200,7 +195,7 @@ export default function NewsPage() {
 
           {totalPages > 1 && (
             <div className="pagination-container">
-              <button 
+              <button
                 className="pagination-btn pagination-btn--icon"
                 disabled={currentPage === 1}
                 onClick={() => handlePageChange(currentPage - 1)}
@@ -208,7 +203,7 @@ export default function NewsPage() {
               >
                 <ChevronLeft size={20} />
               </button>
-              
+
               {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                 <button
                   key={page}
@@ -219,7 +214,7 @@ export default function NewsPage() {
                 </button>
               ))}
 
-              <button 
+              <button
                 className="pagination-btn pagination-btn--icon"
                 disabled={currentPage === totalPages}
                 onClick={() => handlePageChange(currentPage + 1)}

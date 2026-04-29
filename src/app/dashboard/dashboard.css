@@ -407,3 +407,134 @@
         height: 60vh;
     }
 }
+
+/* ── News Tag Pills ── */
+.news-tag-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.news-tag-pill {
+    height: 36px;
+    padding: 0 14px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.news-tag-pill:hover {
+    background: var(--border-color);
+    color: var(--text-primary);
+}
+
+.news-tag-pill--active {
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    border-color: var(--text-primary);
+}
+
+.news-tag-pill--region {
+    border-radius: 8px;
+}
+
+.news-tag-pill--region.news-tag-pill--active {
+    background: #38bdf8;
+    border-color: #38bdf8;
+    color: #0f172a;
+}
+
+.news-tag-pill--artist.news-tag-pill--active {
+    background: rgba(255,255,255,0.1);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+/* ── Artist Search ── */
+.artist-search-wrapper {
+    position: relative;
+}
+
+.artist-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    pointer-events: none;
+}
+
+.artist-search-wrapper .form-input {
+    padding-left: 36px;
+}
+
+.artist-dropdown {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-primary);
+    overflow: hidden;
+    margin-top: 4px;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.artist-dropdown-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.1s ease;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.artist-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.artist-dropdown-item:hover {
+    background: var(--bg-secondary);
+}
+
+.artist-dropdown-item.selected {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.artist-dropdown-empty {
+    padding: 12px 14px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* ── Region section ── */
+.region-section {
+    background: rgba(56, 189, 248, 0.04);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    border-radius: 10px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.region-section .form-label {
+    color: #38bdf8;
+}
