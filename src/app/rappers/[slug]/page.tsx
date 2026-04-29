@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, Youtube, Instagram, Facebook, User, MapPin, Globe, Star, Music, Clock, Newspaper } from "lucide-react";
+import { ChevronLeft, Youtube, Instagram, Facebook, User, MapPin, Globe, Star, Music, Clock, Newspaper, Share2, Mic2, AlignLeft } from "lucide-react";
 import { RapperGallery } from "@/components/rapper-gallery";
 import { ViewTracker } from "@/components/ViewTracker";
 import "../rapper-detail.css";
@@ -204,43 +204,63 @@ export default async function RapperDetailPage({ params }: { params: Promise<{ s
 
                         {/* Social icons */}
                         {(entry.social_yt || entry.social_ig || entry.social_fb || entry.website_url) && (
-                            <div className="rapper-detail-socials">
-                                {entry.social_yt && (
-                                    <a href={entry.social_yt} target="_blank" rel="noreferrer" className="social-link-item yt" aria-label="YouTube">
-                                        <Youtube size={20} />
-                                    </a>
-                                )}
-                                {entry.social_ig && (
-                                    <a href={entry.social_ig} target="_blank" rel="noreferrer" className="social-link-item ig" aria-label="Instagram">
-                                        <Instagram size={20} />
-                                    </a>
-                                )}
-                                {entry.social_fb && (
-                                    <a href={entry.social_fb} target="_blank" rel="noreferrer" className="social-link-item fb" aria-label="Facebook">
-                                        <Facebook size={20} />
-                                    </a>
-                                )}
-                                {entry.website_url && (
-                                    <a href={entry.website_url} target="_blank" rel="noreferrer" className="social-link-item web" aria-label="Website">
-                                        <Globe size={20} />
-                                    </a>
-                                )}
+                            <div className="rapper-section">
+                                <div className="rapper-section-header">
+                                    <Share2 size={13} />
+                                    <span>SOCIAL MEDIA</span>
+                                </div>
+                                <div className="rapper-detail-socials">
+                                    {entry.social_yt && (
+                                        <a href={entry.social_yt} target="_blank" rel="noreferrer" className="social-link-item yt" aria-label="YouTube">
+                                            <Youtube size={20} />
+                                        </a>
+                                    )}
+                                    {entry.social_ig && (
+                                        <a href={entry.social_ig} target="_blank" rel="noreferrer" className="social-link-item ig" aria-label="Instagram">
+                                            <Instagram size={20} />
+                                        </a>
+                                    )}
+                                    {entry.social_fb && (
+                                        <a href={entry.social_fb} target="_blank" rel="noreferrer" className="social-link-item fb" aria-label="Facebook">
+                                            <Facebook size={20} />
+                                        </a>
+                                    )}
+                                    {entry.website_url && (
+                                        <a href={entry.website_url} target="_blank" rel="noreferrer" className="social-link-item web" aria-label="Website">
+                                            <Globe size={20} />
+                                        </a>
+                                    )}
+                                </div>
                             </div>
                         )}
 
-                        {/* Spotify — between socials and bio */}
-                        {renderSpotifyEmbed(entry.spotify_url)}
+                        {/* Spotify */}
+                        {entry.spotify_url && (
+                            <div className="rapper-section">
+                                <div className="rapper-section-header">
+                                    <Mic2 size={13} />
+                                    <span>MUZYKA</span>
+                                </div>
+                                {renderSpotifyEmbed(entry.spotify_url)}
+                            </div>
+                        )}
 
                         {/* Bio */}
-                        <div className="rapper-detail-bio">
-                            {entry.bio || "Brak opisu dla tego twórcy."}
+                        <div className="rapper-section">
+                            <div className="rapper-section-header">
+                                <AlignLeft size={13} />
+                                <span>BIO</span>
+                            </div>
+                            <div className="rapper-detail-bio">
+                                {entry.bio || "Brak opisu dla tego twórcy."}
+                            </div>
                         </div>
 
                         {/* Discography */}
                         {entry.discography && entry.discography.length > 0 && (
-                            <div className="rapper-discography">
-                                <div className="discography-section-header">
-                                    <Music size={14} style={{ color: 'var(--text-secondary)', opacity: 0.6 }} />
+                            <div className="rapper-section">
+                                <div className="rapper-section-header">
+                                    <Music size={13} />
                                     <span>DYSKOGRAFIA</span>
                                 </div>
                                 <div className="discography-grid">
@@ -259,9 +279,9 @@ export default async function RapperDetailPage({ params }: { params: Promise<{ s
 
                         {/* Related news */}
                         {taggedNews && taggedNews.length > 0 && (
-                            <div className="rapper-related-news">
-                                <div className="discography-section-header">
-                                    <Newspaper size={14} style={{ color: 'var(--text-secondary)', opacity: 0.6 }} />
+                            <div className="rapper-section">
+                                <div className="rapper-section-header">
+                                    <Newspaper size={13} />
                                     <span>NEWSY O ARTYŚCIE</span>
                                 </div>
                                 <div className="related-news-list">
