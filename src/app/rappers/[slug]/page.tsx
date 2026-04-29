@@ -38,8 +38,8 @@ const renderSpotifyEmbed = (url?: string) => {
                         width="100%"
                         height="152"
                         frameBorder="0"
-                        allow="autoplay; clipboard-write; encrypted-media 'none'; fullscreen; picture-in-picture"
-                        sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation-by-user-activation"
+                        allow="autoplay; clipboard-write; fullscreen; picture-in-picture"
+                        sandbox="allow-forms allow-popups allow-scripts allow-top-navigation-by-user-activation"
                         loading="lazy"
                     ></iframe>
                 </div>
