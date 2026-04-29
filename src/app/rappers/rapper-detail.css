@@ -25,39 +25,41 @@
     gap: 0;
 }
 
-/* Section wrapper — creates consistent spacing between all sections */
+/* Section wrapper — single separator at bottom only */
 .rapper-section {
-    padding-bottom: 2rem;
-    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
     border-bottom: 1px solid var(--border-color);
 }
 
 .rapper-section:last-child {
     border-bottom: none;
     margin-bottom: 0;
+    padding-bottom: 0;
 }
 
-/* Unified section header — same style across all sections */
+/* Section header — NO underline (section itself has the separator) */
 .rapper-section-header {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 1rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0;
+    border-bottom: none;
 }
 
 .rapper-section-header span {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 2px;
     color: var(--text-secondary);
+    opacity: 0.55;
 }
 
 .rapper-section-header svg {
     color: var(--text-secondary);
-    opacity: 0.6;
+    opacity: 0.4;
     flex-shrink: 0;
 }
 
@@ -173,7 +175,7 @@
 
 /* Spotify embed */
 .spotify-embed-container {
-    margin-top: 0.5rem;
+    margin-top: 0;
     margin-bottom: 0;
     width: 100%;
 }
@@ -183,27 +185,28 @@
     margin-top: 0;
 }
 
-/* Discography section header — now uses unified rapper-section-header */
+/* Discography section header — legacy, same as rapper-section-header (no border) */
 .discography-section-header {
     display: flex;
     align-items: center;
     gap: 8px;
     margin-bottom: 0.75rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0;
+    border-bottom: none;
 }
 
 .discography-section-header span {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 2px;
     color: var(--text-secondary);
+    opacity: 0.55;
 }
 
 .discography-section-header svg {
     color: var(--text-secondary);
-    opacity: 0.6;
+    opacity: 0.4;
 }
 
 .discography-grid {

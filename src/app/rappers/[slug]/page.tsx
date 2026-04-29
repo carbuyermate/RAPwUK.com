@@ -31,7 +31,7 @@ const renderSpotifyEmbed = (url?: string) => {
             const type = match[1];
             const id = match[2];
             return (
-                <div className="spotify-embed-container" style={{ marginTop: '2rem', width: '100%' }}>
+                <div className="spotify-embed-container">
                     <iframe
                         style={{ borderRadius: '12px' }}
                         src={`https://open.spotify.com/embed/${type}/${id}?utm_source=generator&theme=0`}
