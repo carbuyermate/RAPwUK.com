@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, Youtube, Instagram, Facebook, User, MapPin, Globe, Star, Music } from "lucide-react";
+import { ChevronLeft, Youtube, Instagram, Facebook, User, MapPin, Globe, Star, Music, Clock, Newspaper } from "lucide-react";
 import { RapperGallery } from "@/components/rapper-gallery";
 import { ViewTracker } from "@/components/ViewTracker";
 import "../rapper-detail.css";
@@ -111,6 +111,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
+function timeAgo(dateStr: string) {
+    const diffMs = Date.now() - new Date(dateStr).getTime();
+    const diffH = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffD = Math.floor(diffH / 24);
+    if (diffH < 1) return 'Przed chwilą';
+    if (diffH < 24) return `${diffH}h temu`;
+    if (diffD < 7) return `${diffD} dni temu`;
+    return new Date(dateStr).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
 export default async function RapperDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
 
@@ -136,6 +146,14 @@ export default async function RapperDetailPage({ params }: { params: Promise<{ s
     if (!data) notFound();
 
     const entry = data as RapperDetail;
+
+    // Fetch news tagged with this artist
+    const { data: taggedNews } = await supabase
+        .from('news')
+        .select('id, slug, title, category, tags, image_url, created_at')
+        .contains('artist_ids', [entry.id])
+        .order('created_at', { ascending: false })
+        .limit(20);
 
     return (
         <div className="rapper-detail-page animate-fade-in">
@@ -210,20 +228,20 @@ export default async function RapperDetailPage({ params }: { params: Promise<{ s
                             </div>
                         )}
 
+                        {/* Spotify — between socials and bio */}
+                        {renderSpotifyEmbed(entry.spotify_url)}
+
                         {/* Bio */}
                         <div className="rapper-detail-bio">
                             {entry.bio || "Brak opisu dla tego twórcy."}
                         </div>
-
-                        {/* Spotify */}
-                        {renderSpotifyEmbed(entry.spotify_url)}
 
                         {/* Discography */}
                         {entry.discography && entry.discography.length > 0 && (
                             <div className="rapper-discography">
                                 <div className="discography-section-header">
                                     <Music size={14} style={{ color: 'var(--text-secondary)', opacity: 0.6 }} />
-                                    <span>Dyskografia</span>
+                                    <span>DYSKOGRAFIA</span>
                                 </div>
                                 <div className="discography-grid">
                                     {entry.discography
@@ -235,6 +253,44 @@ export default async function RapperDetailPage({ params }: { params: Promise<{ s
                                             </div>
                                         ))
                                     }
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Related news */}
+                        {taggedNews && taggedNews.length > 0 && (
+                            <div className="rapper-related-news">
+                                <div className="discography-section-header">
+                                    <Newspaper size={14} style={{ color: 'var(--text-secondary)', opacity: 0.6 }} />
+                                    <span>NEWSY O ARTYŚCIE</span>
+                                </div>
+                                <div className="related-news-list">
+                                    {taggedNews.map(item => {
+                                        const displayTag = (item.tags && item.tags.length > 0)
+                                            ? item.tags[0].toUpperCase()
+                                            : item.category?.toUpperCase() || '';
+                                        return (
+                                            <Link
+                                                key={item.id}
+                                                href={`/news/${item.slug || item.id}`}
+                                                className="related-news-item"
+                                            >
+                                                {item.image_url && (
+                                                    // eslint-disable-next-line @next/next/no-img-element
+                                                    <img src={item.image_url} alt={item.title} className="related-news-thumb" />
+                                                )}
+                                                <div className="related-news-body">
+                                                    {displayTag && (
+                                                        <span className="related-news-tag">{displayTag}</span>
+                                                    )}
+                                                    <span className="related-news-title">{item.title}</span>
+                                                    <span className="related-news-date">
+                                                        <Clock size={10} /> {timeAgo(item.created_at)}
+                                                    </span>
+                                                </div>
+                                            </Link>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         )}
