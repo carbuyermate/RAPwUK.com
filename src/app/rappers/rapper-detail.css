@@ -25,6 +25,8 @@
         width: 100%;
         max-width: 100vw;
         box-sizing: border-box;
+        align-items: stretch;
+        overflow: hidden;
     }
     
     .rapper-detail-info {
@@ -62,6 +64,7 @@
     max-width: 100%;
     min-width: 0;
     box-sizing: border-box;
+    overflow: hidden;
 }
 
 .rapper-section:last-child {
@@ -103,6 +106,9 @@
     margin: 0 0 1rem 0;
     line-height: 1;
     word-break: break-word;
+    overflow-wrap: break-word;
+    overflow: hidden;
+    max-width: 100%;
 }
 
 /* Meta row: badges, city, patron all in one line */
@@ -302,6 +308,11 @@
     margin-top: 0;
     margin-bottom: 2rem;
     width: 100%;
+    max-width: 100%;
+}
+
+.spotify-embed-container iframe {
+    max-width: 100%;
 }
 
 /* ── Related News section ── */
