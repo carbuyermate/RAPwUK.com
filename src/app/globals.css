@@ -42,12 +42,12 @@
 /* ── Global Reset ── */
 * {
   box-sizing: border-box;
-  padding: 0;
-  margin: 0;
 }
 
-html, body {
-  max-width: 100%;
+html {
+  margin: 0;
+  padding: 0;
+  max-width: 100vw;
   overflow-x: hidden;
 }
 
@@ -58,6 +58,8 @@ body {
   line-height: 1.5;
   transition: background-color 0.3s ease, color 0.3s ease;
   min-height: 100vh;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 img, video {
@@ -182,6 +184,8 @@ a.glass-panel:hover,
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Main content — offset for fixed navbar */
