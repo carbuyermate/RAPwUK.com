@@ -12,6 +12,7 @@ import '../dashboard.css';
 
 // Tags + their available regions
 const TAG_CONFIG: Record<string, string[]> = {
+    'PATRONAT':     ['PL', 'UK', 'USA'],
     'VIDEO':        ['PL', 'UK'],
     'TRACK':        ['PL', 'UK'],
     'EVENT':        ['PL', 'UK', 'USA'],

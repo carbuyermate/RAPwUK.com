@@ -15,6 +15,7 @@ interface NewsItem {
   title: string;
   content: string;
   category: string;
+  tags?: string[];
   image_url?: string;
   created_at: string;
 }
@@ -119,9 +120,26 @@ export default async function Home() {
                           </div>
                         )}
                         <div className="news-card__body">
-                          {item.category && (
-                            <span className={`news-tag ${item.category === 'Sponsorowane' ? 'news-tag--sponsored' : ''}`}>{item.category}</span>
-                          )}
+                          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '8px' }}>
+                            {item.tags && item.tags.length > 0 ? (
+                              item.tags.map(t => {
+                                const tag = t.toUpperCase();
+                                const isP = tag === 'PATRONAT';
+                                const isK = tag === 'KONKURS';
+                                const isS = tag === 'SPONSOROWANE';
+                                const tc = isP ? 'news-tag--patronat' : isK ? 'news-tag--konkurs' : isS ? 'news-tag--sponsorowane' : '';
+                                return (
+                                  <span key={tag} className={`news-tag ${tc}`}>
+                                    {isP ? '👑 ' : isK ? '🏆 ' : isS ? '⭐ ' : ''}{tag}
+                                  </span>
+                                );
+                              })
+                            ) : item.category && (
+                              <span className={`news-tag ${item.category === 'Patronat' ? 'news-tag--patronat' : item.category === 'Konkurs' ? 'news-tag--konkurs' : item.category === 'Sponsorowane' ? 'news-tag--sponsorowane' : ''}`}>
+                                {item.category === 'Patronat' ? '👑 ' : item.category === 'Konkurs' ? '🏆 ' : item.category === 'Sponsorowane' ? '⭐ ' : ''}{item.category.toUpperCase()}
+                              </span>
+                            )}
+                          </div>
                           <h3 className="news-card__title">{item.title}</h3>
                           <p className="news-meta">
                             <Clock size={12} />

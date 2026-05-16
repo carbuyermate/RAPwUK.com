@@ -11,6 +11,7 @@ interface NewsDetail {
   title: string;
   content: string;
   category: string;
+  tags?: string[];
   author?: string;
   image_url?: string;
   youtube_url?: string;
@@ -148,9 +149,26 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
         )}
 
         <div className="article-meta">
-          {article.category && (
-            <span className="news-tag news-tag--highlight">{article.category}</span>
-          )}
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            {article.tags && article.tags.length > 0 ? (
+              article.tags.map(t => {
+                const tag = t.toUpperCase();
+                const isP = tag === 'PATRONAT';
+                const isK = tag === 'KONKURS';
+                const isS = tag === 'SPONSOROWANE';
+                const tc = isP ? 'news-tag--patronat' : isK ? 'news-tag--konkurs' : isS ? 'news-tag--sponsorowane' : 'news-tag--highlight';
+                return (
+                  <span key={tag} className={`news-tag ${tc}`}>
+                    {isP ? '👑 ' : isK ? '🏆 ' : isS ? '⭐ ' : ''}{tag}
+                  </span>
+                );
+              })
+            ) : article.category && (
+              <span className={`news-tag ${article.category === 'Patronat' ? 'news-tag--patronat' : article.category === 'Konkurs' ? 'news-tag--konkurs' : article.category === 'Sponsorowane' ? 'news-tag--sponsorowane' : 'news-tag--highlight'}`}>
+                {article.category === 'Patronat' ? '👑 ' : article.category === 'Konkurs' ? '🏆 ' : article.category === 'Sponsorowane' ? '⭐ ' : ''}{article.category.toUpperCase()}
+              </span>
+            )}
+          </div>
           <div className="article-meta-details">
             <span className="news-meta">
               <Clock size={12} />

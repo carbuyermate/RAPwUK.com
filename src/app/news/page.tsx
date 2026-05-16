@@ -19,7 +19,7 @@ interface NewsItem {
 }
 
 // Fixed ordered filter tabs (new system)
-const FILTER_TAGS = ['VIDEO', 'TRACK', 'EVENT', 'PREMIERA', 'NEWS', 'SPONSOROWANE', 'WYWIAD', 'RELACJA', 'KONKURS', 'PUBLICYSTYKA', 'RECENZJA', 'INNE'];
+const FILTER_TAGS = ['PATRONAT', 'VIDEO', 'TRACK', 'EVENT', 'PREMIERA', 'NEWS', 'SPONSOROWANE', 'WYWIAD', 'RELACJA', 'KONKURS', 'PUBLICYSTYKA', 'RECENZJA', 'INNE'];
 
 function timeAgo(dateStr: string) {
   const diffMs = Date.now() - new Date(dateStr).getTime();
@@ -141,23 +141,16 @@ export default function NewsPage() {
         <>
           <div className="news-page__grid">
             {news.map((item) => {
+              const isPatronat = item.tags?.includes('PATRONAT') || item.category === 'Patronat';
               const isKonkurs = item.tags?.includes('KONKURS') || item.category === 'Konkurs';
               const isSponsorowane = item.tags?.includes('SPONSOROWANE') || item.category === 'Sponsorowane';
-              const premiumClass = isKonkurs
+              const premiumClass = isPatronat
+                ? 'news-page__card--patronat'
+                : isKonkurs
                 ? 'news-page__card--konkurs'
                 : isSponsorowane
                 ? 'news-page__card--sponsorowane'
                 : '';
-              const tagClass = isKonkurs
-                ? 'news-tag--konkurs'
-                : isSponsorowane
-                ? 'news-tag--sponsorowane'
-                : '';
-
-              // Display tag: use first from new tags[], fallback to legacy category
-              const displayTag = (item.tags && item.tags.length > 0)
-                ? item.tags[0].toUpperCase()
-                : item.category?.toUpperCase() || '';
 
               return (
                 <Link
@@ -172,11 +165,26 @@ export default function NewsPage() {
                     </div>
                   )}
                   <div className="news-page__card-body">
-                    {displayTag && (
-                      <span className={`news-tag ${tagClass}`}>
-                        {isKonkurs ? '🏆 ' : isSponsorowane ? '⭐ ' : ''}{displayTag}
-                      </span>
-                    )}
+                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '8px' }}>
+                      {item.tags && item.tags.length > 0 ? (
+                        item.tags.map(t => {
+                          const tag = t.toUpperCase();
+                          const isP = tag === 'PATRONAT';
+                          const isK = tag === 'KONKURS';
+                          const isS = tag === 'SPONSOROWANE';
+                          const tc = isP ? 'news-tag--patronat' : isK ? 'news-tag--konkurs' : isS ? 'news-tag--sponsorowane' : '';
+                          return (
+                            <span key={tag} className={`news-tag ${tc}`}>
+                              {isP ? '👑 ' : isK ? '🏆 ' : isS ? '⭐ ' : ''}{tag}
+                            </span>
+                          );
+                        })
+                      ) : item.category && (
+                        <span className={`news-tag ${isPatronat ? 'news-tag--patronat' : isKonkurs ? 'news-tag--konkurs' : isSponsorowane ? 'news-tag--sponsorowane' : ''}`}>
+                          {isPatronat ? '👑 ' : isKonkurs ? '🏆 ' : isSponsorowane ? '⭐ ' : ''}{item.category.toUpperCase()}
+                        </span>
+                      )}
+                    </div>
                     <h2 className="news-page__card-title">{item.title}</h2>
                     {item.content && (
                       <p className="news-page__card-excerpt">
