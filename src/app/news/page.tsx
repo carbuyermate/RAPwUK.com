@@ -165,7 +165,7 @@ export default function NewsPage() {
                     </div>
                   )}
                   <div className="news-page__card-body">
-                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '8px' }}>
+                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '8px' }}>
                       {item.tags && item.tags.length > 0 ? (
                         [...item.tags].sort((a, b) => {
                           const isPremiumA = ['PATRONAT', 'KONKURS', 'SPONSOROWANE'].includes(a.toUpperCase());
