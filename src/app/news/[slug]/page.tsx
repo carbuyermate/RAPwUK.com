@@ -151,14 +151,16 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
           {article.category && (
             <span className="news-tag news-tag--highlight">{article.category}</span>
           )}
-          <span className="news-meta">
-            <Clock size={12} />
-            {date}
-          </span>
-          <span className="news-meta">
-            <User size={12} />
-            {article.author || 'Redakcja'}
-          </span>
+          <div className="article-meta-details">
+            <span className="news-meta">
+              <Clock size={12} />
+              {date}
+            </span>
+            <span className="news-meta">
+              <User size={12} />
+              {article.author || 'Redakcja'}
+            </span>
+          </div>
         </div>
 
         <h1 className="article-title">{article.title}</h1>
