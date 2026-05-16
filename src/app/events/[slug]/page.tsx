@@ -149,7 +149,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                         <div className="ticket-cta-box">
                             {event.ticket_url ? (
                                 <>
-                                    <h4 className="text-lg font-bold mb-4">Zarezerwuj bilety</h4>
+                                    <h4 className="text-base font-bold mb-3">Zarezerwuj bilety</h4>
                                     <a 
                                         href={event.ticket_url} 
                                         target="_blank" 
@@ -172,7 +172,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                     <div className="event-detail-content">
                         <div>
                             {event.is_premium && (
-                                <div className="event-tag-premium-large mb-4">
+                                <div className="event-tag-premium-large">
                                     PATRONAT!
                                 </div>
                             )}

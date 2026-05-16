@@ -71,6 +71,7 @@
     flex-direction: column;
     gap: 2rem;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    position: relative;
 }
 
 [data-theme='dark'] .event-detail-content {
@@ -87,18 +88,24 @@
 }
 
 .event-tag-premium-large {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: #f59e0b;
-    color: #000;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #fff;
     font-weight: 900;
     text-transform: uppercase;
     font-size: 0.7rem;
     letter-spacing: 1.5px;
-    padding: 6px 16px;
+    padding: 6px 20px;
     border-radius: 99px;
     width: fit-content;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    z-index: 10;
 }
 
 .event-detail-title {
@@ -190,10 +197,10 @@
 /* Ticket Box */
 .ticket-cta-box {
     margin-top: 1.5rem;
-    padding: 2.5rem;
+    padding: 1.5rem;
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    border-radius: 24px;
+    border-radius: 16px;
     text-align: center;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
 }
@@ -205,14 +212,14 @@
 
 .ticket-cta-btn {
     width: 100%;
-    padding: 1.25rem;
-    font-size: 1.2rem;
-    font-weight: 900;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    font-weight: 800;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    border-radius: 14px;
+    gap: 10px;
+    border-radius: 10px;
     background: var(--text-primary);
     color: var(--bg-primary);
     text-decoration: none;
