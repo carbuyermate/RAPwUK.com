@@ -36,6 +36,7 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
     const [title, setTitle] = useState('');
     const [slug, setSlug] = useState('');
     const [content, setContent] = useState('');
+    const [author, setAuthor] = useState('');
 
     // New multi-tag system
     const [tags, setTags] = useState<string[]>([]);
@@ -76,6 +77,7 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
                 setTitle(data.title);
                 setSlug(data.slug || '');
                 setContent(data.content || '');
+                setAuthor(data.author || 'Redakcja');
                 // Load new tags; fall back to old category for legacy news
                 if (data.tags && data.tags.length > 0) {
                     setTags(data.tags);
@@ -201,6 +203,7 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
                 youtube_url: youtubeUrl || null,
                 youtube_url_2: youtubeUrl2 || null,
                 youtube_url_3: youtubeUrl3 || null,
+                author: author || 'Redakcja',
             })
             .eq('id', id);
 
@@ -254,6 +257,20 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             required
+                        />
+                    </div>
+
+                    {/* Autor */}
+                    <div className="form-group">
+                        <label className="form-label flex items-center gap-2">
+                            <Users size={16} /> AUTOR
+                        </label>
+                        <input
+                            type="text"
+                            className="form-input"
+                            placeholder="np. Jan Kowalski"
+                            value={author}
+                            onChange={(e) => setAuthor(e.target.value)}
                         />
                     </div>
 

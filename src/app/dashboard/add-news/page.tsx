@@ -36,6 +36,7 @@ export default function AddNewsPage() {
     const [slug, setSlug] = useState('');
     const [manualSlug, setManualSlug] = useState(false);
     const [content, setContent] = useState('');
+    const [author, setAuthor] = useState('');
 
     // New multi-tag system
     const [tags, setTags] = useState<string[]>([]);
@@ -170,6 +171,7 @@ export default function AddNewsPage() {
                 youtube_url: youtubeUrl || null,
                 youtube_url_2: youtubeUrl2 || null,
                 youtube_url_3: youtubeUrl3 || null,
+                author: author || 'Redakcja',
                 is_auto_generated: false,
             }]);
 
@@ -212,6 +214,20 @@ export default function AddNewsPage() {
                             value={title}
                             onChange={handleTitleChange}
                             required
+                        />
+                    </div>
+
+                    {/* Autor */}
+                    <div className="form-group">
+                        <label className="form-label flex items-center gap-2">
+                            <Users size={16} /> AUTOR
+                        </label>
+                        <input
+                            type="text"
+                            className="form-input"
+                            placeholder="np. Jan Kowalski"
+                            value={author}
+                            onChange={(e) => setAuthor(e.target.value)}
                         />
                     </div>
 

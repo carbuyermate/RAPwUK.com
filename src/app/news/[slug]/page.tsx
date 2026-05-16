@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Clock, ChevronLeft } from "lucide-react";
+import { Clock, ChevronLeft, User } from "lucide-react";
 import { ViewTracker } from "@/components/ViewTracker";
 import "../news.css";
 import "./article.css";
@@ -11,6 +11,7 @@ interface NewsDetail {
   title: string;
   content: string;
   category: string;
+  author?: string;
   image_url?: string;
   youtube_url?: string;
   youtube_url_2?: string;
@@ -153,6 +154,10 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
           <span className="news-meta">
             <Clock size={12} />
             {date}
+          </span>
+          <span className="news-meta">
+            <User size={12} />
+            {article.author || 'Redakcja'}
           </span>
         </div>
 
