@@ -187,6 +187,9 @@ export default async function Home() {
                         className={`event-row${ev.is_premium ? ' event-row--premium' : ''}${i < events.length - 1 ? ' event-row--border' : ''}`}
                         style={{ textDecoration: 'none', color: 'inherit' }}
                       >
+                        {ev.is_premium && (
+                          <div className="event-row-premium-badge">PATRONAT!</div>
+                        )}
                         <div className="event-date-pill">
                           <span className="event-date-pill__day">{d.day}</span>
                           <span className="event-date-pill__month">{d.month}</span>
@@ -202,7 +205,6 @@ export default async function Home() {
                         </div>
                         <div className="event-info">
                           <h3 className="event-info__title">
-                            {ev.is_premium && <span className="premium-dot" title="Premium" />}
                             {ev.title}
                           </h3>
                           <p className="event-info__meta">

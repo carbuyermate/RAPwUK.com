@@ -296,7 +296,7 @@
 .events-list {
   display: flex;
   flex-direction: column;
-  padding: 4px 0;
+  padding: 12px 0;
   overflow: hidden;
   max-height: 840px;
   overflow-y: auto;
@@ -325,6 +325,7 @@
   gap: 12px;
   padding: 14px 18px;
   transition: background 0.18s ease;
+  position: relative;
 }
 
 .event-row:hover {
@@ -435,13 +436,21 @@
   margin-top: 2px;
 }
 
-.premium-dot {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #f59e0b;
-  flex-shrink: 0;
+.event-row-premium-badge {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #fff;
+  font-size: 0.55rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.4);
+  z-index: 5;
 }
 
 /* Ticket button */
