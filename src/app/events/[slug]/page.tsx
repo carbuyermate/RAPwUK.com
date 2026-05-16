@@ -149,7 +149,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                         <div className="ticket-cta-box">
                             {event.ticket_url ? (
                                 <>
-                                    <h4 className="text-base font-bold mb-3">Zarezerwuj bilety</h4>
+                                    <h4 className="text-base font-bold m-0 leading-none">Zarezerwuj bilety</h4>
                                     <a 
                                         href={event.ticket_url} 
                                         target="_blank" 

@@ -197,12 +197,17 @@
 /* Ticket Box */
 .ticket-cta-box {
     margin-top: 1.5rem;
-    padding: 1.5rem;
+    padding: 1.25rem;
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: 16px;
     text-align: center;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
 }
 
 [data-theme='dark'] .ticket-cta-box {
