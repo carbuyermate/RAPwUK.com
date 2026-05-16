@@ -197,7 +197,7 @@
 /* Ticket Box */
 .ticket-cta-box {
     margin-top: 1.5rem;
-    padding: 1.25rem;
+    padding: 0.8rem 1.25rem 1.25rem 1.25rem;
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: 16px;
