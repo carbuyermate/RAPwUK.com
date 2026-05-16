@@ -146,26 +146,19 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                             </div>
                         )}
 
-                        <div className="ticket-cta-box">
-                            {event.ticket_url ? (
-                                <>
-                                    <h4 className="text-base font-bold m-0 leading-none">Zarezerwuj bilety</h4>
-                                    <a 
-                                        href={event.ticket_url} 
-                                        target="_blank" 
-                                        rel="noopener noreferrer"
-                                        className="ticket-cta-btn"
-                                    >
-                                        <Ticket size={24} /> KUP BILETY
-                                    </a>
-                                </>
-                            ) : (
-                                <div className="flex flex-col items-center justify-center p-4 gap-3">
-                                    <Ticket size={32} strokeWidth={1} />
-                                    <p className="text-secondary text-sm text-center uppercase tracking-widest font-bold">Informacje o biletach wkrótce</p>
-                                </div>
-                            )}
-                        </div>
+                        {event.ticket_url && (
+                            <div className="ticket-cta-box">
+                                <h4 className="text-base font-bold m-0 leading-none">Zarezerwuj bilety</h4>
+                                <a 
+                                    href={event.ticket_url} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="ticket-cta-btn"
+                                >
+                                    <Ticket size={24} /> KUP BILETY
+                                </a>
+                            </div>
+                        )}
                     </div>
 
                     {/* Info Side */}
