@@ -151,7 +151,13 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
         <div className="article-meta">
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             {article.tags && article.tags.length > 0 ? (
-              article.tags.map(t => {
+              [...article.tags].sort((a, b) => {
+                const isPremiumA = ['PATRONAT', 'KONKURS', 'SPONSOROWANE'].includes(a.toUpperCase());
+                const isPremiumB = ['PATRONAT', 'KONKURS', 'SPONSOROWANE'].includes(b.toUpperCase());
+                if (isPremiumA && !isPremiumB) return -1;
+                if (!isPremiumA && isPremiumB) return 1;
+                return 0;
+              }).map(t => {
                 const tag = t.toUpperCase();
                 const isP = tag === 'PATRONAT';
                 const isK = tag === 'KONKURS';

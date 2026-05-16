@@ -167,7 +167,13 @@ export default function NewsPage() {
                   <div className="news-page__card-body">
                     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '8px' }}>
                       {item.tags && item.tags.length > 0 ? (
-                        item.tags.map(t => {
+                        [...item.tags].sort((a, b) => {
+                          const isPremiumA = ['PATRONAT', 'KONKURS', 'SPONSOROWANE'].includes(a.toUpperCase());
+                          const isPremiumB = ['PATRONAT', 'KONKURS', 'SPONSOROWANE'].includes(b.toUpperCase());
+                          if (isPremiumA && !isPremiumB) return -1;
+                          if (!isPremiumA && isPremiumB) return 1;
+                          return 0;
+                        }).map(t => {
                           const tag = t.toUpperCase();
                           const isP = tag === 'PATRONAT';
                           const isK = tag === 'KONKURS';
