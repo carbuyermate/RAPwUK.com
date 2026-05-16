@@ -68,7 +68,6 @@
     border: 1px solid rgba(255, 255, 255, 0.05);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
-    overflow: hidden;
     text-decoration: none;
     color: inherit;
 }
@@ -147,16 +146,19 @@
 }
 
 .event-tag-premium {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
     background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
     color: #fff;
     font-size: 0.65rem;
     font-weight: 800;
-    padding: 0.2rem 0.6rem;
+    padding: 0.2rem 0.8rem;
     border-radius: 4px;
     text-transform: uppercase;
-    width: fit-content;
-    margin-bottom: 0.2rem;
     box-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
+    z-index: 10;
 }
 
 [data-theme='dark'] .event-tag-premium {
