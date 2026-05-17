@@ -34,13 +34,13 @@
     }
     
     .rapper-detail-name {
-        order: 1;
+        order: 2;
         font-size: clamp(2rem, 8vw, 2.5rem);
         margin-top: 0.5rem;
     }
     
     .rapper-detail-meta {
-        order: 2;
+        order: 3;
     }
     
     .rapper-section {
@@ -297,9 +297,9 @@
 @media (max-width: 1000px) {
     .rapper-detail-gallery-col {
         position: static;
-        order: 3;
-        margin-top: 1rem;
-        margin-bottom: 2.5rem;
+        order: 1;
+        margin-top: 0;
+        margin-bottom: 1.5rem;
     }
 }
 
