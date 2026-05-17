@@ -246,15 +246,17 @@ export default async function RapperDetailPage({ params }: { params: Promise<{ s
                         )}
 
                         {/* Bio */}
-                        <div className="rapper-section">
-                            <div className="rapper-section-header">
-                                <AlignLeft size={13} />
-                                <span>BIO</span>
+                        {entry.bio && entry.bio.trim() !== '' && (
+                            <div className="rapper-section">
+                                <div className="rapper-section-header">
+                                    <AlignLeft size={13} />
+                                    <span>BIO</span>
+                                </div>
+                                <div className="rapper-detail-bio">
+                                    {entry.bio}
+                                </div>
                             </div>
-                            <div className="rapper-detail-bio">
-                                {entry.bio || "Brak opisu dla tego twórcy."}
-                            </div>
-                        </div>
+                        )}
 
                         {/* Discography */}
                         {entry.discography && entry.discography.length > 0 && (
