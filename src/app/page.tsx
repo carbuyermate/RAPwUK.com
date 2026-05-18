@@ -35,11 +35,11 @@ interface EventItem {
 function formatDate(dateStr: string) {
   const d = new Date(dateStr);
   return {
-    day: d.toLocaleDateString('pl-PL', { day: '2-digit' }),
-    month: d.toLocaleDateString('pl-PL', { month: 'short' }).toUpperCase(),
-    weekday: d.toLocaleDateString('pl-PL', { weekday: 'short' }),
-    full: d.toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' }),
-    time: d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' }),
+    day: d.toLocaleDateString('pl-PL', { timeZone: 'UTC', day: '2-digit' }),
+    month: d.toLocaleDateString('pl-PL', { timeZone: 'UTC', month: 'short' }).toUpperCase(),
+    weekday: d.toLocaleDateString('pl-PL', { timeZone: 'UTC', weekday: 'short' }),
+    full: d.toLocaleDateString('pl-PL', { timeZone: 'UTC', day: 'numeric', month: 'long', year: 'numeric' }),
+    time: d.toLocaleTimeString('pl-PL', { timeZone: 'UTC', hour: '2-digit', minute: '2-digit' }),
   };
 }
 

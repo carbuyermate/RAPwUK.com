@@ -54,7 +54,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!event) return {};
 
   const date = new Date(event.event_date).toLocaleDateString('pl-PL', {
-    day: 'numeric', month: 'long', year: 'numeric',
+    timeZone: 'UTC', day: 'numeric', month: 'long', year: 'numeric',
   });
   const description = event.description
     ? event.description.replace(/\s+/g, ' ').trim().slice(0, 160)
@@ -91,9 +91,9 @@ function formatDate(dateStr: string) {
     const d = new Date(dateStr);
     const isUnknownTime = dateStr.includes('T00:00:00+00:00') || dateStr.endsWith('T00:00:00Z') || dateStr.includes('T00:00:00.000Z');
     return {
-        full: d.toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' }),
-        weekday: d.toLocaleDateString('pl-PL', { weekday: 'long' }),
-        time: isUnknownTime ? 'Godzina nieznana' : d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' }),
+        full: d.toLocaleDateString('pl-PL', { timeZone: 'UTC', day: 'numeric', month: 'long', year: 'numeric' }),
+        weekday: d.toLocaleDateString('pl-PL', { timeZone: 'UTC', weekday: 'long' }),
+        time: isUnknownTime ? 'Godzina nieznana' : d.toLocaleTimeString('pl-PL', { timeZone: 'UTC', hour: '2-digit', minute: '2-digit' }),
     };
 }
 

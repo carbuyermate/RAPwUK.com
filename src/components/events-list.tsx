@@ -81,9 +81,9 @@ export default function EventsList({ initialEvents }: EventsListProps) {
 
     const formatDate = (dateStr: string) => {
         const date = new Date(dateStr);
-        const day = date.getDate();
-        const month = date.toLocaleDateString('pl-PL', { month: 'short' });
-        const year = date.getFullYear();
+        const day = date.toLocaleDateString('pl-PL', { timeZone: 'UTC', day: 'numeric' });
+        const month = date.toLocaleDateString('pl-PL', { timeZone: 'UTC', month: 'short' });
+        const year = date.toLocaleDateString('pl-PL', { timeZone: 'UTC', year: 'numeric' });
         return { day, month, year };
     };
 

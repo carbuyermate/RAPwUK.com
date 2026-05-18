@@ -51,11 +51,8 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
                 setDescription(data.description || '');
                 if (data.event_date) {
                     const evtDate = new Date(data.event_date);
-                    // Handle offset to get correct local date/time
-                    const offset = evtDate.getTimezoneOffset();
-                    const localDate = new Date(evtDate.getTime() - (offset * 60 * 1000));
-                    setDate(localDate.toISOString().split('T')[0]);
-                    const fetchedTime = localDate.toISOString().substring(11, 16);
+                    setDate(evtDate.toISOString().split('T')[0]);
+                    const fetchedTime = evtDate.toISOString().substring(11, 16);
                     setTime(fetchedTime === '00:00' ? '' : fetchedTime);
                 }
                 setVenue(data.venue);
