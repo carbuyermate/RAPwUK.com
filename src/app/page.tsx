@@ -209,7 +209,7 @@ export default async function Home() {
                           </h3>
                           <p className="event-info__meta">
                             <MapPin size={11} />
-                            {ev.city}{ev.venue ? `, ${ev.venue}` : ''}
+                            {ev.venue}
                           </p>
                         </div>
                         <div className="text-secondary opacity-30">

@@ -167,7 +167,7 @@ export default function EventsList({ initialEvents }: EventsListProps) {
                                         </p>
                                         <div className="flex items-center gap-4 mt-2 text-sm text-secondary">
                                             <span className="flex items-center gap-1" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                                <MapPin size={14} /> {event.venue}, {event.city}
+                                                <MapPin size={14} /> {event.venue}
                                             </span>
                                         </div>
                                     </div>
