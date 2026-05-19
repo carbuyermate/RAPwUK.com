@@ -53,7 +53,7 @@ export default async function ShopPage() {
     const products = (newProducts || []) as Product[];
 
     return (
-        <div className="container shop-page main-content animate-fade-in">
+        <div className="container shop-page animate-fade-in">
 
             {/* Standard page header — identical to Newsy, Eventy, Scena */}
             <header className="page-header animate-fade-in">
