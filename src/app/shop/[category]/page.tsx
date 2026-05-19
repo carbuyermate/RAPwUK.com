@@ -4,6 +4,7 @@ import { ProductCard } from '@/components/shop/ProductCard';
 import Link from 'next/link';
 import { ChevronLeft, Music, Ticket, Shirt } from 'lucide-react';
 import type { Product } from '@/app/shop/page';
+import '../shop.css';
 
 export const dynamic = 'force-dynamic';
 

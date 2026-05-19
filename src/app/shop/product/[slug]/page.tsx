@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { AddToCartButton } from '@/components/shop/AddToCartButton';
 import type { Product } from '@/app/shop/page';
+import '../../shop.css';
 
 export const dynamic = 'force-dynamic';
 

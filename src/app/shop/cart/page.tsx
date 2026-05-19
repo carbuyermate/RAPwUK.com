@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ChevronLeft, Trash2, ShoppingCart } from 'lucide-react';
 import { useCartStore } from '@/lib/store/useCartStore';
 import { useState } from 'react';
+import '../shop.css';
 
 export default function CartPage() {
     const { items, removeItem, updateQuantity, getTotal, clearCart } = useCartStore();
