@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft, Tag, FileText, Upload, X } from 'lucide-react';
 import { createSlug } from '@/lib/utils';
-import '../../dashboard.css';
+import '../dashboard.css';
 
 async function compressImage(file: File, maxPx = 1200, quality = 0.82): Promise<File> {
     return new Promise((resolve) => {

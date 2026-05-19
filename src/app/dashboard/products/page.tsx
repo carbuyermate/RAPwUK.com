@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { ChevronLeft, Plus, Trash2, Edit, Package } from 'lucide-react';
-import '../../dashboard.css';
+import '../dashboard.css';
 
 interface Product {
     id: string;
