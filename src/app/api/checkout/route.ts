@@ -1,0 +1,45 @@
+import { NextRequest, NextResponse } from 'next/server';
+import Stripe from 'stripe';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    apiVersion: '2025-04-30.basil',
+});
+
+export async function POST(req: NextRequest) {
+    try {
+        const { items } = await req.json();
+
+        if (!items || items.length === 0) {
+            return NextResponse.json({ error: 'Koszyk jest pusty' }, { status: 400 });
+        }
+
+        const line_items = items.map((item: { title: string; price: number; quantity: number; image_url?: string }) => ({
+            price_data: {
+                currency: 'gbp',
+                product_data: {
+                    name: item.title,
+                    ...(item.image_url ? { images: [item.image_url] } : {}),
+                },
+                unit_amount: Math.round(item.price * 100), // Stripe uses pence (cents)
+            },
+            quantity: item.quantity,
+        }));
+
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items,
+            mode: 'payment',
+            success_url: `${process.env.NEXT_PUBLIC_APP_URL}/shop/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/shop/cart`,
+            billing_address_collection: 'required',
+            shipping_address_collection: {
+                allowed_countries: ['GB', 'PL', 'DE', 'FR', 'NL', 'IE'],
+            },
+        });
+
+        return NextResponse.json({ url: session.url });
+    } catch (err: any) {
+        console.error('[Checkout API Error]', err);
+        return NextResponse.json({ error: err.message }, { status: 500 });
+    }
+}

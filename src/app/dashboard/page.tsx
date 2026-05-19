@@ -1,7 +1,7 @@
 'use client';
 
 import { supabase } from '@/lib/supabase';
-import { Newspaper, Users, CalendarDays, MonitorPlay, BarChart2 } from 'lucide-react';
+import { Newspaper, Users, CalendarDays, MonitorPlay, BarChart2, ShoppingBag, ClipboardList } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -212,6 +212,40 @@ export default function DashboardPage() {
                     <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between' }}>
                         <span className="text-secondary">Analityka ruchu</span>
                         <span style={{ color: '#60a5fa', fontWeight: 700 }}>→</span>
+                    </div>
+                </Link>
+
+                {/* Shop / Products Module */}
+                <Link href="/dashboard/products" className="stat-card glass-panel" style={{ cursor: 'pointer', textDecoration: 'none', transition: 'all 0.2s', display: 'flex', flexDirection: 'column', gap: '1rem', borderColor: 'rgba(16,185,129,0.15)', background: 'rgba(16,185,129,0.02)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <div style={{ padding: '12px', background: 'rgba(16,185,129,0.08)', borderRadius: '12px' }}>
+                            <ShoppingBag size={28} style={{ color: '#10b981' }} />
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-lg mb-1">Sklep — Produkty</h3>
+                            <p className="text-secondary text-sm">Zarządzaj asortymentem sklepu</p>
+                        </div>
+                    </div>
+                    <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between' }}>
+                        <span className="text-secondary">Muzyka, Bilety, Ubrania</span>
+                        <span style={{ color: '#10b981', fontWeight: 700 }}>→</span>
+                    </div>
+                </Link>
+
+                {/* Orders Module */}
+                <Link href="/dashboard/orders" className="stat-card glass-panel" style={{ cursor: 'pointer', textDecoration: 'none', transition: 'all 0.2s', display: 'flex', flexDirection: 'column', gap: '1rem', borderColor: 'rgba(16,185,129,0.1)', background: 'rgba(16,185,129,0.01)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <div style={{ padding: '12px', background: 'rgba(16,185,129,0.06)', borderRadius: '12px' }}>
+                            <ClipboardList size={28} style={{ color: '#10b981' }} />
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-lg mb-1">Sklep — Zamówienia</h3>
+                            <p className="text-secondary text-sm">Przeglądaj i aktualizuj statusy zamówień</p>
+                        </div>
+                    </div>
+                    <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between' }}>
+                        <span className="text-secondary">Płatności Stripe</span>
+                        <span style={{ color: '#10b981', fontWeight: 700 }}>→</span>
                     </div>
                 </Link>
 

@@ -128,3 +128,54 @@ CREATE POLICY "Allow authenticated full access" ON public.ads
     USING (true)
     WITH CHECK (true);
 
+-- 6. Sklep: Produkty
+CREATE TABLE IF NOT EXISTS public.products (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    slug TEXT NOT NULL UNIQUE,
+    title TEXT NOT NULL,
+    description TEXT,
+    price NUMERIC(10, 2) NOT NULL,
+    category TEXT NOT NULL CHECK (category IN ('muzyka', 'bilety', 'ubrania')),
+    image_url TEXT,
+    stripe_price_id TEXT,
+    stock INTEGER DEFAULT 0,
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+CREATE TRIGGER update_products_updated_at BEFORE UPDATE ON public.products FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
+
+CREATE POLICY "Allow public read access" ON public.products
+    FOR SELECT USING (is_active = true);
+
+CREATE POLICY "Allow authenticated full access" ON public.products
+    TO authenticated
+    USING (true)
+    WITH CHECK (true);
+
+-- 7. Sklep: Zamówienia (Orders)
+CREATE TABLE IF NOT EXISTS public.orders (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    customer_email TEXT NOT NULL,
+    total_amount NUMERIC(10, 2) NOT NULL,
+    status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'paid', 'shipped', 'cancelled')),
+    stripe_session_id TEXT UNIQUE,
+    items JSONB NOT NULL DEFAULT '[]'::jsonb, -- Tablica zakupionych produktów ze szczegółami
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
+CREATE TRIGGER update_orders_updated_at BEFORE UPDATE ON public.orders FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
+
+CREATE POLICY "Allow public insert" ON public.orders
+    FOR INSERT TO public
+    WITH CHECK (true);
+
+CREATE POLICY "Allow authenticated full access" ON public.orders
+    TO authenticated
+    USING (true)
+    WITH CHECK (true);
+
