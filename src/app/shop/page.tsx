@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
-import { ArrowRight, Music, Ticket, Shirt } from 'lucide-react';
+import { ArrowRight, Music, Ticket, Shirt, ShoppingBag } from 'lucide-react';
 import { ProductCard } from '@/components/shop/ProductCard';
 import './shop.css';
 
@@ -55,16 +55,13 @@ export default async function ShopPage() {
     return (
         <div className="container shop-page main-content animate-fade-in">
 
-            {/* Hero */}
-            <div className="shop-hero">
-                <p className="shop-hero-eyebrow">Oficjalny sklep</p>
-                <h1 className="shop-hero-title">
-                    RAPwUK <span>Shop</span>
+            {/* Standard page header — identical to Newsy, Eventy, Scena */}
+            <header className="page-header animate-fade-in">
+                <h1 className="page-header-title">
+                    <ShoppingBag size={32} /> Sklep
                 </h1>
-                <p className="shop-hero-subtitle">
-                    Muzyka, bilety i ubrania z polskiej sceny hip-hop w UK
-                </p>
-            </div>
+                <p className="page-header-subtitle">Muzyka, bilety i ubrania z polskiej sceny hip-hop w UK</p>
+            </header>
 
             {/* Categories */}
             <div className="shop-categories">
