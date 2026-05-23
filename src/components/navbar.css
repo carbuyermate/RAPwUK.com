@@ -53,8 +53,37 @@
     font-size: 0.85rem;
     letter-spacing: 0.05em;
     font-weight: 600;
-    transition: color 0.2s ease;
+    color: var(--text-secondary);
+    position: relative;
+    padding: 6px 0;
+    transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease;
+    display: inline-block;
 }
+
+.navbar-links a:hover,
+.navbar-links a.active {
+    color: var(--text-primary);
+    transform: translateY(-1px);
+}
+
+.navbar-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background-color: var(--text-primary);
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 2px;
+}
+
+.navbar-links a:hover::after,
+.navbar-links a.active::after {
+    width: 100%;
+    left: 0;
+}
+
 
 
 .navbar-actions {
