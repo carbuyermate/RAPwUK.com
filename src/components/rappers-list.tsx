@@ -119,7 +119,7 @@ export default function RappersList({ initialRappers }: { initialRappers: Rapper
                         borderRadius: '12px'
                     }}>
                         {premiumRappers.map(rapper => (
-                            <Link key={rapper.id} href={`/rappers/${rapper.slug || rapper.id}`} className="directory-item-row" style={{ borderBottomColor: 'rgba(56, 189, 248, 0.1)' }}>
+                            <Link key={rapper.id} href={`/rappers/${rapper.slug || rapper.id}`} className="directory-item-row directory-item-row--premium" style={{ borderBottomColor: 'rgba(56, 189, 248, 0.1)' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
                                     <span className="directory-item-name font-bold text-white" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>{rapper.name}</span>
                                 </div>

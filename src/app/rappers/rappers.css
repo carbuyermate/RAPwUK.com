@@ -131,6 +131,9 @@
 .directory-item-row:hover {
     background: var(--bg-secondary);
 }
+.directory-item-row--premium:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
 .directory-item-name {
     font-size: 1.15rem;
     font-weight: 700;
