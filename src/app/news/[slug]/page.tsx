@@ -17,6 +17,9 @@ interface NewsDetail {
   youtube_url?: string;
   youtube_url_2?: string;
   youtube_url_3?: string;
+  spotify_url?: string;
+  soundcloud_url?: string;
+  instagram_url?: string;
   created_at: string;
 }
 
@@ -211,6 +214,48 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
             </div>
           )
         ))}
+
+        {article.spotify_url && getSpotifyEmbedUrl(article.spotify_url) && (
+          <div className="mt-8 rounded-xl overflow-hidden border border-white/10 shadow-2xl">
+              <iframe
+                  style={{ borderRadius: '12px', display: 'block' }}
+                  src={getSpotifyEmbedUrl(article.spotify_url)!}
+                  width="100%"
+                  height="152"
+                  frameBorder="0"
+                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                  loading="lazy"
+              ></iframe>
+          </div>
+        )}
+
+        {article.soundcloud_url && getSoundCloudEmbedUrl(article.soundcloud_url) && (
+          <div className="mt-8 rounded-xl overflow-hidden border border-white/10 shadow-2xl">
+              <iframe 
+                  width="100%" 
+                  height="166" 
+                  scrolling="no" 
+                  frameBorder="no" 
+                  allow="autoplay" 
+                  src={getSoundCloudEmbedUrl(article.soundcloud_url)!}
+                  style={{ display: 'block' }}
+              ></iframe>
+          </div>
+        )}
+
+        {article.instagram_url && getInstagramEmbedUrl(article.instagram_url) && (
+          <div className="mt-8 rounded-xl overflow-hidden border border-white/10 shadow-2xl" style={{ maxWidth: '540px', margin: '2rem auto' }}>
+              <iframe 
+                  src={getInstagramEmbedUrl(article.instagram_url)!} 
+                  width="100%" 
+                  height="480" 
+                  frameBorder="0" 
+                  scrolling="no" 
+                  allowTransparency 
+                  style={{ display: 'block', background: 'var(--bg-primary)' }}
+              ></iframe>
+          </div>
+        )}
       </article>
 
       {/* Czytaj też: 5 najnowszych newsów (tylko tytuły) */}
@@ -256,4 +301,24 @@ function getYouTubeEmbedUrl(url: string) {
     return (match && match[2].length === 11)
       ? `https://www.youtube.com/embed/${match[2]}`
       : url;
+}
+
+function getSpotifyEmbedUrl(url: string) {
+    if (!url) return null;
+    const match = url.match(/(track|album|playlist|artist)\/([a-zA-Z0-9]+)/);
+    if (match) {
+        return `https://open.spotify.com/embed/${match[1]}/${match[2]}?utm_source=generator&theme=0`;
+    }
+    return null;
+}
+
+function getSoundCloudEmbedUrl(url: string) {
+    if (!url) return null;
+    return `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true`;
+}
+
+function getInstagramEmbedUrl(url: string) {
+    if (!url) return null;
+    const cleanUrl = url.split('?')[0].replace(/\/$/, '');
+    return `${cleanUrl}/embed/`;
 }

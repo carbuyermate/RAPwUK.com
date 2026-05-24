@@ -25,10 +25,9 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
     const savedRangeRef = useRef<Range | null>(null);
 
     // Modal state
-    const [activeModal, setActiveModal] = useState<'image' | 'media' | null>(null);
+    const [activeModal, setActiveModal] = useState<'image' | null>(null);
     const [uploading, setUploading] = useState(false);
     const [imageUrl, setImageUrl] = useState('');
-    const [embedUrl, setEmbedUrl] = useState('');
 
     // Initialize editor content only once on mount, or when value changes externally
     // (not from user typing, to avoid cursor jump)
@@ -92,54 +91,6 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
         document.execCommand('formatBlock', false, `h${level}`);
         editorRef.current?.focus();
         handleInput();
-    };
-
-    // Embed handler
-    const handleInsertEmbed = () => {
-        if (!embedUrl || embedUrl.trim() === '') {
-            setActiveModal(null);
-            return;
-        }
-
-        const url = embedUrl.trim();
-        setEmbedUrl('');
-        setActiveModal(null);
-
-        // Check if raw iframe paste
-        if (url.startsWith('<iframe')) {
-            insertHTML(url);
-            return;
-        }
-
-        // Spotify
-        if (url.includes('spotify.com')) {
-            const match = url.match(/(track|album|playlist|artist)\/([a-zA-Z0-9]+)/);
-            if (match) {
-                const type = match[1];
-                const id = match[2];
-                const embedHtml = `<iframe src="https://open.spotify.com/embed/${type}/${id}?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" style="border-radius:12px; margin: 1.5rem 0; display: block;"></iframe><p></p>`;
-                insertHTML(embedHtml);
-                return;
-            }
-        }
-
-        // SoundCloud
-        if (url.includes('soundcloud.com')) {
-            const embedHtml = `<iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true" style="border-radius: 8px; margin: 1.5rem 0; display: block;"></iframe><p></p>`;
-            insertHTML(embedHtml);
-            return;
-        }
-
-        // Instagram
-        if (url.includes('instagram.com')) {
-            const cleanUrl = url.split('?')[0].replace(/\/$/, '');
-            const embedHtml = `<iframe src="${cleanUrl}/embed/" width="100%" height="480" frameborder="0" scrolling="no" allowtransparency="true" style="border: 1px solid var(--border-color); border-radius: 12px; margin: 1.5rem 0; max-width: 540px; display: block; background: var(--bg-primary);"></iframe><p></p>`;
-            insertHTML(embedHtml);
-            return;
-        }
-
-        // Fallback: alert
-        alert('Nierozpoznany link. Wklej poprawny link do Spotify, SoundCloud lub Instagram.');
     };
 
     // Image URL handler
@@ -250,9 +201,6 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
                 <button type="button" title="Wstaw zdjęcie (z komputera lub link)"
                     onMouseDown={(e) => { e.preventDefault(); saveSelection(); setActiveModal('image'); }}
                     className="editor-toolbar-btn">📷 Zdjęcie</button>
-                <button type="button" title="Wstaw Spotify, SoundCloud lub Instagram"
-                    onMouseDown={(e) => { e.preventDefault(); saveSelection(); setActiveModal('media'); }}
-                    className="editor-toolbar-btn">🎬 Media</button>
             </div>
 
             {/* Editable area — NO dangerouslySetInnerHTML to prevent cursor reset */}
@@ -302,23 +250,6 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
                     <div className="editor-modal-actions">
                         <button type="button" onClick={handleInsertImageUrl}>Wstaw</button>
                         <button type="button" onClick={() => { setActiveModal(null); setImageUrl(''); }}>Anuluj</button>
-                    </div>
-                </div>
-            )}
-
-            {activeModal === 'media' && (
-                <div className="editor-modal">
-                    <h3>Wstaw odtwarzacz / wideo</h3>
-                    <p>Wklej link ze Spotify, SoundCloud lub Instagram:</p>
-                    <input 
-                        type="text" 
-                        placeholder="np. https://open.spotify.com/track/..." 
-                        value={embedUrl}
-                        onChange={(e) => setEmbedUrl(e.target.value)}
-                    />
-                    <div className="editor-modal-actions">
-                        <button type="button" onClick={handleInsertEmbed}>Wstaw</button>
-                        <button type="button" onClick={() => { setActiveModal(null); setEmbedUrl(''); }}>Anuluj</button>
                     </div>
                 </div>
             )}

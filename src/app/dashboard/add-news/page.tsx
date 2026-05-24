@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { Tag, FileText, Image as ImageIcon, ChevronLeft, Upload, X, Youtube, Search, Users } from 'lucide-react';
+import { Tag, FileText, Image as ImageIcon, ChevronLeft, Upload, X, Youtube, Search, Users, Music, Instagram } from 'lucide-react';
 import Link from 'next/link';
 import { RichTextEditor } from '@/components/RichTextEditor';
 import { ImageCropper } from '@/components/ImageCropper';
@@ -50,6 +50,9 @@ export default function AddNewsPage() {
     const [youtubeUrl, setYoutubeUrl] = useState('');
     const [youtubeUrl2, setYoutubeUrl2] = useState('');
     const [youtubeUrl3, setYoutubeUrl3] = useState('');
+    const [spotifyUrl, setSpotifyUrl] = useState('');
+    const [soundcloudUrl, setSoundcloudUrl] = useState('');
+    const [instagramUrl, setInstagramUrl] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [showCropper, setShowCropper] = useState(false);
@@ -172,6 +175,9 @@ export default function AddNewsPage() {
                 youtube_url: youtubeUrl || null,
                 youtube_url_2: youtubeUrl2 || null,
                 youtube_url_3: youtubeUrl3 || null,
+                spotify_url: spotifyUrl || null,
+                soundcloud_url: soundcloudUrl || null,
+                instagram_url: instagramUrl || null,
                 author: author || 'Redakcja',
                 is_auto_generated: false,
             }]);
@@ -382,6 +388,30 @@ export default function AddNewsPage() {
                             <Youtube size={16} /> LINK DO YOUTUBE 3 (OPCJONALNIE)
                         </label>
                         <input type="url" className="form-input" placeholder="https://www.youtube.com/watch?v=..." value={youtubeUrl3} onChange={(e) => setYoutubeUrl3(e.target.value)} />
+                    </div>
+
+                    {/* Spotify URL */}
+                    <div className="form-group">
+                        <label className="form-label flex items-center gap-2">
+                            <Music size={16} /> LINK DO SPOTIFY (OPCJONALNIE)
+                        </label>
+                        <input type="url" className="form-input" placeholder="https://open.spotify.com/track/..." value={spotifyUrl} onChange={(e) => setSpotifyUrl(e.target.value)} />
+                    </div>
+
+                    {/* SoundCloud URL */}
+                    <div className="form-group">
+                        <label className="form-label flex items-center gap-2">
+                            <Music size={16} /> LINK DO SOUNDCLOUD (OPCJONALNIE)
+                        </label>
+                        <input type="url" className="form-input" placeholder="https://soundcloud.com/..." value={soundcloudUrl} onChange={(e) => setSoundcloudUrl(e.target.value)} />
+                    </div>
+
+                    {/* Instagram URL */}
+                    <div className="form-group">
+                        <label className="form-label flex items-center gap-2">
+                            <Instagram size={16} /> LINK DO INSTAGRAMA (OPCJONALNIE)
+                        </label>
+                        <input type="url" className="form-input" placeholder="https://www.instagram.com/p/..." value={instagramUrl} onChange={(e) => setInstagramUrl(e.target.value)} />
                     </div>
 
                     {/* Zdjęcie */}
