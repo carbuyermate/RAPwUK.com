@@ -85,6 +85,22 @@
   margin-bottom: 0;
 }
 
+.article-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5rem auto;
+  display: block;
+}
+
+.article-body iframe {
+  width: 100%;
+  max-width: 100%;
+  border-radius: 12px;
+  margin: 1.5rem auto;
+  display: block;
+}
+
 .news-meta {
   font-size: 0.78rem;
   color: var(--text-secondary);

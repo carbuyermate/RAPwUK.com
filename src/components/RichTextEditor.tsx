@@ -1,6 +1,5 @@
-'use client';
-
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
 
 interface RichTextEditorProps {
     value: string;
@@ -22,6 +21,14 @@ const dividerStyle: React.CSSProperties = {
 
 export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {
     const editorRef = useRef<HTMLDivElement>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const savedRangeRef = useRef<Range | null>(null);
+
+    // Modal state
+    const [activeModal, setActiveModal] = useState<'image' | 'media' | null>(null);
+    const [uploading, setUploading] = useState(false);
+    const [imageUrl, setImageUrl] = useState('');
+    const [embedUrl, setEmbedUrl] = useState('');
 
     // Initialize editor content only once on mount, or when value changes externally
     // (not from user typing, to avoid cursor jump)
@@ -35,26 +42,42 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
         }
     }, [value]);
 
+    const saveSelection = () => {
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0) {
+            savedRangeRef.current = selection.getRangeAt(0);
+        }
+    };
+
+    const restoreSelection = () => {
+        const range = savedRangeRef.current;
+        if (range) {
+            const selection = window.getSelection();
+            if (selection) {
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
+        }
+    };
+
     const execCmd = (command: string) => {
         document.execCommand(command, false, undefined);
         editorRef.current?.focus();
         handleInput();
     };
 
-    const insertLink = () => {
-        // Zapiszmy zaznaczenie zanim wyskoczy alert (czasami przeglądarki gubią focus przy prompt)
-        const selection = window.getSelection();
-        let range: Range | null = null;
-        if (selection && selection.rangeCount > 0) {
-            range = selection.getRangeAt(0);
-        }
+    const insertHTML = (html: string) => {
+        editorRef.current?.focus();
+        restoreSelection();
+        document.execCommand('insertHTML', false, html);
+        handleInput();
+    };
 
+    const insertLink = () => {
+        saveSelection();
         const url = prompt('Podaj pełny URL linku (np. https://...):');
         if (url && url.trim() !== '') {
-            if (range) {
-                selection?.removeAllRanges();
-                selection?.addRange(range);
-            }
+            restoreSelection();
             
             // Format URL (jeśli nie ma http/https to dodaj)
             const finalUrl = /^https?:\/\//i.test(url) ? url : `https://${url}`;
@@ -71,6 +94,104 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
         handleInput();
     };
 
+    // Embed handler
+    const handleInsertEmbed = () => {
+        if (!embedUrl || embedUrl.trim() === '') {
+            setActiveModal(null);
+            return;
+        }
+
+        const url = embedUrl.trim();
+        setEmbedUrl('');
+        setActiveModal(null);
+
+        // Check if raw iframe paste
+        if (url.startsWith('<iframe')) {
+            insertHTML(url);
+            return;
+        }
+
+        // Spotify
+        if (url.includes('spotify.com')) {
+            const match = url.match(/(track|album|playlist|artist)\/([a-zA-Z0-9]+)/);
+            if (match) {
+                const type = match[1];
+                const id = match[2];
+                const embedHtml = `<iframe src="https://open.spotify.com/embed/${type}/${id}?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" style="border-radius:12px; margin: 1.5rem 0; display: block;"></iframe><p></p>`;
+                insertHTML(embedHtml);
+                return;
+            }
+        }
+
+        // SoundCloud
+        if (url.includes('soundcloud.com')) {
+            const embedHtml = `<iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true" style="border-radius: 8px; margin: 1.5rem 0; display: block;"></iframe><p></p>`;
+            insertHTML(embedHtml);
+            return;
+        }
+
+        // Instagram
+        if (url.includes('instagram.com')) {
+            const cleanUrl = url.split('?')[0].replace(/\/$/, '');
+            const embedHtml = `<iframe src="${cleanUrl}/embed/" width="100%" height="480" frameborder="0" scrolling="no" allowtransparency="true" style="border: 1px solid var(--border-color); border-radius: 12px; margin: 1.5rem 0; max-width: 540px; display: block; background: var(--bg-primary);"></iframe><p></p>`;
+            insertHTML(embedHtml);
+            return;
+        }
+
+        // Fallback: alert
+        alert('Nierozpoznany link. Wklej poprawny link do Spotify, SoundCloud lub Instagram.');
+    };
+
+    // Image URL handler
+    const handleInsertImageUrl = () => {
+        if (!imageUrl || imageUrl.trim() === '') {
+            setActiveModal(null);
+            return;
+        }
+
+        const url = imageUrl.trim();
+        setImageUrl('');
+        setActiveModal(null);
+
+        const imgHtml = `<img src="${url}" alt="Zdjęcie w newsie" style="max-width: 100%; border-radius: 8px; margin: 1.5rem 0; display: block;" /><p></p>`;
+        insertHTML(imgHtml);
+    };
+
+    // Image upload handler
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Plik jest za duży (maksymalnie 5MB).');
+            return;
+        }
+
+        setUploading(true);
+        setActiveModal(null);
+
+        try {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `news-inline/${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from('uploads')
+                .upload(fileName, file, { upsert: false });
+
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabase.storage.from('uploads').getPublicUrl(fileName);
+
+            const imgHtml = `<img src="${publicUrl}" alt="Zdjęcie w newsie" style="max-width: 100%; border-radius: 8px; margin: 1.5rem 0; display: block;" /><p></p>`;
+            insertHTML(imgHtml);
+        } catch (err: any) {
+            console.error(err);
+            alert(`Błąd wczytywania zdjęcia: ${err.message || 'Nieznany błąd'}`);
+        } finally {
+            setUploading(false);
+        }
+    };
+
     const handleInput = () => {
         if (editorRef.current) {
             onChange(editorRef.current.innerHTML);
@@ -79,6 +200,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
 
     return (
         <div style={{
+            position: 'relative',
             background: 'var(--bg-primary)',
             border: '1px solid var(--border-color)',
             borderRadius: '8px',
@@ -124,6 +246,13 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
                     onMouseDown={(e) => { e.preventDefault(); execCmd('unlink'); }}
                     className="editor-toolbar-btn"
                     style={{ opacity: 0.8, fontSize: '0.75rem' }}>🔗✖ Usuń</button>
+                <div style={dividerStyle} />
+                <button type="button" title="Wstaw zdjęcie (z komputera lub link)"
+                    onMouseDown={(e) => { e.preventDefault(); saveSelection(); setActiveModal('image'); }}
+                    className="editor-toolbar-btn">📷 Zdjęcie</button>
+                <button type="button" title="Wstaw Spotify, SoundCloud lub Instagram"
+                    onMouseDown={(e) => { e.preventDefault(); saveSelection(); setActiveModal('media'); }}
+                    className="editor-toolbar-btn">🎬 Media</button>
             </div>
 
             {/* Editable area — NO dangerouslySetInnerHTML to prevent cursor reset */}
@@ -143,6 +272,63 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
                     fontFamily: 'inherit',
                 }}
             />
+
+            {/* Hidden inputs & modals */}
+            <input 
+                type="file" 
+                ref={fileInputRef} 
+                accept="image/*" 
+                onChange={handleImageUpload} 
+                style={{ display: 'none' }} 
+            />
+
+            {activeModal === 'image' && (
+                <div className="editor-modal">
+                    <h3>Wstaw zdjęcie</h3>
+                    <button 
+                        type="button" 
+                        onClick={() => { fileInputRef.current?.click(); }}
+                        className="editor-upload-btn"
+                    >
+                        📁 Wybierz plik z komputera
+                    </button>
+                    <div style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.8rem', margin: '4px 0' }}>lub wklej link do zdjęcia:</div>
+                    <input 
+                        type="text" 
+                        placeholder="https://domena.pl/zdjecie.jpg" 
+                        value={imageUrl}
+                        onChange={(e) => setImageUrl(e.target.value)}
+                    />
+                    <div className="editor-modal-actions">
+                        <button type="button" onClick={handleInsertImageUrl}>Wstaw</button>
+                        <button type="button" onClick={() => { setActiveModal(null); setImageUrl(''); }}>Anuluj</button>
+                    </div>
+                </div>
+            )}
+
+            {activeModal === 'media' && (
+                <div className="editor-modal">
+                    <h3>Wstaw odtwarzacz / wideo</h3>
+                    <p>Wklej link ze Spotify, SoundCloud lub Instagram:</p>
+                    <input 
+                        type="text" 
+                        placeholder="np. https://open.spotify.com/track/..." 
+                        value={embedUrl}
+                        onChange={(e) => setEmbedUrl(e.target.value)}
+                    />
+                    <div className="editor-modal-actions">
+                        <button type="button" onClick={handleInsertEmbed}>Wstaw</button>
+                        <button type="button" onClick={() => { setActiveModal(null); setEmbedUrl(''); }}>Anuluj</button>
+                    </div>
+                </div>
+            )}
+
+            {uploading && (
+                <div className="editor-modal" style={{ textAlign: 'center' }}>
+                    <h3>Wgrywanie zdjęcia...</h3>
+                    <div className="editor-loader" />
+                </div>
+            )}
 
             <style dangerouslySetInnerHTML={{ __html: `
                 .editor-toolbar-btn {
@@ -172,6 +358,101 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
                 [contenteditable] h3 { font-size: 1.1rem; font-weight: 700; margin: 0.8rem 0 0.4rem; }
                 [contenteditable] ul { padding-left: 1.5rem; margin: 0.5rem 0; }
                 [contenteditable] li { margin: 0.2rem 0; }
+                [contenteditable] img {
+                    max-width: 100%;
+                    border-radius: 8px;
+                    margin: 1.5rem 0;
+                    display: block;
+                }
+                .editor-modal {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: var(--bg-secondary);
+                    border: 1px solid var(--border-color);
+                    border-radius: 12px;
+                    padding: 1.5rem;
+                    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+                    z-index: 100;
+                    width: 90%;
+                    max-width: 400px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+                }
+                .editor-modal h3 {
+                    margin: 0;
+                    font-size: 1.1rem;
+                    color: var(--text-primary);
+                }
+                .editor-modal p {
+                    margin: 0;
+                    font-size: 0.9rem;
+                    color: var(--text-secondary);
+                }
+                .editor-modal input[type="text"] {
+                    width: 100%;
+                    padding: 8px 12px;
+                    background: var(--bg-primary);
+                    border: 1px solid var(--border-color);
+                    border-radius: 6px;
+                    color: var(--text-primary);
+                    outline: none;
+                }
+                .editor-modal input[type="text"]:focus {
+                    border-color: var(--text-primary);
+                }
+                .editor-modal-actions {
+                    display: flex;
+                    justify-content: flex-end;
+                    gap: 8px;
+                }
+                .editor-modal-actions button {
+                    padding: 6px 12px;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-weight: 600;
+                    font-size: 0.85rem;
+                }
+                .editor-modal-actions button:first-child {
+                    background: var(--text-primary);
+                    color: var(--bg-primary);
+                    border: none;
+                }
+                .editor-modal-actions button:last-child {
+                    background: transparent;
+                    border: 1px solid var(--border-color);
+                    color: var(--text-primary);
+                }
+                .editor-upload-btn {
+                    padding: 10px;
+                    background: var(--bg-primary);
+                    border: 1px dashed var(--border-color);
+                    border-radius: 8px;
+                    color: var(--text-primary);
+                    cursor: pointer;
+                    font-weight: 600;
+                    text-align: center;
+                    transition: all 0.2s;
+                }
+                .editor-upload-btn:hover {
+                    background: var(--border-color);
+                    border-style: solid;
+                }
+                .editor-loader {
+                    border: 3px solid var(--border-color);
+                    border-top: 3px solid var(--text-primary);
+                    border-radius: 50%;
+                    width: 30px;
+                    height: 30px;
+                    animation: spin 1s linear infinite;
+                    margin: 0 auto;
+                }
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
             `}} />
         </div>
     );
