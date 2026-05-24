@@ -14,21 +14,9 @@ const TOOLBAR_BUTTONS = [
     { label: 'U', command: 'underline', title: 'Podkreślenie', style: { textDecoration: 'underline' } },
 ];
 
-const btnStyle: React.CSSProperties = {
-    padding: '4px 10px',
-    background: 'rgba(255,255,255,0.06)',
-    border: '1px solid rgba(255,255,255,0.1)',
-    borderRadius: '4px',
-    color: 'rgba(255,255,255,0.8)',
-    cursor: 'pointer',
-    fontSize: '0.85rem',
-    fontWeight: 700,
-    transition: 'all 0.15s',
-};
-
 const dividerStyle: React.CSSProperties = {
     width: '1px', height: '20px',
-    background: 'rgba(255,255,255,0.1)',
+    background: 'var(--border-color)',
     margin: '0 4px',
 };
 
@@ -91,8 +79,8 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
 
     return (
         <div style={{
-            background: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(255,255,255,0.1)',
+            background: 'var(--bg-primary)',
+            border: '1px solid var(--border-color)',
             borderRadius: '8px',
             overflow: 'hidden',
         }}>
@@ -101,8 +89,8 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
                 display: 'flex',
                 gap: '4px',
                 padding: '8px 12px',
-                borderBottom: '1px solid rgba(255,255,255,0.1)',
-                background: 'rgba(255,255,255,0.04)',
+                borderBottom: '1px solid var(--border-color)',
+                background: 'var(--bg-secondary)',
                 flexWrap: 'wrap',
                 alignItems: 'center',
             }}>
@@ -112,7 +100,8 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
                         type="button"
                         title={btn.title}
                         onMouseDown={(e) => { e.preventDefault(); execCmd(btn.command); }}
-                        style={{ ...btnStyle, ...(btn.style || {}) }}
+                        className="editor-toolbar-btn"
+                        style={btn.style}
                     >
                         {btn.label}
                     </button>
@@ -120,20 +109,21 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
                 <div style={dividerStyle} />
                 <button type="button" title="Nagłówek H2"
                     onMouseDown={(e) => { e.preventDefault(); insertHeading(2); }}
-                    style={btnStyle}>H2</button>
+                    className="editor-toolbar-btn">H2</button>
                 <button type="button" title="Nagłówek H3"
                     onMouseDown={(e) => { e.preventDefault(); insertHeading(3); }}
-                    style={btnStyle}>H3</button>
+                    className="editor-toolbar-btn">H3</button>
                 <div style={dividerStyle} />
                 <button type="button" title="Lista punktowana"
                     onMouseDown={(e) => { e.preventDefault(); execCmd('insertUnorderedList'); }}
-                    style={btnStyle}>• Lista</button>
+                    className="editor-toolbar-btn">• Lista</button>
                 <button type="button" title="Dodaj link"
                     onMouseDown={(e) => { e.preventDefault(); insertLink(); }}
-                    style={btnStyle}>🔗 Link</button>
+                    className="editor-toolbar-btn">🔗 Link</button>
                 <button type="button" title="Usun link"
                     onMouseDown={(e) => { e.preventDefault(); execCmd('unlink'); }}
-                    style={{...btnStyle, opacity: 0.8, fontSize: '0.75rem'}}>🔗✖ Usuń</button>
+                    className="editor-toolbar-btn"
+                    style={{ opacity: 0.8, fontSize: '0.75rem' }}>🔗✖ Usuń</button>
             </div>
 
             {/* Editable area — NO dangerouslySetInnerHTML to prevent cursor reset */}
@@ -146,7 +136,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
                 style={{
                     minHeight: '250px',
                     padding: '1rem',
-                    color: 'rgba(255,255,255,0.9)',
+                    color: 'var(--text-primary)',
                     fontSize: '1rem',
                     lineHeight: 1.7,
                     outline: 'none',
@@ -155,9 +145,25 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
             />
 
             <style dangerouslySetInnerHTML={{ __html: `
+                .editor-toolbar-btn {
+                    padding: 4px 10px;
+                    background: var(--bg-primary);
+                    border: 1px solid var(--border-color);
+                    border-radius: 4px;
+                    color: var(--text-primary);
+                    cursor: pointer;
+                    font-size: 0.85rem;
+                    font-weight: 700;
+                    transition: all 0.15s;
+                }
+                .editor-toolbar-btn:hover {
+                    background: var(--bg-secondary);
+                    border-color: var(--text-secondary);
+                }
                 [contenteditable]:empty:before {
                     content: attr(data-placeholder);
-                    color: rgba(255,255,255,0.25);
+                    color: var(--text-secondary);
+                    opacity: 0.5;
                     pointer-events: none;
                     display: block;
                 }
