@@ -29,23 +29,11 @@
         overflow: hidden;
     }
     
-    .rapper-detail-info {
-        display: contents;
-    }
-    
     .rapper-detail-name {
-        order: 2;
         font-size: clamp(2rem, 8vw, 2.5rem);
         margin-top: 0.5rem;
     }
-    
-    .rapper-detail-meta {
-        order: 3;
-    }
-    
-    .rapper-section {
-        order: 4;
-    }
+
 }
 
 /* Info Column */
@@ -297,7 +285,7 @@
 @media (max-width: 1000px) {
     .rapper-detail-gallery-col {
         position: static;
-        order: 1;
+        order: -1;
         margin-top: 0;
         margin-bottom: 1.5rem;
     }
