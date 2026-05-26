@@ -258,32 +258,30 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
         )}
       </article>
 
-      {/* Czytaj też: 5 najnowszych newsów (tylko tytuły) */}
+      {/* Czytaj też: 5 najnowszych newsów (z miniaturkami) */}
       {relatedNews.length > 0 && (
-        <div 
-          className="animate-fade-in" 
-          style={{ 
-            fontSize: '1.05rem', 
-            lineHeight: '1.8', 
-            marginTop: '3rem', 
-            paddingTop: '2rem', 
-            borderTop: '1px solid rgba(255, 255, 255, 0.1)' 
-          }}
-        >
-          <p style={{ fontWeight: 'bold', color: 'var(--text-primary)', marginBottom: '1rem' }}>
-            Czytaj też:
-          </p>
-          <ul style={{ listStyleType: 'none', paddingLeft: 0, margin: 0 }}>
+        <div className="related-news-section animate-fade-in">
+          <h3>Czytaj też:</h3>
+          <ul className="related-news-list">
             {relatedNews.map((item) => (
-              <li key={item.id} style={{ marginBottom: '0.6rem', display: 'flex', alignItems: 'flex-start' }}>
-                <span style={{ color: 'var(--text-secondary)', marginRight: '0.5rem', opacity: 0.7 }}>•</span>
-                <Link 
-                  href={`/news/${item.slug || item.id}`} 
-                  className="hover-opacity"
-                  style={{ textDecoration: 'none', color: 'var(--text-secondary)', display: 'block' }}
-                >
-                  {item.title}
+              <li key={item.id} className="related-news-item">
+                <Link href={`/news/${item.slug || item.id}`} className="related-news-thumb-link">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img 
+                    src={item.image_url || "/logo.jpg"} 
+                    alt={item.title} 
+                    className="related-news-thumb" 
+                    loading="lazy"
+                  />
                 </Link>
+                <div className="related-news-info">
+                  <Link 
+                    href={`/news/${item.slug || item.id}`} 
+                    className="related-news-title"
+                  >
+                    {item.title}
+                  </Link>
+                </div>
               </li>
             ))}
           </ul>
