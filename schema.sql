@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS public.news (
     spotify_url TEXT,
     soundcloud_url TEXT,
     instagram_url TEXT,
+    facebook_url TEXT,
     social_source_url TEXT,
     is_auto_generated BOOLEAN DEFAULT false,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { Tag, FileText, Image as ImageIcon, ChevronLeft, Upload, X, Youtube, Search, Users, Music, Instagram } from 'lucide-react';
+import { Tag, FileText, Image as ImageIcon, ChevronLeft, Upload, X, Youtube, Search, Users, Music, Instagram, Facebook } from 'lucide-react';
 import Link from 'next/link';
 import { RichTextEditor } from '@/components/RichTextEditor';
 import { ImageCropper } from '@/components/ImageCropper';
@@ -17,7 +17,7 @@ const TAG_CONFIG: Record<string, string[]> = {
     'TRACK':        ['PL', 'UK'],
     'EVENT':        ['PL', 'UK', 'USA'],
     'PREMIERA':     ['PL', 'UK'],
-    'NEWS':         [],
+    'NEWS':         ['PL', 'UK', 'USA'],
     'SPONSOROWANE': [],
     'WYWIAD':       [],
     'RELACJA':      [],
@@ -53,6 +53,7 @@ export default function AddNewsPage() {
     const [spotifyUrl, setSpotifyUrl] = useState('');
     const [soundcloudUrl, setSoundcloudUrl] = useState('');
     const [instagramUrl, setInstagramUrl] = useState('');
+    const [facebookUrl, setFacebookUrl] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [showCropper, setShowCropper] = useState(false);
@@ -178,6 +179,7 @@ export default function AddNewsPage() {
                 spotify_url: spotifyUrl || null,
                 soundcloud_url: soundcloudUrl || null,
                 instagram_url: instagramUrl || null,
+                facebook_url: facebookUrl || null,
                 author: author || 'Redakcja',
                 is_auto_generated: false,
             }]);
@@ -412,6 +414,14 @@ export default function AddNewsPage() {
                             <Instagram size={16} /> LINK DO INSTAGRAMA (OPCJONALNIE)
                         </label>
                         <input type="url" className="form-input" placeholder="https://www.instagram.com/p/..." value={instagramUrl} onChange={(e) => setInstagramUrl(e.target.value)} />
+                    </div>
+
+                    {/* Facebook URL */}
+                    <div className="form-group">
+                        <label className="form-label flex items-center gap-2">
+                            <Facebook size={16} /> LINK DO FACEBOOKA (OPCJONALNIE)
+                        </label>
+                        <input type="url" className="form-input" placeholder="https://www.facebook.com/watch/?v=... lub https://www.facebook.com/reel/..." value={facebookUrl} onChange={(e) => setFacebookUrl(e.target.value)} />
                     </div>
 
                     {/* Zdjęcie */}
