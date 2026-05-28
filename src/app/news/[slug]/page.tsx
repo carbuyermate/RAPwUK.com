@@ -217,7 +217,7 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
         ))}
 
         {article.spotify_url && getSpotifyEmbedUrl(article.spotify_url) && (
-          <div className="mt-8 rounded-xl overflow-hidden border border-white/10 shadow-2xl">
+          <div className="mt-8 rounded-xl overflow-hidden border border-white/10 shadow-2xl" style={{ maxWidth: '600px', margin: '2rem auto' }}>
               <iframe
                   style={{ borderRadius: '12px', display: 'block' }}
                   src={getSpotifyEmbedUrl(article.spotify_url)!}
@@ -231,7 +231,7 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
         )}
 
         {article.soundcloud_url && getSoundCloudEmbedUrl(article.soundcloud_url) && (
-          <div className="mt-8 rounded-xl overflow-hidden border border-white/10 shadow-2xl">
+          <div className="mt-8 rounded-xl overflow-hidden border border-white/10 shadow-2xl" style={{ maxWidth: '600px', margin: '2rem auto' }}>
               <iframe 
                   width="100%" 
                   height="166" 
@@ -245,7 +245,7 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
         )}
 
         {article.instagram_url && getInstagramEmbedUrl(article.instagram_url) && (
-          <div className="mt-8 rounded-xl overflow-hidden border border-white/10 shadow-2xl" style={{ maxWidth: '540px', margin: '2rem auto' }}>
+          <div className="mt-8 rounded-xl overflow-hidden border border-white/10 shadow-2xl" style={{ maxWidth: '480px', margin: '2rem auto' }}>
               <iframe 
                   src={getInstagramEmbedUrl(article.instagram_url)!} 
                   width="100%" 
@@ -260,10 +260,11 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
 
         {article.facebook_url && getFacebookEmbedUrl(article.facebook_url) && (
           <div 
-            className="mt-8 rounded-xl overflow-hidden border border-white/10 shadow-2xl mx-auto" 
+            className="mt-8 rounded-xl overflow-hidden border border-white/10 shadow-2xl" 
             style={{ 
               aspectRatio: article.facebook_url.includes('/reel/') || article.facebook_url.includes('/share/r/') ? '9/16' : '16/9',
-              maxWidth: article.facebook_url.includes('/reel/') || article.facebook_url.includes('/share/r/') ? '360px' : '100%' 
+              maxWidth: article.facebook_url.includes('/reel/') || article.facebook_url.includes('/share/r/') ? '360px' : '100%',
+              margin: '2rem auto'
             }}
           >
               <iframe 
