@@ -38,16 +38,47 @@ export async function POST(req: NextRequest) {
     if (event.type === 'checkout.session.completed') {
         const session = event.data.object as Stripe.Checkout.Session;
 
-        // Mark the order as paid in Supabase
-        const { error } = await supabaseAdmin
-            .from('orders')
-            .update({ status: 'paid' })
-            .eq('stripe_session_id', session.id);
+        try {
+            const stripe = getStripe();
+            // Fetch line items from Stripe to store in our orders DB
+            const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
+            const items = lineItems.data.map(item => ({
+                title: item.description,
+                quantity: item.quantity,
+                price: (item.price?.unit_amount || 0) / 100
+            }));
 
-        if (error) {
-            console.error('[Webhook DB Error]', error);
-        } else {
-            console.log(`[Webhook] Order ${session.id} marked as PAID`);
+            // Check if the order already exists
+            const { data: existingOrder } = await supabaseAdmin
+                .from('orders')
+                .select('id')
+                .eq('stripe_session_id', session.id)
+                .maybeSingle();
+
+            if (existingOrder) {
+                // If it exists, update it to paid
+                const { error } = await supabaseAdmin
+                    .from('orders')
+                    .update({ status: 'paid' })
+                    .eq('stripe_session_id', session.id);
+                if (error) throw error;
+                console.log(`[Webhook] Order ${session.id} updated to PAID`);
+            } else {
+                // If it doesn't exist, insert the completed order directly
+                const { error } = await supabaseAdmin
+                    .from('orders')
+                    .insert({
+                        customer_email: session.customer_details?.email || 'unknown@example.com',
+                        total_amount: (session.amount_total || 0) / 100,
+                        status: 'paid',
+                        stripe_session_id: session.id,
+                        items: items
+                    });
+                if (error) throw error;
+                console.log(`[Webhook] Order ${session.id} created as PAID`);
+            }
+        } catch (err: any) {
+            console.error('[Webhook Processing Error]', err.message);
         }
     }
 
