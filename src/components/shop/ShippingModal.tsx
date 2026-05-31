@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Truck, Coins, ShieldCheck, Clock, Info } from 'lucide-react';
 
 interface ShippingModalProps {
@@ -9,8 +10,11 @@ interface ShippingModalProps {
 }
 
 export function ShippingModal({ isOpen, onClose }: ShippingModalProps) {
+    const [mounted, setMounted] = useState(false);
+
     // Zapobiega przewijaniu tła, gdy modal jest otwarty
     useEffect(() => {
+        setMounted(true);
         if (isOpen) {
             document.body.style.overflow = 'hidden';
         } else {
@@ -21,7 +25,7 @@ export function ShippingModal({ isOpen, onClose }: ShippingModalProps) {
         };
     }, [isOpen]);
 
-    if (!isOpen) return null;
+    if (!isOpen || !mounted) return null;
 
     // Zamknięcie modala przy kliknięciu w tło (backdrop)
     const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -30,7 +34,7 @@ export function ShippingModal({ isOpen, onClose }: ShippingModalProps) {
         }
     };
 
-    return (
+    return createPortal(
         <div className="shipping-modal-overlay animate-fade-in" onClick={handleBackdropClick}>
             <div className="shipping-modal-content glass-panel animate-scale-up">
                 <header className="shipping-modal-header">
@@ -120,6 +124,7 @@ export function ShippingModal({ isOpen, onClose }: ShippingModalProps) {
                     </button>
                 </footer>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
