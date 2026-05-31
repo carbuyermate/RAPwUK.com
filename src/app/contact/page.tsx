@@ -62,8 +62,8 @@ export default function ContactPage() {
                     <div className="info-card glass-panel">
                         <h3><Mail size={20} className="text-secondary" /> Email</h3>
                         <p>Możesz też napisać bezpośrednio na:</p>
-                        <a href="mailto:rapwuktv@gmail.com" style={{ color: 'var(--text-primary)', fontWeight: '700', textDecoration: 'none' }}>
-                            rapwuktv@gmail.com
+                        <a href="mailto:kontakt@rapwuk.com" style={{ color: 'var(--text-primary)', fontWeight: '700', textDecoration: 'none' }}>
+                            kontakt@rapwuk.com
                         </a>
                     </div>
                     
