@@ -6,6 +6,7 @@ import { useTheme } from "next-themes";
 import { Moon, Sun, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { GlobalSearch } from "./GlobalSearch";
+import { CartIcon } from "./shop/CartIcon";
 import "./navbar.css";
 
 export function Navbar() {
@@ -40,6 +41,7 @@ export function Navbar() {
 
                     <div className="navbar-actions">
                         <GlobalSearch onClose={() => setMobileOpen(false)} />
+                        {mounted && pathname?.startsWith('/shop') && <CartIcon />}
                         {mounted && (
                             <button
                                 className="theme-toggle"
