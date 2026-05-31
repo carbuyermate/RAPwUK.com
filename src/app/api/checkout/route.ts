@@ -30,6 +30,24 @@ export async function POST(req: NextRequest) {
             quantity: item.quantity,
         }));
 
+        // Calculate InPost UK Shipping: £3 for first physical item, +£1 for each additional
+        const physicalItems = items.filter((item: { category: string; quantity: number }) => item.category !== 'bilety');
+        const physicalQty = physicalItems.reduce((sum: number, item: { quantity: number }) => sum + item.quantity, 0);
+        const shippingCost = physicalQty > 0 ? (3.00 + (physicalQty - 1) * 1.00) : 0;
+
+        if (shippingCost > 0) {
+            line_items.push({
+                price_data: {
+                    currency: 'gbp',
+                    product_data: {
+                        name: 'Wysyłka (InPost UK)',
+                    },
+                    unit_amount: Math.round(shippingCost * 100),
+                },
+                quantity: 1,
+            });
+        }
+
         const stripe = getStripe();
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],

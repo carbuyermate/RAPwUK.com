@@ -13,6 +13,10 @@ export default function CartPage() {
     const [error, setError] = useState<string | null>(null);
 
     const total = getTotal();
+    const physicalItems = items.filter((item) => item.category !== 'bilety');
+    const physicalQty = physicalItems.reduce((sum, item) => sum + item.quantity, 0);
+    const shipping = physicalQty > 0 ? (3.00 + (physicalQty - 1) * 1.00) : 0;
+    const grandTotal = total + shipping;
 
     const handleCheckout = async () => {
         if (items.length === 0) return;
@@ -99,14 +103,14 @@ export default function CartPage() {
                     </div>
                     <div className="cart-summary-row" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '4px', borderBottom: 'none', paddingBottom: 0 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                            <span>Wysyłka</span>
-                            <span style={{ color: '#10b981', fontWeight: 700 }}>Obliczana przy kasie</span>
+                            <span>Wysyłka (InPost UK)</span>
+                            <span style={{ fontWeight: 700 }}>£{shipping.toFixed(2)}</span>
                         </div>
                         <ShippingInfoButton variant="link" label="Zobacz cennik wysyłki" />
                     </div>
                     <div className="cart-summary-total">
                         <span>Razem</span>
-                        <span>£{total.toFixed(2)}</span>
+                        <span>£{grandTotal.toFixed(2)}</span>
                     </div>
 
                     {error && (
