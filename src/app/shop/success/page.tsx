@@ -1,7 +1,17 @@
+'use client';
+
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { CheckCircle } from 'lucide-react';
+import { useCartStore } from '@/lib/store/useCartStore';
 
 export default function SuccessPage() {
+    const clearCart = useCartStore((s) => s.clearCart);
+
+    useEffect(() => {
+        clearCart();
+    }, [clearCart]);
+
     return (
         <div className="container" style={{ padding: '6rem 0', textAlign: 'center' }}>
             <div style={{ fontSize: '5rem', marginBottom: '1.5rem', color: '#10b981' }}>
