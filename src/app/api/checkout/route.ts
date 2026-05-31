@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
 function getStripe() {
-    return new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder', {
+    const key = (process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder')
+        .replace(/\s+/g, '')
+        .replace(/^["']|["']$/g, '');
+    return new Stripe(key, {
         apiVersion: '2024-06-20',
     });
 }
