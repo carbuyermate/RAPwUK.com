@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { ArrowRight, Music, Ticket, Shirt, ShoppingBag } from 'lucide-react';
 import { ProductCard } from '@/components/shop/ProductCard';
+import { ShippingInfoButton } from '@/components/shop/ShippingInfoButton';
 import './shop.css';
 
 export const dynamic = 'force-dynamic';
@@ -61,6 +62,9 @@ export default async function ShopPage() {
                     <ShoppingBag size={32} /> Sklep
                 </h1>
                 <p className="page-header-subtitle">Muzyka, bilety i ubrania z polskiej sceny hip-hop w UK</p>
+                <div style={{ marginTop: '1rem' }}>
+                    <ShippingInfoButton />
+                </div>
             </header>
 
             {/* Categories */}

@@ -549,3 +549,199 @@
 @media (max-width: 640px) {
     .product-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
 }
+
+/* ── Shipping Modal & Info Button ── */
+.shipping-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+.shipping-modal-content {
+    max-width: 500px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    box-shadow: var(--glass-shadow);
+    position: relative;
+    color: var(--text-primary);
+}
+
+.shipping-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+}
+
+.shipping-modal-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin: 0;
+    letter-spacing: 0.5px;
+    color: var(--text-primary);
+}
+
+.shipping-modal-close-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+    padding: 4px;
+    display: flex;
+    border-radius: 6px;
+}
+
+.shipping-modal-close-btn:hover {
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+}
+
+.shipping-modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.shipping-modal-section {
+    display: flex;
+    gap: 1rem;
+    align-items: start;
+}
+
+.section-icon-wrapper {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.section-details {
+    flex: 1;
+}
+
+.section-details h3 {
+    font-size: 0.9rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 0.4rem;
+    color: var(--text-primary);
+}
+
+.section-details p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0 0 0.35rem;
+}
+
+.section-details ul {
+    margin: 0.25rem 0 0;
+    padding-left: 1.25rem;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.pricing-table {
+    margin-top: 0.5rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+}
+
+.pricing-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.pricing-row:last-child {
+    border-bottom: none;
+}
+
+.info-subtext {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    display: block;
+    margin-top: 0.25rem;
+    font-style: italic;
+}
+
+.highlight-text {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #f59e0b;
+    margin: 0.25rem 0;
+}
+
+.shipping-modal-notice {
+    display: flex;
+    gap: 0.75rem;
+    background: rgba(245, 158, 11, 0.05);
+    border: 1px dashed rgba(245, 158, 11, 0.3);
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: var(--text-secondary);
+}
+
+.shipping-modal-notice p {
+    margin: 0;
+}
+
+.shipping-modal-footer {
+    border-top: 1px solid var(--border-color);
+    padding-top: 1rem;
+}
+
+.btn-shipping-info {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-shipping-info:hover {
+    color: var(--text-primary);
+    border-color: var(--text-primary);
+    background: var(--bg-secondary);
+}
+

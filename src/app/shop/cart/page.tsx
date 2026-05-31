@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ChevronLeft, Trash2, ShoppingCart } from 'lucide-react';
 import { useCartStore } from '@/lib/store/useCartStore';
 import { useState } from 'react';
+import { ShippingInfoButton } from '@/components/shop/ShippingInfoButton';
 import '../shop.css';
 
 export default function CartPage() {
@@ -96,9 +97,12 @@ export default function CartPage() {
                         <span>Produkty ({items.reduce((a, i) => a + i.quantity, 0)})</span>
                         <span>£{total.toFixed(2)}</span>
                     </div>
-                    <div className="cart-summary-row">
-                        <span>Wysyłka</span>
-                        <span style={{ color: '#10b981', fontWeight: 700 }}>Obliczana przy kasie</span>
+                    <div className="cart-summary-row" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '4px', borderBottom: 'none', paddingBottom: 0 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                            <span>Wysyłka</span>
+                            <span style={{ color: '#10b981', fontWeight: 700 }}>Obliczana przy kasie</span>
+                        </div>
+                        <ShippingInfoButton variant="link" label="Zobacz cennik wysyłki" />
                     </div>
                     <div className="cart-summary-total">
                         <span>Razem</span>

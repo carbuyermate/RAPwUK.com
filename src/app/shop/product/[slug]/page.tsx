@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { AddToCartButton } from '@/components/shop/AddToCartButton';
+import { ShippingInfoButton } from '@/components/shop/ShippingInfoButton';
 import type { Product } from '@/app/shop/page';
 import '../../shop.css';
 
@@ -79,9 +80,13 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                         <AddToCartButton product={product} />
                     )}
 
-                    <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                    <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
                         Na stanie: {product.stock} szt.
                     </p>
+
+                    <div>
+                        <ShippingInfoButton />
+                    </div>
                 </div>
             </div>
         </div>
