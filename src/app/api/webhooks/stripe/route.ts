@@ -39,15 +39,6 @@ export async function POST(req: NextRequest) {
         const session = event.data.object as any;
 
         try {
-            const stripe = getStripe();
-            // Fetch line items from Stripe to store in our orders DB
-            const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
-            const items = lineItems.data.map(item => ({
-                title: item.description,
-                quantity: item.quantity,
-                price: (item.price?.unit_amount || 0) / 100
-            }));
-
             // Extract delivery details and custom fields from the session
             const customFields = session.custom_fields || [];
             const shippingMethodField = customFields.find((f: any) => f.key === 'shipping_method');
@@ -72,27 +63,87 @@ export async function POST(req: NextRequest) {
                 }
             } : null;
 
-            // Check if the order already exists
-            const { data: existingOrder } = await supabaseAdmin
-                .from('orders')
-                .select('id')
-                .eq('stripe_session_id', session.id)
-                .maybeSingle();
+            // 1. Find the order by order_id (from metadata) or by stripe_session_id
+            const orderId = session.metadata?.order_id;
+            let dbOrder = null;
 
-            if (existingOrder) {
-                // If it exists, update it to paid and update the shipping address
-                const { error } = await supabaseAdmin
+            if (orderId) {
+                const { data } = await supabaseAdmin
                     .from('orders')
-                    .update({ 
+                    .select('*')
+                    .eq('id', orderId)
+                    .maybeSingle();
+                dbOrder = data;
+            }
+
+            if (!dbOrder) {
+                // Fallback: search by stripe_session_id
+                const { data } = await supabaseAdmin
+                    .from('orders')
+                    .select('*')
+                    .eq('stripe_session_id', session.id)
+                    .maybeSingle();
+                dbOrder = data;
+            }
+
+            if (dbOrder) {
+                // Order exists! Let's update it to paid, set the customer email, and store shipping details
+                const { error: updateErr } = await supabaseAdmin
+                    .from('orders')
+                    .update({
                         status: 'paid',
+                        customer_email: session.customer_details?.email || dbOrder.customer_email,
                         shipping_address: shippingAddressObj
                     })
-                    .eq('stripe_session_id', session.id);
-                if (error) throw error;
-                console.log(`[Webhook] Order ${session.id} updated to PAID`);
+                    .eq('id', dbOrder.id);
+
+                if (updateErr) throw updateErr;
+                console.log(`[Webhook] Order ${dbOrder.id} updated to PAID`);
+
+                // Decrement stock for the purchased items
+                if (Array.isArray(dbOrder.items)) {
+                    for (const item of dbOrder.items) {
+                        const productId = item.id;
+                        const qty = item.quantity;
+                        
+                        if (productId && qty > 0) {
+                            // Read current stock
+                            const { data: product } = await supabaseAdmin
+                                .from('products')
+                                .select('stock')
+                                .eq('id', productId)
+                                .maybeSingle();
+
+                            if (product) {
+                                const currentStock = product.stock !== null ? product.stock : 0;
+                                const newStock = Math.max(0, currentStock - qty);
+                                
+                                const { error: stockErr } = await supabaseAdmin
+                                    .from('products')
+                                    .update({ stock: newStock })
+                                    .eq('id', productId);
+                                    
+                                if (stockErr) {
+                                    console.error(`[Webhook] Failed to update stock for product ${productId}:`, stockErr.message);
+                                } else {
+                                    console.log(`[Webhook] Stock for product ${productId} decremented from ${currentStock} to ${newStock}`);
+                                }
+                            }
+                        }
+                    }
+                }
             } else {
-                // If it doesn't exist, insert the completed order directly
-                const { error } = await supabaseAdmin
+                // Fallback/Safety: If for some reason the order doesn't exist, we create a new one on the fly
+                // Fetch line items from Stripe to store in our orders DB
+                const stripe = getStripe();
+                const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
+                const items = lineItems.data.map(item => ({
+                    title: item.description,
+                    quantity: item.quantity,
+                    price: (item.price?.unit_amount || 0) / 100
+                }));
+
+                const { error: insertErr } = await supabaseAdmin
                     .from('orders')
                     .insert({
                         customer_email: session.customer_details?.email || 'unknown@example.com',
@@ -102,8 +153,8 @@ export async function POST(req: NextRequest) {
                         items: items,
                         shipping_address: shippingAddressObj
                     });
-                if (error) throw error;
-                console.log(`[Webhook] Order ${session.id} created as PAID`);
+                if (insertErr) throw insertErr;
+                console.log(`[Webhook] Order ${session.id} created on-the-fly as PAID`);
             }
         } catch (err: any) {
             console.error('[Webhook Processing Error]', err.message);

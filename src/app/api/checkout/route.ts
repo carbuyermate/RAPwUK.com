@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { createClient } from '@supabase/supabase-js';
 
 function getStripe() {
     const key = (process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder')
@@ -9,6 +10,11 @@ function getStripe() {
         apiVersion: '2024-06-20',
     });
 }
+
+const supabaseAdmin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+);
 
 export async function POST(req: NextRequest) {
     try {
@@ -48,6 +54,37 @@ export async function POST(req: NextRequest) {
             });
         }
 
+        // Calculate total amount
+        const productsPrice = items.reduce((sum: number, item: { price: number; quantity: number }) => sum + (item.price * item.quantity), 0);
+        const totalAmount = productsPrice + shippingCost;
+
+        // Clean items array to ensure it only has standard properties we want to store
+        const dbItems = items.map((item: any) => ({
+            id: item.id,
+            title: item.title,
+            price: item.price,
+            quantity: item.quantity,
+            category: item.category || null,
+            slug: item.slug || null
+        }));
+
+        // Pre-create pending order in Supabase
+        const { data: order, error: orderErr } = await supabaseAdmin
+            .from('orders')
+            .insert({
+                customer_email: 'pending@example.com',
+                total_amount: totalAmount,
+                status: 'pending',
+                items: dbItems,
+            })
+            .select('id')
+            .single();
+
+        if (orderErr) {
+            console.error('[Checkout DB Error]', orderErr);
+            throw new Error(`Błąd bazy danych: ${orderErr.message}`);
+        }
+
         const stripe = getStripe();
         const sessionOptions: Stripe.Checkout.SessionCreateParams = {
             payment_method_types: ['card'],
@@ -56,6 +93,9 @@ export async function POST(req: NextRequest) {
             success_url: `${process.env.NEXT_PUBLIC_APP_URL}/shop/success?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/shop/cart`,
             billing_address_collection: 'required',
+            metadata: {
+                order_id: order.id,
+            },
         };
 
         if (physicalQty > 0) {
@@ -93,6 +133,16 @@ export async function POST(req: NextRequest) {
         }
 
         const session = await stripe.checkout.sessions.create(sessionOptions);
+
+        // Update order in Supabase with the stripe_session_id
+        const { error: updateErr } = await supabaseAdmin
+            .from('orders')
+            .update({ stripe_session_id: session.id })
+            .eq('id', order.id);
+
+        if (updateErr) {
+            console.error('[Checkout DB Update Error]', updateErr);
+        }
 
         return NextResponse.json({ url: session.url });
     } catch (err: any) {
