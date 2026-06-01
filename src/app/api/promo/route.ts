@@ -7,7 +7,7 @@ const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 function headers(token?: string | null) {
-    const key = serviceKey || anonKey;
+    const key = anonKey;
     return {
         apikey: key,
         Authorization: `Bearer ${token || key}`,

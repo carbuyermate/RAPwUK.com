@@ -1,9 +1,17 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { fetchTicketmasterEvents } from '@/lib/ticketmaster';
 import { fetchEventbriteEvents } from '@/lib/eventbrite';
 import { supabase } from '@/lib/supabase';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+    const { searchParams } = new URL(req.url);
+    const secret = searchParams.get('secret');
+    const expectedSecret = process.env.CRON_SECRET;
+
+    if (expectedSecret && secret !== expectedSecret) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     try {
         const [tmEvents, ebEvents] = await Promise.all([
             fetchTicketmasterEvents(),

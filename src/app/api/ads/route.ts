@@ -6,7 +6,7 @@ const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 // Helper to call Supabase REST directly with the best available key
 function supabaseHeaders(authToken?: string) {
-    const key = serviceKey || anonKey;
+    const key = anonKey;
     return {
         apikey: key,
         Authorization: `Bearer ${authToken || key}`,
