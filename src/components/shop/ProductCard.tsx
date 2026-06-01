@@ -19,6 +19,7 @@ export function ProductCard({ product }: { product: Product }) {
             image_url: product.image_url,
             category: product.category,
             slug: product.slug,
+            stock: product.stock,
         });
         setAdded(true);
         setTimeout(() => setAdded(false), 1800);

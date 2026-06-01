@@ -48,6 +48,7 @@ export default async function ShopPage() {
         .from('products')
         .select('*')
         .eq('is_active', true)
+        .gt('stock', 0)
         .order('created_at', { ascending: false })
         .limit(8);
 

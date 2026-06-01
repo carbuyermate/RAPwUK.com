@@ -40,6 +40,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
         .select('*')
         .eq('category', category)
         .eq('is_active', true)
+        .gt('stock', 0)
         .order('created_at', { ascending: false });
 
     const products = (data || []) as Product[];

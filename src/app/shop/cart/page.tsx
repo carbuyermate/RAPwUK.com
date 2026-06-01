@@ -83,7 +83,16 @@ export default function CartPage() {
                                 <div className="cart-item-qty">
                                     <button className="qty-btn" onClick={() => updateQuantity(item.id, item.quantity - 1)} disabled={item.quantity <= 1}>−</button>
                                     <span className="qty-value">{item.quantity}</span>
-                                    <button className="qty-btn" onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
+                                    <button 
+                                        className="qty-btn" 
+                                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                        disabled={item.quantity >= item.stock}
+                                    >+</button>
+                                    {item.quantity >= item.stock && (
+                                        <span style={{ fontSize: '0.7rem', color: '#fbbf24', marginLeft: '8px' }}>
+                                            Max na stanie
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                             <div className="cart-item-price">£{(item.price * item.quantity).toFixed(2)}</div>

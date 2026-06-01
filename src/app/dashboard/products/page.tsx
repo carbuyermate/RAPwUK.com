@@ -72,8 +72,23 @@ export default function ProductsPage() {
                                 <tr key={p.id} style={{ borderBottom: i < products.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
                                     <td style={{ padding: '1rem 1.5rem' }}>
                                         <div style={{ fontWeight: 700 }}>{p.title}</div>
-                                        <div style={{ fontSize: '0.75rem', color: p.is_active ? '#10b981' : '#ef4444', marginTop: '2px' }}>
-                                            {p.is_active ? '● Aktywny' : '● Nieaktywny'}
+                                        <div style={{ fontSize: '0.72rem', display: 'flex', gap: '8px', alignItems: 'center', marginTop: '4px' }}>
+                                            <span style={{ color: p.is_active ? '#10b981' : '#ef4444', fontWeight: 600 }}>
+                                                {p.is_active ? '● Aktywny' : '● Nieaktywny'}
+                                            </span>
+                                            {p.is_active && (
+                                                <span style={{ 
+                                                    color: p.stock > 0 ? '#34d399' : '#fbbf24', 
+                                                    background: p.stock > 0 ? '#10b98115' : '#f59e0b15',
+                                                    border: p.stock > 0 ? '1px solid #10b98130' : '1px solid #f59e0b30',
+                                                    padding: '1px 6px',
+                                                    borderRadius: '4px',
+                                                    fontSize: '0.68rem',
+                                                    fontWeight: 600
+                                                }}>
+                                                    {p.stock > 0 ? 'w sprzedaży' : 'brak na magazynie'}
+                                                </span>
+                                            )}
                                         </div>
                                     </td>
                                     <td style={{ padding: '1rem' }}>{categoryLabel[p.category] || p.category}</td>

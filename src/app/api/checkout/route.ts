@@ -24,6 +24,29 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Koszyk jest pusty' }, { status: 400 });
         }
 
+        // Check live database stock for each item
+        for (const item of items) {
+            const { data: product } = await supabaseAdmin
+                .from('products')
+                .select('stock, title')
+                .eq('id', item.id)
+                .maybeSingle();
+
+            if (!product) {
+                return NextResponse.json({ error: `Produkt "${item.title}" nie istnieje w bazie` }, { status: 400 });
+            }
+
+            if (product.stock === null || product.stock === 0) {
+                return NextResponse.json({ error: `Produkt "${product.title}" jest chwilowo niedostępny` }, { status: 400 });
+            }
+
+            if (item.quantity > product.stock) {
+                return NextResponse.json({ 
+                    error: `Maksymalna dostępna ilość dla "${product.title}" to ${product.stock} szt. Zmniejsz ilość w koszyku.` 
+                }, { status: 400 });
+            }
+        }
+
         const line_items = items.map((item: { title: string; price: number; quantity: number; image_url?: string }) => ({
             price_data: {
                 currency: 'gbp',

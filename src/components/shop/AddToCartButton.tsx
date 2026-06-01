@@ -17,6 +17,7 @@ export function AddToCartButton({ product }: { product: Product }) {
             image_url: product.image_url,
             category: product.category,
             slug: product.slug,
+            stock: product.stock,
         });
         setAdded(true);
         setTimeout(() => setAdded(false), 2000);
