@@ -24,11 +24,12 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Koszyk jest pusty' }, { status: 400 });
         }
 
-        // Check live database stock for each item
+        // Check live database stock and price for each item
+        const verifiedItems = [];
         for (const item of items) {
             const { data: product } = await supabaseAdmin
                 .from('products')
-                .select('stock, title')
+                .select('stock, title, price, category, slug')
                 .eq('id', item.id)
                 .maybeSingle();
 
@@ -45,9 +46,19 @@ export async function POST(req: NextRequest) {
                     error: `Maksymalna dostępna ilość dla "${product.title}" to ${product.stock} szt. Zmniejsz ilość w koszyku.` 
                 }, { status: 400 });
             }
+
+            verifiedItems.push({
+                id: item.id,
+                title: product.title,
+                price: Number(product.price),
+                quantity: item.quantity,
+                category: product.category,
+                slug: product.slug,
+                image_url: item.image_url // image URL is safe to pass from client for display
+            });
         }
 
-        const line_items = items.map((item: { title: string; price: number; quantity: number; image_url?: string }) => ({
+        const line_items = verifiedItems.map((item: { title: string; price: number; quantity: number; image_url?: string }) => ({
             price_data: {
                 currency: 'gbp',
                 product_data: {
@@ -60,7 +71,7 @@ export async function POST(req: NextRequest) {
         }));
 
         // Calculate InPost UK Shipping: £3 for first physical item, +£1 for each additional
-        const physicalItems = items.filter((item: { category: string; quantity: number }) => item.category !== 'bilety');
+        const physicalItems = verifiedItems.filter((item: { category: string; quantity: number }) => item.category !== 'bilety');
         const physicalQty = physicalItems.reduce((sum: number, item: { quantity: number }) => sum + item.quantity, 0);
         const shippingCost = physicalQty > 0 ? (3.00 + (physicalQty - 1) * 1.00) : 0;
 
@@ -78,11 +89,11 @@ export async function POST(req: NextRequest) {
         }
 
         // Calculate total amount
-        const productsPrice = items.reduce((sum: number, item: { price: number; quantity: number }) => sum + (item.price * item.quantity), 0);
+        const productsPrice = verifiedItems.reduce((sum: number, item: { price: number; quantity: number }) => sum + (item.price * item.quantity), 0);
         const totalAmount = productsPrice + shippingCost;
 
         // Clean items array to ensure it only has standard properties we want to store
-        const dbItems = items.map((item: any) => ({
+        const dbItems = verifiedItems.map((item: any) => ({
             id: item.id,
             title: item.title,
             price: item.price,

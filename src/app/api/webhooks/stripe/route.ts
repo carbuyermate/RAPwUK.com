@@ -89,18 +89,29 @@ export async function POST(req: NextRequest) {
             }
 
             if (dbOrder) {
-                // Order exists! Let's update it to paid, set the customer email, and store shipping details
+                // Try RPC first (bypasses RLS if defined with SECURITY DEFINER)
                 const { error: updateErr } = await supabaseAdmin
-                    .from('orders')
-                    .update({
-                        status: 'paid',
-                        customer_email: customerDetails?.email || dbOrder.customer_email,
-                        shipping_address: shippingAddressObj
-                    })
-                    .eq('id', dbOrder.id);
+                    .rpc('update_order_to_paid', {
+                        order_id: dbOrder.id,
+                        email: customerDetails?.email || dbOrder.customer_email,
+                        address: shippingAddressObj
+                    });
 
-                if (updateErr) throw updateErr;
-                console.log(`[Webhook] Order ${dbOrder.id} updated to PAID`);
+                if (updateErr) {
+                    console.log(`[Webhook] RPC update order to paid failed, falling back to direct update: ${updateErr.message}`);
+                    const { error: directUpdateErr } = await supabaseAdmin
+                        .from('orders')
+                        .update({
+                            status: 'paid',
+                            customer_email: customerDetails?.email || dbOrder.customer_email,
+                            shipping_address: shippingAddressObj
+                        })
+                        .eq('id', dbOrder.id);
+                    if (directUpdateErr) throw directUpdateErr;
+                    console.log(`[Webhook] Order ${dbOrder.id} updated to PAID via direct update fallback`);
+                } else {
+                    console.log(`[Webhook] Order ${dbOrder.id} updated to PAID via RPC`);
+                }
 
                 // Decrement stock for the purchased items
                 let itemsList = dbOrder.items;
