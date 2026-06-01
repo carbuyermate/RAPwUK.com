@@ -184,3 +184,34 @@ CREATE POLICY "Allow authenticated full access" ON public.orders
     USING (true)
     WITH CHECK (true);
 
+-- 8. Polityki bezpieczeństwa dla pozostałych tabel
+
+-- Tabela: profiles
+CREATE POLICY "Allow users to read their own profile" ON public.profiles
+    FOR SELECT TO authenticated
+    USING (auth.uid() = id);
+
+CREATE POLICY "Allow users to update their own profile" ON public.profiles
+    FOR UPDATE TO authenticated
+    USING (auth.uid() = id)
+    WITH CHECK (auth.uid() = id);
+
+-- Tabela: rappers
+CREATE POLICY "Allow public read access for rappers" ON public.rappers
+    FOR SELECT USING (true);
+
+CREATE POLICY "Allow authenticated full access for rappers" ON public.rappers
+    TO authenticated
+    USING (true)
+    WITH CHECK (true);
+
+-- Tabela: news
+CREATE POLICY "Allow public read access for news" ON public.news
+    FOR SELECT USING (true);
+
+CREATE POLICY "Allow authenticated full access for news" ON public.news
+    TO authenticated
+    USING (true)
+    WITH CHECK (true);
+
+
