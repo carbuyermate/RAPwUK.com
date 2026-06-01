@@ -127,18 +127,30 @@ export async function POST(req: NextRequest) {
                                 .maybeSingle();
 
                             if (product) {
-                                const currentStock = product.stock !== null ? product.stock : 0;
-                                const newStock = Math.max(0, currentStock - qty);
-                                
-                                const { error: stockErr } = await supabaseAdmin
-                                    .from('products')
-                                    .update({ stock: newStock })
-                                    .eq('id', productId);
+                                // Try RPC first (bypasses RLS if defined with SECURITY DEFINER)
+                                const { error: rpcErr } = await supabaseAdmin
+                                    .rpc('decrement_product_stock', {
+                                        product_id: productId,
+                                        qty: qty
+                                    });
+
+                                if (rpcErr) {
+                                    console.log(`[Webhook] RPC decrement failed, falling back to direct update: ${rpcErr.message}`);
+                                    const currentStock = product.stock !== null ? product.stock : 0;
+                                    const newStock = Math.max(0, currentStock - qty);
                                     
-                                if (stockErr) {
-                                    console.error(`[Webhook] Failed to update stock for product ${productId}:`, stockErr.message);
+                                    const { error: stockErr } = await supabaseAdmin
+                                        .from('products')
+                                        .update({ stock: newStock })
+                                        .eq('id', productId);
+                                        
+                                    if (stockErr) {
+                                        console.error(`[Webhook] Direct stock update fallback also failed for product ${productId}:`, stockErr.message);
+                                    } else {
+                                        console.log(`[Webhook] Stock for product ${productId} decremented via direct update fallback to ${newStock}`);
+                                    }
                                 } else {
-                                    console.log(`[Webhook] Stock for product ${productId} decremented from ${currentStock} to ${newStock}`);
+                                    console.log(`[Webhook] Stock for product ${productId} decremented via RPC`);
                                 }
                             }
                         }
