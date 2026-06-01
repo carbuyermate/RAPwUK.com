@@ -13,6 +13,19 @@ interface Order {
     status: string;
     items: Array<{ title: string; quantity: number; price: number }>;
     created_at: string;
+    shipping_address?: {
+        name: string;
+        method: 'home' | 'locker' | null;
+        locker_code: string | null;
+        address: {
+            line1: string | null;
+            line2: string | null;
+            city: string | null;
+            state: string | null;
+            postal_code: string | null;
+            country: string | null;
+        } | null;
+    } | null;
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -80,6 +93,45 @@ export default function OrdersPage() {
                                             <div key={i}>{item.quantity}× {item.title} — £{(item.price * item.quantity).toFixed(2)}</div>
                                         ))}
                                     </div>
+                                    {order.shipping_address && (
+                                        <div style={{ 
+                                            marginTop: '1rem', 
+                                            padding: '10px 14px', 
+                                            borderRadius: '8px', 
+                                            background: 'rgba(255,255,255,0.03)', 
+                                            border: '1px solid rgba(255,255,255,0.06)',
+                                            fontSize: '0.85rem'
+                                        }}>
+                                            <div style={{ fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px', flexWrap: 'wrap' }}>
+                                                <span>📦 Wysyłka:</span>
+                                                <span style={{ 
+                                                    textTransform: 'uppercase', 
+                                                    fontSize: '0.72rem', 
+                                                    padding: '2px 8px', 
+                                                    borderRadius: '4px', 
+                                                    background: order.shipping_address.method === 'locker' ? '#d9770620' : '#05966920',
+                                                    color: order.shipping_address.method === 'locker' ? '#fbbf24' : '#34d399',
+                                                    border: order.shipping_address.method === 'locker' ? '1px solid #d9770640' : '1px solid #05966940'
+                                                }}>
+                                                    {order.shipping_address.method === 'locker' ? 'Paczkomat InPost' : 'Adres Domowy'}
+                                                </span>
+                                                {order.shipping_address.method === 'locker' && order.shipping_address.locker_code && (
+                                                    <span style={{ color: '#fbbf24', fontWeight: 700 }}>
+                                                        [{order.shipping_address.locker_code}]
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div style={{ color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+                                                <strong>{order.shipping_address.name}</strong><br />
+                                                {order.shipping_address.address?.line1}
+                                                {order.shipping_address.address?.line2 && `, ${order.shipping_address.address.line2}`}
+                                                <br />
+                                                {order.shipping_address.address?.postal_code} {order.shipping_address.address?.city}
+                                                <br />
+                                                {order.shipping_address.address?.country}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                                 <div style={{ textAlign: 'right' }}>
                                     <div style={{ fontFamily: 'Outfit', fontSize: '1.4rem', fontWeight: 900 }}>£{order.total_amount.toFixed(2)}</div>

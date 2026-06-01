@@ -167,6 +167,7 @@ CREATE TABLE IF NOT EXISTS public.orders (
     status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'paid', 'shipped', 'cancelled')),
     stripe_session_id TEXT UNIQUE,
     items JSONB NOT NULL DEFAULT '[]'::jsonb, -- Tablica zakupionych produktów ze szczegółami
+    shipping_address JSONB, -- Szczegóły dostawy (metoda, kod paczkomatu, dane adresowe)
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );

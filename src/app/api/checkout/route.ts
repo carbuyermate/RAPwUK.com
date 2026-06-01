@@ -49,17 +49,47 @@ export async function POST(req: NextRequest) {
         }
 
         const stripe = getStripe();
-        const session = await stripe.checkout.sessions.create({
+        const sessionOptions: Stripe.Checkout.SessionCreateParams = {
             payment_method_types: ['card'],
             line_items,
             mode: 'payment',
             success_url: `${process.env.NEXT_PUBLIC_APP_URL}/shop/success?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/shop/cart`,
             billing_address_collection: 'required',
-            shipping_address_collection: {
+        };
+
+        if (physicalQty > 0) {
+            sessionOptions.shipping_address_collection = {
                 allowed_countries: ['GB', 'PL', 'DE', 'FR', 'NL', 'IE'],
-            },
-        });
+            };
+            sessionOptions.custom_fields = [
+                {
+                    key: 'shipping_method',
+                    label: {
+                        type: 'custom',
+                        custom: 'Metoda dostawy / Delivery Method',
+                    },
+                    type: 'dropdown',
+                    dropdown: {
+                        options: [
+                            { label: 'Adres domowy (Home Delivery)', value: 'home' },
+                            { label: 'Paczkomat (InPost Locker)', value: 'locker' },
+                        ],
+                    },
+                },
+                {
+                    key: 'locker_code',
+                    label: {
+                        type: 'custom',
+                        custom: 'Kod paczkomatu (np. UK12345) / Locker Code',
+                    },
+                    type: 'text',
+                    optional: true,
+                },
+            ];
+        }
+
+        const session = await stripe.checkout.sessions.create(sessionOptions);
 
         return NextResponse.json({ url: session.url });
     } catch (err: any) {

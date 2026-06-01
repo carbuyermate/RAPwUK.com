@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (event.type === 'checkout.session.completed') {
-        const session = event.data.object as Stripe.Checkout.Session;
+        const session = event.data.object as any;
 
         try {
             const stripe = getStripe();
@@ -48,6 +48,28 @@ export async function POST(req: NextRequest) {
                 price: (item.price?.unit_amount || 0) / 100
             }));
 
+            // Extract delivery details and custom fields from the session
+            const customFields = session.custom_fields || [];
+            const shippingMethodField = customFields.find((f: any) => f.key === 'shipping_method');
+            const shippingMethod = shippingMethodField?.dropdown?.value || null;
+            const lockerCodeField = customFields.find((f: any) => f.key === 'locker_code');
+            const lockerCode = lockerCodeField?.text?.value || null;
+
+            const shippingDetails = session.shipping_details;
+            const shippingAddressObj = shippingDetails ? {
+                name: shippingDetails.name,
+                method: shippingMethod,
+                locker_code: lockerCode,
+                address: {
+                    line1: shippingDetails.address?.line1 || null,
+                    line2: shippingDetails.address?.line2 || null,
+                    city: shippingDetails.address?.city || null,
+                    state: shippingDetails.address?.state || null,
+                    postal_code: shippingDetails.address?.postal_code || null,
+                    country: shippingDetails.address?.country || null,
+                }
+            } : null;
+
             // Check if the order already exists
             const { data: existingOrder } = await supabaseAdmin
                 .from('orders')
@@ -56,10 +78,13 @@ export async function POST(req: NextRequest) {
                 .maybeSingle();
 
             if (existingOrder) {
-                // If it exists, update it to paid
+                // If it exists, update it to paid and update the shipping address
                 const { error } = await supabaseAdmin
                     .from('orders')
-                    .update({ status: 'paid' })
+                    .update({ 
+                        status: 'paid',
+                        shipping_address: shippingAddressObj
+                    })
                     .eq('stripe_session_id', session.id);
                 if (error) throw error;
                 console.log(`[Webhook] Order ${session.id} updated to PAID`);
@@ -72,7 +97,8 @@ export async function POST(req: NextRequest) {
                         total_amount: (session.amount_total || 0) / 100,
                         status: 'paid',
                         stripe_session_id: session.id,
-                        items: items
+                        items: items,
+                        shipping_address: shippingAddressObj
                     });
                 if (error) throw error;
                 console.log(`[Webhook] Order ${session.id} created as PAID`);
