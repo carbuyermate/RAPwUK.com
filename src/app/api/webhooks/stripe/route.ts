@@ -46,11 +46,13 @@ export async function POST(req: NextRequest) {
             const lockerCodeField = customFields.find((f: any) => f.key === 'locker_code');
             const lockerCode = lockerCodeField?.text?.value || null;
 
-            const shippingDetails = session.shipping_details;
+            const shippingDetails = session.shipping_details || session.collected_information?.shipping_details;
+            const customerDetails = session.customer_details || session.collected_information?.customer_details;
+
             const shippingAddressObj = shippingDetails ? {
                 name: shippingDetails.name,
-                phone: session.customer_details?.phone || null,
-                email: session.customer_details?.email || null,
+                phone: customerDetails?.phone || null,
+                email: customerDetails?.email || null,
                 method: shippingMethod,
                 locker_code: lockerCode,
                 address: {
@@ -92,7 +94,7 @@ export async function POST(req: NextRequest) {
                     .from('orders')
                     .update({
                         status: 'paid',
-                        customer_email: session.customer_details?.email || dbOrder.customer_email,
+                        customer_email: customerDetails?.email || dbOrder.customer_email,
                         shipping_address: shippingAddressObj
                     })
                     .eq('id', dbOrder.id);
@@ -101,8 +103,18 @@ export async function POST(req: NextRequest) {
                 console.log(`[Webhook] Order ${dbOrder.id} updated to PAID`);
 
                 // Decrement stock for the purchased items
-                if (Array.isArray(dbOrder.items)) {
-                    for (const item of dbOrder.items) {
+                let itemsList = dbOrder.items;
+                if (typeof itemsList === 'string') {
+                    try {
+                        itemsList = JSON.parse(itemsList);
+                    } catch (e) {
+                        console.error('[Webhook] Failed to parse dbOrder.items string', e);
+                        itemsList = [];
+                    }
+                }
+
+                if (Array.isArray(itemsList)) {
+                    for (const item of itemsList) {
                         const productId = item.id;
                         const qty = item.quantity;
                         
@@ -146,7 +158,7 @@ export async function POST(req: NextRequest) {
                 const { error: insertErr } = await supabaseAdmin
                     .from('orders')
                     .insert({
-                        customer_email: session.customer_details?.email || 'unknown@example.com',
+                        customer_email: customerDetails?.email || 'unknown@example.com',
                         total_amount: (session.amount_total || 0) / 100,
                         status: 'paid',
                         stripe_session_id: session.id,
