@@ -15,6 +15,8 @@ interface Order {
     created_at: string;
     shipping_address?: {
         name: string;
+        phone?: string | null;
+        email?: string | null;
         method: 'home' | 'locker' | null;
         locker_code: string | null;
         address: {
@@ -129,6 +131,12 @@ export default function OrdersPage() {
                                                 {order.shipping_address.address?.postal_code} {order.shipping_address.address?.city}
                                                 <br />
                                                 {order.shipping_address.address?.country}
+                                                {(order.shipping_address.phone || order.shipping_address.email) && (
+                                                    <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px dashed rgba(255,255,255,0.08)', fontSize: '0.8rem', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                                        {order.shipping_address.phone && <div>📞 Tel: <strong>{order.shipping_address.phone}</strong></div>}
+                                                        {order.shipping_address.email && <div>✉️ Email: <strong>{order.shipping_address.email}</strong></div>}
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     )}

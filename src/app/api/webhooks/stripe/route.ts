@@ -58,6 +58,8 @@ export async function POST(req: NextRequest) {
             const shippingDetails = session.shipping_details;
             const shippingAddressObj = shippingDetails ? {
                 name: shippingDetails.name,
+                phone: session.customer_details?.phone || null,
+                email: session.customer_details?.email || null,
                 method: shippingMethod,
                 locker_code: lockerCode,
                 address: {
