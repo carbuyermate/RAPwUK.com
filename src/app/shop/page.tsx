@@ -17,6 +17,10 @@ export interface Product {
     image_url?: string;
     stripe_price_id?: string;
     stock: number;
+    media_type?: 'CD' | 'DVD' | 'Kaseta' | null;
+    condition_media?: string | null;
+    condition_cover?: string | null;
+    condition_notes?: string | null;
 }
 
 const CATEGORIES = [

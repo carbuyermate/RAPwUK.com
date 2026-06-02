@@ -64,6 +64,59 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                         <p className="product-detail-desc">{product.description}</p>
                     )}
 
+                    {product.category === 'muzyka' && (product.media_type || product.condition_media || product.condition_cover || product.condition_notes) && (
+                        <div style={{
+                            margin: '1.5rem 0',
+                            padding: '1.25rem',
+                            background: 'rgba(255,255,255,0.02)',
+                            borderRadius: '10px',
+                            border: '1px solid rgba(255,255,255,0.06)',
+                            fontSize: '0.9rem'
+                        }}>
+                            <h3 style={{ margin: '0 0 0.75rem 0', fontSize: '0.95rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
+                                Szczegóły wydania & stan przedmiotu:
+                            </h3>
+                            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                {product.media_type && (
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>Nośnik:</span>
+                                        <strong style={{ color: 'var(--text-primary)' }}>
+                                            {product.media_type === 'CD' ? '💿 CD' : product.media_type === 'DVD' ? '📀 DVD' : '📼 Kaseta'}
+                                        </strong>
+                                    </li>
+                                )}
+                                {product.condition_media && (
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>Stan nośnika:</span>
+                                        <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{product.condition_media}</span>
+                                    </li>
+                                )}
+                                {product.condition_cover && (
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>Stan okładki:</span>
+                                        <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{product.condition_cover}</span>
+                                    </li>
+                                )}
+                                {product.condition_notes && (
+                                    <li style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingTop: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>Uwagi:</span>
+                                        <div style={{
+                                            padding: '8px 12px',
+                                            background: 'rgba(245,158,11,0.05)',
+                                            border: '1px solid rgba(245,158,11,0.15)',
+                                            borderRadius: '6px',
+                                            fontSize: '0.85rem',
+                                            color: '#f59e0b',
+                                            lineHeight: '1.4'
+                                        }}>
+                                            {product.condition_notes}
+                                        </div>
+                                    </li>
+                                )}
+                            </ul>
+                        </div>
+                    )}
+
                     {product.stock === 0 ? (
                         <div style={{
                             padding: '14px 24px',

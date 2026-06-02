@@ -45,6 +45,12 @@ export default function EditProductPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     
+    // Parametry wydania muzycznego i stanu
+    const [mediaType, setMediaType] = useState<'CD' | 'DVD' | 'Kaseta' | ''>('');
+    const [conditionMedia, setConditionMedia] = useState('');
+    const [conditionCover, setConditionCover] = useState('');
+    const [conditionNotes, setConditionNotes] = useState('');
+    
     const router = useRouter();
     const params = useParams();
     const id = params.id as string;
@@ -79,6 +85,10 @@ export default function EditProductPage() {
                     setImagePreview(data.image_url);
                     setOldImageUrl(data.image_url);
                 }
+                setMediaType(data.media_type || '');
+                setConditionMedia(data.condition_media || '');
+                setConditionCover(data.condition_cover || '');
+                setConditionNotes(data.condition_notes || '');
             } catch (err: any) {
                 setError(err.message);
             } finally {
@@ -134,6 +144,10 @@ export default function EditProductPage() {
                     stock: parseInt(stock),
                     is_active: isActive,
                     image_url,
+                    media_type: category === 'muzyka' && mediaType ? mediaType : null,
+                    condition_media: category === 'muzyka' ? conditionMedia : null,
+                    condition_cover: category === 'muzyka' ? conditionCover : null,
+                    condition_notes: category === 'muzyka' ? conditionNotes : null,
                 })
                 .eq('id', id);
 
@@ -209,6 +223,34 @@ export default function EditProductPage() {
                             <option value="ubrania">👕 Ubrania</option>
                         </select>
                     </div>
+                    {category === 'muzyka' && (
+                        <div style={{ gridColumn: 'span 2', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '0.5rem' }}>
+                            <h3 style={{ gridColumn: 'span 2', fontSize: '1rem', fontWeight: 'bold', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.5rem', marginBottom: '0.25rem' }}>
+                                Parametry Wydania Muzycznego & Stanu
+                            </h3>
+                            <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                                <label className="form-label">Nośnik fizyczny</label>
+                                <select className="form-input" value={mediaType} onChange={(e) => setMediaType(e.target.value as any)}>
+                                    <option value="">-- Wybierz nośnik (np. CD, DVD, Kaseta) --</option>
+                                    <option value="CD">💿 CD</option>
+                                    <option value="DVD">📀 DVD</option>
+                                    <option value="Kaseta">📼 Kaseta</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Stan nośnika</label>
+                                <input type="text" className="form-input" placeholder="np. Nowy, BDB, VG+, Porysowany" value={conditionMedia} onChange={(e) => setConditionMedia(e.target.value)} />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Stan okładki</label>
+                                <input type="text" className="form-input" placeholder="np. Nowy, Idealny, Pogięta" value={conditionCover} onChange={(e) => setConditionCover(e.target.value)} />
+                            </div>
+                            <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                                <label className="form-label">Uwagi do stanu / wydania</label>
+                                <textarea className="form-input" style={{ minHeight: '60px', resize: 'vertical' }} placeholder="np. Pudełko lekko pęknięte, zawiera autograf artysty, itp." value={conditionNotes} onChange={(e) => setConditionNotes(e.target.value)} />
+                            </div>
+                        </div>
+                    )}
                     {/* Image */}
                     <div className="form-group" style={{ gridColumn: 'span 2' }}>
                         <label className="form-label">Zdjęcie produktu</label>
