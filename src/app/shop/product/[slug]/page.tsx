@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { AddToCartButton } from '@/components/shop/AddToCartButton';
 import { ShippingInfoButton } from '@/components/shop/ShippingInfoButton';
+import { ConditionGuideButton } from '@/components/shop/ConditionGuideButton';
 import type { Product } from '@/app/shop/page';
 import '../../shop.css';
 
@@ -73,9 +74,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                             border: '1px solid rgba(255,255,255,0.06)',
                             fontSize: '0.9rem'
                         }}>
-                            <h3 style={{ margin: '0 0 0.75rem 0', fontSize: '0.95rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
-                                Szczegóły wydania & stan przedmiotu:
-                            </h3>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '0.5rem' }}>
+                                <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
+                                    Szczegóły wydania & stan przedmiotu:
+                                </h3>
+                                <ConditionGuideButton />
+                            </div>
                             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                 {product.media_type && (
                                     <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>

@@ -162,12 +162,28 @@ export default function AddProductPage() {
                                 </select>
                             </div>
                             <div className="form-group">
-                                <label className="form-label">Stan nośnika</label>
-                                <input type="text" className="form-input" placeholder="np. Nowy, BDB, VG+, Porysowany" value={conditionMedia} onChange={(e) => setConditionMedia(e.target.value)} />
+                                <label className="form-label">Stan nośnika (Media)</label>
+                                <select className="form-input" value={conditionMedia} onChange={(e) => setConditionMedia(e.target.value)}>
+                                    <option value="">-- Wybierz stan nośnika --</option>
+                                    <option value="Mint (M)">Mint (M) – Idealny</option>
+                                    <option value="Near Mint (NM)">Near Mint (NM) – Prawie idealny</option>
+                                    <option value="Very Good Plus (VG+)">Very Good Plus (VG+) – Bardzo dobry plus</option>
+                                    <option value="Very Good (VG)">Very Good (VG) – Bardzo dobry</option>
+                                    <option value="Good (G)">Good (G) – Dobry</option>
+                                    <option value="Poor (P)">Poor (P) – Słaby</option>
+                                </select>
                             </div>
                             <div className="form-group">
-                                <label className="form-label">Stan okładki</label>
-                                <input type="text" className="form-input" placeholder="np. Nowy, Idealny, Pogięta" value={conditionCover} onChange={(e) => setConditionCover(e.target.value)} />
+                                <label className="form-label">Stan okładki (Sleeve)</label>
+                                <select className="form-input" value={conditionCover} onChange={(e) => setConditionCover(e.target.value)}>
+                                    <option value="">-- Wybierz stan okładki --</option>
+                                    <option value="Mint (M)">Mint (M) – Idealny</option>
+                                    <option value="Near Mint (NM)">Near Mint (NM) – Prawie idealny</option>
+                                    <option value="Very Good Plus (VG+)">Very Good Plus (VG+) – Bardzo dobry plus</option>
+                                    <option value="Very Good (VG)">Very Good (VG) – Bardzo dobry</option>
+                                    <option value="Good (G)">Good (G) – Dobry</option>
+                                    <option value="Poor (P)">Poor (P) – Słaby</option>
+                                </select>
                             </div>
                             <div className="form-group" style={{ gridColumn: 'span 2' }}>
                                 <label className="form-label">Uwagi do stanu / wydania</label>
