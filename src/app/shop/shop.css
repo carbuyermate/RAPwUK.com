@@ -186,8 +186,15 @@
     transition: transform 0.22s ease, box-shadow 0.22s ease;
     display: flex;
     flex-direction: column;
+    height: 100%;
+}
+
+.product-card-link {
     text-decoration: none;
     color: inherit;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 .product-card:hover {

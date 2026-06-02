@@ -33,7 +33,7 @@ export function ProductCard({ product }: { product: Product }) {
 
     return (
         <div className="product-card">
-            <Link href={`/shop/product/${product.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Link href={`/shop/product/${product.slug}`} className="product-card-link">
                 <div className="product-card-image">
                     {product.image_url ? (
                         // eslint-disable-next-line @next/next/no-img-element
