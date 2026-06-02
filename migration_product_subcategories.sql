@@ -7,7 +7,13 @@
 ALTER TABLE public.products 
 ADD COLUMN IF NOT EXISTS music_category TEXT;
 
--- 2. Dodajemy ograniczenie (CHECK constraint) gwarantujące poprawne wartości
+-- 2. Aktualizujemy istniejące produkty muzyczne, które mają pustą podkategorię
+-- Domyślnie ustawiamy 'PL' dla istniejących pozycji, aby baza nie odrzuciła warunku NOT NULL.
+UPDATE public.products
+SET music_category = 'PL'
+WHERE category = 'muzyka' AND music_category IS NULL;
+
+-- 3. Dodajemy ograniczenie (CHECK constraint) gwarantujące poprawne wartości
 -- Jeśli kategoria to 'muzyka', podkategoria musi być wybrana i należeć do zdefiniowanej listy.
 ALTER TABLE public.products
 DROP CONSTRAINT IF EXISTS check_music_subcategory;
