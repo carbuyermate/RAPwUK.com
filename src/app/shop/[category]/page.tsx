@@ -28,20 +28,32 @@ const CATEGORY_META: Record<string, { title: string; desc: string; icon: React.R
 
 const VALID_CATEGORIES = Object.keys(CATEGORY_META);
 
-export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
+export default async function CategoryPage({
+    params,
+    searchParams,
+}: {
+    params: Promise<{ category: string }>;
+    searchParams: Promise<{ sub?: string }>;
+}) {
     const { category } = await params;
+    const { sub } = await searchParams;
 
     if (!VALID_CATEGORIES.includes(category)) return notFound();
 
     const meta = CATEGORY_META[category];
 
-    const { data } = await supabase
+    let query = supabase
         .from('products')
         .select('*')
         .eq('category', category)
         .eq('is_active', true)
-        .gt('stock', 0)
-        .order('created_at', { ascending: false });
+        .gt('stock', 0);
+
+    if (category === 'muzyka' && sub && ['PL', 'UK', 'USA', 'RAP W UK'].includes(sub)) {
+        query = query.eq('music_category', sub);
+    }
+
+    const { data } = await query.order('created_at', { ascending: false });
 
     const products = (data || []) as Product[];
 
@@ -51,12 +63,59 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
                 <ChevronLeft size={18} /> Sklep
             </Link>
 
-            <header className="page-header">
+            <header className="page-header" style={{ marginBottom: category === 'muzyka' ? '1.5rem' : '2.5rem' }}>
                 <h1 className="page-header-title">
                     {meta.icon} {meta.title}
                 </h1>
                 <p className="page-header-subtitle">{meta.desc}</p>
             </header>
+
+            {category === 'muzyka' && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '2.5rem' }}>
+                    <Link
+                        href="/shop/muzyka"
+                        style={{
+                            padding: '8px 16px',
+                            borderRadius: '8px',
+                            fontSize: '0.85rem',
+                            fontWeight: 600,
+                            background: !sub ? 'var(--text-primary)' : 'var(--bg-secondary)',
+                            color: !sub ? 'var(--bg-primary)' : 'var(--text-secondary)',
+                            border: '1px solid var(--border-color)',
+                            textDecoration: 'none',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px',
+                            transition: 'all 0.2s ease',
+                        }}
+                    >
+                        Wszystko
+                    </Link>
+                    {['PL', 'UK', 'USA', 'RAP W UK'].map((item) => {
+                        const isActive = sub === item;
+                        return (
+                            <Link
+                                key={item}
+                                href={`/shop/muzyka?sub=${encodeURIComponent(item)}`}
+                                style={{
+                                    padding: '8px 16px',
+                                    borderRadius: '8px',
+                                    fontSize: '0.85rem',
+                                    fontWeight: 600,
+                                    background: isActive ? 'var(--text-primary)' : 'var(--bg-secondary)',
+                                    color: isActive ? 'var(--bg-primary)' : 'var(--text-secondary)',
+                                    border: '1px solid var(--border-color)',
+                                    textDecoration: 'none',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.5px',
+                                    transition: 'all 0.2s ease',
+                                }}
+                            >
+                                {item}
+                            </Link>
+                        );
+                    })}
+                </div>
+            )}
 
             {products.length > 0 ? (
                 <div className="product-grid">
@@ -67,8 +126,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
             ) : (
                 <div className="shop-empty">
                     <div className="shop-empty-icon">📦</div>
-                    <h2 className="shop-empty-title">Już wkrótce!</h2>
-                    <p>Produkty w tej kategorii pojawią się niebawem.</p>
+                    <h2 className="shop-empty-title">Brak produktów</h2>
+                    <p>Brak dostępnych produktów w wybranej kategorii.</p>
                 </div>
             )}
         </div>

@@ -43,7 +43,11 @@ export function ProductCard({ product }: { product: Product }) {
                     )}
                 </div>
                 <div className="product-card-body">
-                    <span className="product-card-category">{categoryLabel[product.category]}</span>
+                    <span className="product-card-category">
+                        {product.category === 'muzyka' && product.music_category
+                            ? `Muzyka / ${product.music_category}`
+                            : categoryLabel[product.category]}
+                    </span>
                     <h3 className="product-card-title">{product.title}</h3>
                     <div className="product-card-price">£{product.price.toFixed(2)}</div>
                 </div>

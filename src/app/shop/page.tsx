@@ -21,6 +21,7 @@ export interface Product {
     condition_media?: string | null;
     condition_cover?: string | null;
     condition_notes?: string | null;
+    music_category?: 'PL' | 'UK' | 'USA' | 'RAP W UK' | null;
 }
 
 const CATEGORIES = [

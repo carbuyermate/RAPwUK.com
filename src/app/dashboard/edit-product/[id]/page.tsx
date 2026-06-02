@@ -50,6 +50,7 @@ export default function EditProductPage() {
     const [conditionMedia, setConditionMedia] = useState('');
     const [conditionCover, setConditionCover] = useState('');
     const [conditionNotes, setConditionNotes] = useState('');
+    const [musicCategory, setMusicCategory] = useState<'PL' | 'UK' | 'USA' | 'RAP W UK' | ''>('');
     
     const router = useRouter();
     const params = useParams();
@@ -89,6 +90,7 @@ export default function EditProductPage() {
                 setConditionMedia(data.condition_media || '');
                 setConditionCover(data.condition_cover || '');
                 setConditionNotes(data.condition_notes || '');
+                setMusicCategory(data.music_category || '');
             } catch (err: any) {
                 setError(err.message);
             } finally {
@@ -119,6 +121,10 @@ export default function EditProductPage() {
         setLoading(true);
         setError(null);
         try {
+            if (category === 'muzyka' && !musicCategory) {
+                throw new Error('Musisz wybrać kategorię muzyczną (PL, UK, USA lub RAP W UK) dla produktu z kategorii Muzyka.');
+            }
+
             let image_url: string | null = imagePreview && !imageFile ? imagePreview : null;
 
             if (imageFile) {
@@ -148,6 +154,7 @@ export default function EditProductPage() {
                     condition_media: category === 'muzyka' ? conditionMedia : null,
                     condition_cover: category === 'muzyka' ? conditionCover : null,
                     condition_notes: category === 'muzyka' ? conditionNotes : null,
+                    music_category: category === 'muzyka' ? musicCategory : null,
                 })
                 .eq('id', id);
 
@@ -235,6 +242,16 @@ export default function EditProductPage() {
                                     <option value="CD">💿 CD</option>
                                     <option value="DVD">📀 DVD</option>
                                     <option value="Kaseta">📼 Kaseta</option>
+                                </select>
+                            </div>
+                            <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                                <label className="form-label">Kategoria Muzyczna (Kraj/Nurt)</label>
+                                <select className="form-input" value={musicCategory} onChange={(e) => setMusicCategory(e.target.value as any)} required>
+                                    <option value="">-- Wybierz kategorię muzyczną --</option>
+                                    <option value="PL">PL</option>
+                                    <option value="UK">UK</option>
+                                    <option value="USA">USA</option>
+                                    <option value="RAP W UK">RAP W UK</option>
                                 </select>
                             </div>
                             <div className="form-group">
