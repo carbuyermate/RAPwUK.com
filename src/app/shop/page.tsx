@@ -28,21 +28,18 @@ const CATEGORIES = [
     {
         id: 'muzyka',
         title: 'Muzyka',
-        desc: 'Płyty, merch artystów, wydawnictwa',
         icon: <Music size={20} strokeWidth={1.5} />,
         href: '/shop/muzyka',
     },
     {
         id: 'bilety',
         title: 'Bilety',
-        desc: 'Wejściówki na imprezy i koncerty',
         icon: <Ticket size={20} strokeWidth={1.5} />,
         href: '/shop/bilety',
     },
     {
         id: 'ubrania',
         title: 'Ubrania',
-        desc: 'Streetwear i kolekcje limitowane',
         icon: <Shirt size={20} strokeWidth={1.5} />,
         href: '/shop/ubrania',
     },
@@ -67,7 +64,6 @@ export default async function ShopPage() {
                 <h1 className="page-header-title">
                     <ShoppingBag size={32} /> Sklep
                 </h1>
-                <p className="page-header-subtitle">Muzyka, bilety i ubrania z polskiej sceny hip-hop w UK</p>
                 <div style={{ marginTop: '1rem' }}>
                     <ShippingInfoButton />
                 </div>
@@ -82,7 +78,6 @@ export default async function ShopPage() {
                         </div>
                         <div className="category-card-body">
                             <h2 className="category-card-title">{cat.title}</h2>
-                            <p className="category-card-desc">{cat.desc}</p>
                         </div>
                         <span className="category-card-arrow">
                             Przeglądaj <ArrowRight size={13} />
