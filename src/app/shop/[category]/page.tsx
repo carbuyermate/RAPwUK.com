@@ -63,11 +63,10 @@ export default async function CategoryPage({
                 <ChevronLeft size={18} /> Sklep
             </Link>
 
-            <header className="page-header" style={{ marginBottom: category === 'muzyka' ? '1.5rem' : '2.5rem' }}>
+            <header className="page-header" style={{ marginBottom: '1.5rem' }}>
                 <h1 className="page-header-title">
                     {meta.icon} {meta.title}
                 </h1>
-                <p className="page-header-subtitle">{meta.desc}</p>
             </header>
 
             {category === 'muzyka' && (

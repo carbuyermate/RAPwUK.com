@@ -49,6 +49,7 @@ export default function AddProductPage() {
     const [conditionCover, setConditionCover] = useState('');
     const [conditionNotes, setConditionNotes] = useState('');
     const [musicCategory, setMusicCategory] = useState<'PL' | 'UK' | 'USA' | 'RAP W UK' | ''>('');
+    const [itemCondition, setItemCondition] = useState<'Nowa w folii' | 'Nowa' | 'Używana' | ''>('');
     
     const router = useRouter();
 
@@ -76,6 +77,9 @@ export default function AddProductPage() {
             if (category === 'muzyka' && !musicCategory) {
                 throw new Error('Musisz wybrać kategorię muzyczną (PL, UK, USA lub RAP W UK) dla produktu z kategorii Muzyka.');
             }
+            if (category === 'muzyka' && !itemCondition) {
+                throw new Error('Musisz wybrać stan ogólny produktu (Nowa w folii, Nowa lub Używana).');
+            }
 
             let image_url: string | null = null;
             if (imageFile) {
@@ -94,6 +98,7 @@ export default function AddProductPage() {
                 condition_cover: category === 'muzyka' ? conditionCover : null,
                 condition_notes: category === 'muzyka' ? conditionNotes : null,
                 music_category: category === 'muzyka' ? musicCategory : null,
+                item_condition: category === 'muzyka' ? itemCondition : null,
             }]);
             if (insertErr) throw insertErr;
             router.push('/dashboard/products');
@@ -175,6 +180,15 @@ export default function AddProductPage() {
                                     <option value="UK">UK</option>
                                     <option value="USA">USA</option>
                                     <option value="RAP W UK">RAP W UK</option>
+                                </select>
+                            </div>
+                            <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                                <label className="form-label">Stan ogólny produktu</label>
+                                <select className="form-input" value={itemCondition} onChange={(e) => setItemCondition(e.target.value as any)} required>
+                                    <option value="">-- Wybierz stan ogólny produktu --</option>
+                                    <option value="Nowa w folii">🆕 Nowa w folii</option>
+                                    <option value="Nowa">✨ Nowa</option>
+                                    <option value="Używana">💿 Używana</option>
                                 </select>
                             </div>
                             <div className="form-group">

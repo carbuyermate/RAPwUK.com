@@ -65,7 +65,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                         <p className="product-detail-desc">{product.description}</p>
                     )}
 
-                    {product.category === 'muzyka' && (product.media_type || product.condition_media || product.condition_cover || product.condition_notes) && (
+                    {product.category === 'muzyka' && (product.media_type || product.condition_media || product.condition_cover || product.condition_notes || product.item_condition) && (
                         <div style={{
                             margin: '1.5rem 0',
                             padding: '1.25rem',
@@ -81,6 +81,14 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                                 <ConditionGuideButton />
                             </div>
                             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                {product.item_condition && (
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>Stan ogólny:</span>
+                                        <strong style={{ color: 'var(--text-primary)' }}>
+                                            {product.item_condition}
+                                        </strong>
+                                    </li>
+                                )}
                                 {product.media_type && (
                                     <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>Nośnik:</span>

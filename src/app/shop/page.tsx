@@ -22,6 +22,7 @@ export interface Product {
     condition_cover?: string | null;
     condition_notes?: string | null;
     music_category?: 'PL' | 'UK' | 'USA' | 'RAP W UK' | null;
+    item_condition?: 'Nowa w folii' | 'Nowa' | 'Używana' | null;
 }
 
 const CATEGORIES = [
