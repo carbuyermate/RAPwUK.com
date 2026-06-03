@@ -241,7 +241,7 @@ a.glass-panel:hover,
 
 /* ── GLOBAL PAGE HEADER STANDARDS ── */
 .page-header {
-  padding: 3rem 0 2rem;
+  padding: 1.25rem 0 1.75rem;
   border-bottom: 1px solid var(--border-color);
   margin-bottom: 2.5rem;
   text-align: left;
