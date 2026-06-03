@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
-import { ChevronLeft, Package } from 'lucide-react';
+import { ChevronLeft, Package, Trash2 } from 'lucide-react';
 import '../dashboard.css';
 
 interface Order {
@@ -62,6 +62,17 @@ export default function OrdersPage() {
     const updateStatus = async (id: string, status: string) => {
         await supabase.from('orders').update({ status }).eq('id', id);
         setOrders((prev) => prev.map((o) => o.id === id ? { ...o, status } : o));
+    };
+
+    const deleteOrder = async (id: string) => {
+        if (!confirm('Czy na pewno chcesz usunąć to zamówienie? Ta operacja jest nieodwracalna.')) return;
+        try {
+            const { error } = await supabase.from('orders').delete().eq('id', id);
+            if (error) throw error;
+            setOrders((prev) => prev.filter((o) => o.id !== id));
+        } catch (err: any) {
+            alert(`Błąd podczas usuwania zamówienia: ${err.message}`);
+        }
     };
 
     return (
@@ -157,16 +168,36 @@ export default function OrdersPage() {
                                             {STATUS_LABELS[order.status] || order.status}
                                         </span>
                                     </div>
-                                    <select
-                                        style={{ marginTop: '0.75rem', padding: '6px 10px', borderRadius: '8px', fontSize: '0.8rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', cursor: 'pointer' }}
-                                        value={order.status}
-                                        onChange={(e) => updateStatus(order.id, e.target.value)}
-                                    >
-                                        <option value="pending">Oczekuje</option>
-                                        <option value="paid">Opłacone</option>
-                                        <option value="shipped">Wysłane</option>
-                                        <option value="cancelled">Anulowane</option>
-                                    </select>
+                                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem', justifyContent: 'flex-end', alignItems: 'center' }}>
+                                        <select
+                                            style={{ padding: '6px 10px', borderRadius: '8px', fontSize: '0.8rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', cursor: 'pointer' }}
+                                            value={order.status}
+                                            onChange={(e) => updateStatus(order.id, e.target.value)}
+                                        >
+                                            <option value="pending">Oczekuje</option>
+                                            <option value="paid">Opłacone</option>
+                                            <option value="shipped">Wysłane</option>
+                                            <option value="cancelled">Anulowane</option>
+                                        </select>
+                                        <button
+                                            onClick={() => deleteOrder(order.id)}
+                                            style={{
+                                                padding: '6px 10px',
+                                                borderRadius: '8px',
+                                                fontSize: '0.8rem',
+                                                background: 'rgba(239, 68, 68, 0.1)',
+                                                border: '1px solid rgba(239, 68, 68, 0.2)',
+                                                color: '#ef4444',
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                            }}
+                                            title="Usuń zamówienie"
+                                        >
+                                            <Trash2 size={14} />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -113,60 +113,7 @@ export async function POST(req: NextRequest) {
                     console.log(`[Webhook] Order ${dbOrder.id} updated to PAID via RPC`);
                 }
 
-                // Decrement stock for the purchased items
-                let itemsList = dbOrder.items;
-                if (typeof itemsList === 'string') {
-                    try {
-                        itemsList = JSON.parse(itemsList);
-                    } catch (e) {
-                        console.error('[Webhook] Failed to parse dbOrder.items string', e);
-                        itemsList = [];
-                    }
-                }
-
-                if (Array.isArray(itemsList)) {
-                    for (const item of itemsList) {
-                        const productId = item.id;
-                        const qty = item.quantity;
-                        
-                        if (productId && qty > 0) {
-                            // Read current stock
-                            const { data: product } = await supabaseAdmin
-                                .from('products')
-                                .select('stock')
-                                .eq('id', productId)
-                                .maybeSingle();
-
-                            if (product) {
-                                // Try RPC first (bypasses RLS if defined with SECURITY DEFINER)
-                                const { error: rpcErr } = await supabaseAdmin
-                                    .rpc('decrement_product_stock', {
-                                        product_id: productId,
-                                        qty: qty
-                                    });
-
-                                if (rpcErr) {
-                                    console.log(`[Webhook] RPC decrement failed, falling back to direct update: ${rpcErr.message}`);
-                                    const currentStock = product.stock !== null ? product.stock : 0;
-                                    const newStock = Math.max(0, currentStock - qty);
-                                    
-                                    const { error: stockErr } = await supabaseAdmin
-                                        .from('products')
-                                        .update({ stock: newStock })
-                                        .eq('id', productId);
-                                        
-                                    if (stockErr) {
-                                        console.error(`[Webhook] Direct stock update fallback also failed for product ${productId}:`, stockErr.message);
-                                    } else {
-                                        console.log(`[Webhook] Stock for product ${productId} decremented via direct update fallback to ${newStock}`);
-                                    }
-                                } else {
-                                    console.log(`[Webhook] Stock for product ${productId} decremented via RPC`);
-                                }
-                            }
-                        }
-                    }
-                }
+                // Note: Stock decrement is handled automatically via public.handle_order_stock_change database trigger
             } else {
                 // Fallback/Safety: If for some reason the order doesn't exist, we create a new one on the fly
                 // Fetch line items from Stripe to store in our orders DB
