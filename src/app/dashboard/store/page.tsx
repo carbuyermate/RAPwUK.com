@@ -4,10 +4,10 @@ import { useState, useEffect, Suspense } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { 
-    ChevronLeft, Plus, Trash2, Edit, Package, ShoppingBag, 
-    ClipboardList, BarChart3, TrendingUp, DollarSign, Percent, 
-    ShoppingBasket, UserCheck, Calendar, Info, AlertTriangle, Users
+import {
+    ChevronLeft, Plus, Trash2, Edit, Package,
+    ClipboardList, BarChart3, TrendingUp, DollarSign, Percent,
+    ShoppingBasket, UserCheck, Calendar, AlertTriangle, Users
 } from 'lucide-react';
 import '../dashboard.css';
 
@@ -32,6 +32,261 @@ interface OrderItem {
     purchase_price: number;
     quantity: number;
     created_at: string;
+}
+
+// ─── StatsTabContent ─────────────────────────────────────────────────────────
+// Isolated component: loads order_items itself; if it crashes only this tab
+// is affected, not the whole store page.
+function StatsTabContent({ products, orders }: { products: Product[]; orders: Order[] }) {
+    const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
+    const [datePreset, setDatePreset] = useState<string>('thismonth');
+    const [customStartDate, setCustomStartDate] = useState<string>('');
+    const [customEndDate, setCustomEndDate] = useState<string>('');
+    const [statsLoading, setStatsLoading] = useState(true);
+    const [statsError, setStatsError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const now = new Date();
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const toISO = (d: Date) => d.toISOString().split('T')[0];
+        setCustomStartDate(toISO(startOfMonth));
+        setCustomEndDate(toISO(now));
+    }, []);
+
+    useEffect(() => {
+        (async () => {
+            setStatsLoading(true);
+            setStatsError(null);
+            try {
+                const { data, error } = await supabase
+                    .from('order_items')
+                    .select('*')
+                    .order('created_at', { ascending: true });
+                if (error) throw new Error(error.message);
+                setOrderItems((data || []) as OrderItem[]);
+            } catch (e: any) {
+                setStatsError(e.message || 'Błąd ładowania danych');
+            } finally {
+                setStatsLoading(false);
+            }
+        })();
+    }, []);
+
+    const getDateRange = (): { start: Date; end: Date } => {
+        const now = new Date();
+        switch (datePreset) {
+            case 'today': { const s = new Date(now); s.setHours(0,0,0,0); return { start: s, end: now }; }
+            case 'yesterday': { const y = new Date(now); y.setDate(y.getDate()-1); y.setHours(0,0,0,0); const ye = new Date(y); ye.setHours(23,59,59,999); return { start: y, end: ye }; }
+            case '7days': { const s = new Date(now); s.setDate(s.getDate()-6); s.setHours(0,0,0,0); return { start: s, end: now }; }
+            case 'lastmonth': { const s = new Date(now.getFullYear(), now.getMonth()-1, 1); const e = new Date(now.getFullYear(), now.getMonth(), 0, 23,59,59,999); return { start: s, end: e }; }
+            case 'ytd': { const s = new Date(now.getFullYear(), 0, 1); return { start: s, end: now }; }
+            case 'custom': {
+                const s = customStartDate ? new Date(customStartDate) : new Date(now.getFullYear(), now.getMonth(), 1);
+                const e = customEndDate ? new Date(customEndDate + 'T23:59:59') : now;
+                return { start: s, end: e };
+            }
+            default: { const s = new Date(now.getFullYear(), now.getMonth(), 1); return { start: s, end: now }; }
+        }
+    };
+
+    if (statsLoading) return <div className="text-center py-12"><p className="text-secondary animate-pulse">Ładowanie statystyk...</p></div>;
+    if (statsError) return (
+        <div className="glass-panel p-8 text-center mt-4" style={{ borderColor: 'rgba(239,68,68,0.2)' }}>
+            <AlertTriangle size={36} style={{ margin: '0 auto 1rem', color: '#ef4444', opacity: 0.7 }} />
+            <p className="font-semibold" style={{ color: '#ef4444' }}>Błąd ładowania statystyk</p>
+            <p className="text-secondary text-sm mt-2">{statsError}</p>
+            <p className="text-secondary text-xs mt-3">Upewnij się że uruchomiłeś <code>migration_store_analytics_tables.sql</code> w Supabase.</p>
+        </div>
+    );
+
+    const { start: filterStart, end: filterEnd } = getDateRange();
+
+    const paidOrders = orders.filter(o => o.status === 'paid' || o.status === 'shipped');
+    const ordersInRange = paidOrders.filter(o => {
+        const d = new Date(o.created_at);
+        return !isNaN(d.getTime()) && d >= filterStart && d <= filterEnd;
+    });
+
+    const grossRevenue = ordersInRange.reduce((s, o) => s + Number(o.total_amount || 0), 0);
+    const totalOrders = ordersInRange.length;
+    const aov = totalOrders > 0 ? grossRevenue / totalOrders : 0;
+
+    const itemsInRange = orderItems.filter(i => {
+        const d = new Date(i.created_at);
+        return !isNaN(d.getTime()) && d >= filterStart && d <= filterEnd;
+    });
+    const totalCost = itemsInRange.reduce((s, i) => s + (Number(i.purchase_price || 0) * Number(i.quantity || 1)), 0);
+    const netProfit = grossRevenue - totalCost;
+    const roi = totalCost > 0 ? ((netProfit / totalCost) * 100) : 0;
+    const unitsSold = itemsInRange.reduce((s, i) => s + Number(i.quantity || 0), 0);
+
+    const customerLtvMap = new Map<string, { email: string; totalSpent: number; orders: number }>();
+    ordersInRange.forEach(o => {
+        const email = (o.customer_email || '').trim().toLowerCase() || 'unknown';
+        const existing = customerLtvMap.get(email);
+        if (existing) { existing.totalSpent += Number(o.total_amount || 0); existing.orders += 1; }
+        else { customerLtvMap.set(email, { email, totalSpent: Number(o.total_amount || 0), orders: 1 }); }
+    });
+    const topCustomers = Array.from(customerLtvMap.values()).sort((a, b) => b.totalSpent - a.totalSpent).slice(0, 5);
+
+    const msDiff = filterEnd.getTime() - filterStart.getTime();
+    const groupByMonth = msDiff / (1000 * 60 * 60 * 24) > 60;
+    const chartPointsMap = new Map<string, number>();
+    if (groupByMonth) {
+        let cur = new Date(filterStart.getFullYear(), filterStart.getMonth(), 1);
+        while (cur <= filterEnd) {
+            chartPointsMap.set(`${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}`, 0);
+            cur.setMonth(cur.getMonth()+1);
+        }
+        ordersInRange.forEach(o => {
+            const d = new Date(o.created_at);
+            const k = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+            if (chartPointsMap.has(k)) chartPointsMap.set(k, chartPointsMap.get(k)! + Number(o.total_amount));
+        });
+    } else {
+        let cur = new Date(filterStart);
+        while (cur <= filterEnd) {
+            chartPointsMap.set(cur.toISOString().split('T')[0], 0);
+            cur.setDate(cur.getDate()+1);
+        }
+        ordersInRange.forEach(o => {
+            const k = new Date(o.created_at).toISOString().split('T')[0];
+            if (chartPointsMap.has(k)) chartPointsMap.set(k, chartPointsMap.get(k)! + Number(o.total_amount));
+        });
+    }
+    const monthNames = ['Sty','Lut','Mar','Kwi','Maj','Cze','Lip','Sie','Wrz','Paź','Lis','Gru'];
+    const chartData = Array.from(chartPointsMap.entries()).map(([label, value]) => {
+        let displayLabel = label;
+        if (groupByMonth) { const [yr, mo] = label.split('-'); displayLabel = `${monthNames[parseInt(mo)-1]} ${yr.substring(2)}`; }
+        else { const [,mo,dy] = label.split('-'); displayLabel = `${dy}.${mo}`; }
+        return { label: displayLabel, value };
+    });
+    const maxChartValue = Math.max(...chartData.map(d => d.value), 10);
+
+    const productSalesMap = new Map<string, { name: string; qty: number; revenue: number }>();
+    itemsInRange.forEach(i => {
+        const name = i.product_name || 'Nieznany';
+        const existing = productSalesMap.get(name);
+        if (existing) { existing.qty += Number(i.quantity); existing.revenue += Number(i.price_sold) * Number(i.quantity); }
+        else productSalesMap.set(name, { name, qty: Number(i.quantity), revenue: Number(i.price_sold) * Number(i.quantity) });
+    });
+    const topProducts = Array.from(productSalesMap.values()).sort((a, b) => b.revenue - a.revenue).slice(0, 5);
+
+    const unsoldProducts = products.filter(p => !productSalesMap.has(p.title) && p.stock > 0);
+
+    const kpis = [
+        { icon: <DollarSign size={18} />, label: 'Przychód brutto', value: `£${grossRevenue.toFixed(2)}`, color: '#10b981' },
+        { icon: <TrendingUp size={18} />, label: 'Zysk netto', value: `£${netProfit.toFixed(2)}`, color: netProfit >= 0 ? '#10b981' : '#ef4444' },
+        { icon: <Percent size={18} />, label: 'ROI', value: `${roi.toFixed(1)}%`, color: roi >= 0 ? '#10b981' : '#ef4444' },
+        { icon: <ShoppingBasket size={18} />, label: 'Zamówień', value: totalOrders.toString(), color: '#6366f1' },
+        { icon: <DollarSign size={18} />, label: 'Śr. wartość', value: `£${aov.toFixed(2)}`, color: '#f59e0b' },
+        { icon: <Users size={18} />, label: 'Sprzedano szt.', value: unitsSold.toString(), color: '#a78bfa' },
+    ];
+
+    return (
+        <div className="space-y-6">
+            {/* Date filters */}
+            <div className="glass-panel p-4 flex flex-wrap gap-4 items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <Calendar size={18} className="text-emerald-400" />
+                    <span className="font-semibold text-sm">Zakres analizy:</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                    {[{key:'today',label:'Dzisiaj'},{key:'yesterday',label:'Wczoraj'},{key:'7days',label:'7 dni'},{key:'thismonth',label:'Bieżący miesiąc'},{key:'lastmonth',label:'Poprzedni miesiąc'},{key:'ytd',label:'Ten rok (YTD)'},{key:'custom',label:'Niestandardowy'}]
+                        .map(p => <button key={p.key} onClick={() => setDatePreset(p.key)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${datePreset===p.key?'bg-emerald-500 text-white':'bg-white/5 text-secondary hover:text-white'}`}>{p.label}</button>)}
+                </div>
+                {datePreset === 'custom' && (
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                        <input type="date" value={customStartDate} onChange={e => setCustomStartDate(e.target.value)} className="form-input py-1 px-2 text-xs" style={{width:'130px'}} />
+                        <span className="text-secondary text-xs">do</span>
+                        <input type="date" value={customEndDate} onChange={e => setCustomEndDate(e.target.value)} className="form-input py-1 px-2 text-xs" style={{width:'130px'}} />
+                    </div>
+                )}
+            </div>
+
+            {/* KPI Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4">
+                {kpis.map((k, i) => (
+                    <div key={i} className="glass-panel p-4 flex flex-col gap-2">
+                        <div style={{ color: k.color, opacity: 0.8 }}>{k.icon}</div>
+                        <div className="text-xs text-secondary">{k.label}</div>
+                        <div className="text-xl font-black" style={{ color: k.color }}>{k.value}</div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Chart */}
+            {chartData.length > 0 && (
+                <div className="glass-panel p-6">
+                    <h3 className="font-bold mb-4 flex items-center gap-2"><TrendingUp size={18} className="text-emerald-400" /> Przychód w czasie</h3>
+                    <div style={{ display:'flex', alignItems:'flex-end', gap:'4px', height:'140px', overflowX:'auto' }}>
+                        {chartData.map((d, i) => (
+                            <div key={i} style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'4px', minWidth:'32px', flex:'0 0 auto' }}>
+                                <div style={{ width:'100%', background:'rgba(16,185,129,0.15)', borderRadius:'4px 4px 0 0', height:`${Math.max((d.value/maxChartValue)*120,2)}px`, borderTop: d.value>0 ? '2px solid #10b981':undefined, transition:'height 0.3s' }} title={`£${d.value.toFixed(2)}`} />
+                                <span style={{ fontSize:'9px', color:'var(--text-secondary)', whiteSpace:'nowrap' }}>{d.label}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Top Products */}
+                <div className="glass-panel p-6">
+                    <h3 className="font-bold mb-4 flex items-center gap-2"><ShoppingBasket size={18} className="text-emerald-400" /> Top produkty</h3>
+                    {topProducts.length === 0 ? <p className="text-secondary text-sm">Brak sprzedaży w tym okresie.</p> : (
+                        <div style={{ display:'flex', flexDirection:'column', gap:'0.5rem' }}>
+                            {topProducts.map((p, i) => (
+                                <div key={i} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'8px 12px', background:'rgba(255,255,255,0.03)', borderRadius:'8px' }}>
+                                    <div>
+                                        <div className="font-semibold text-sm">{p.name}</div>
+                                        <div className="text-xs text-secondary">{p.qty} szt.</div>
+                                    </div>
+                                    <div className="font-black text-emerald-400">£{p.revenue.toFixed(2)}</div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* Top Customers */}
+                <div className="glass-panel p-6">
+                    <h3 className="font-bold mb-4 flex items-center gap-2"><UserCheck size={18} className="text-emerald-400" /> Top klienci</h3>
+                    {topCustomers.length === 0 ? <p className="text-secondary text-sm">Brak danych o klientach.</p> : (
+                        <div style={{ display:'flex', flexDirection:'column', gap:'0.5rem' }}>
+                            {topCustomers.map((c, i) => (
+                                <div key={i} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'8px 12px', background:'rgba(255,255,255,0.03)', borderRadius:'8px' }}>
+                                    <div>
+                                        <div className="font-semibold text-sm">{c.email === 'unknown' ? '(brak emaila)' : c.email}</div>
+                                        <div className="text-xs text-secondary">{c.orders} zamów.</div>
+                                    </div>
+                                    <div className="font-black text-emerald-400">£{c.totalSpent.toFixed(2)}</div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Unsold products */}
+            {unsoldProducts.length > 0 && (
+                <div className="glass-panel p-6">
+                    <h3 className="font-bold mb-4 flex items-center gap-2"><AlertTriangle size={18} className="text-amber-400" /> Produkty bez sprzedaży (w wybranym okresie)</h3>
+                    <div style={{ display:'flex', flexDirection:'column', gap:'0.5rem' }}>
+                        {unsoldProducts.map(p => (
+                            <div key={p.id} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'8px 12px', background:'rgba(255,255,255,0.03)', borderRadius:'8px' }}>
+                                <div>
+                                    <div className="font-semibold text-sm">{p.title}</div>
+                                    <div className="text-[10px] text-amber-500/80 mt-0.5">Na stanie: {p.stock} szt. — brak sprzedaży</div>
+                                </div>
+                                <div className="font-black text-secondary whitespace-nowrap">£{p.price.toFixed(2)}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
 }
 
 interface Order {
@@ -85,17 +340,11 @@ function StoreDashboardContent() {
     // Tab switching
     const initialTab = searchParams.get('tab') as 'products' | 'orders' | 'stats' || 'products';
     const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'stats'>(initialTab);
-    
-    // Data states
+
+    // Data states (no order_items here – handled by StatsTabContent)
     const [products, setProducts] = useState<Product[]>([]);
     const [orders, setOrders] = useState<Order[]>([]);
-    const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
     const [loading, setLoading] = useState(true);
-    
-    // Date filter presets
-    const [datePreset, setDatePreset] = useState<string>('thismonth');
-    const [customStartDate, setCustomStartDate] = useState<string>('');
-    const [customEndDate, setCustomEndDate] = useState<string>('');
     
     // Update active tab when query param changes
     useEffect(() => {
@@ -114,15 +363,13 @@ function StoreDashboardContent() {
                 return;
             }
 
-            const [productsRes, ordersRes, itemsRes] = await Promise.all([
+            const [productsRes, ordersRes] = await Promise.all([
                 supabase.from('products').select('*').order('created_at', { ascending: false }),
                 supabase.from('orders').select('*').order('created_at', { ascending: false }),
-                supabase.from('order_items').select('*').order('created_at', { ascending: true })
             ]);
 
             setProducts((productsRes.data || []) as Product[]);
             setOrders((ordersRes.data || []) as Order[]);
-            setOrderItems((itemsRes.data || []) as OrderItem[]);
         } catch (err) {
             console.error('Error fetching data:', err);
         } finally {
@@ -132,16 +379,6 @@ function StoreDashboardContent() {
 
     useEffect(() => {
         fetchData();
-    }, []);
-
-    // Set custom date inputs based on current month initially
-    useEffect(() => {
-        const now = new Date();
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        
-        const toISODate = (d: Date) => d.toISOString().split('T')[0];
-        setCustomStartDate(toISODate(startOfMonth));
-        setCustomEndDate(toISODate(now));
     }, []);
 
     // Update query parameters on tab switch to keep state in URL
@@ -175,264 +412,7 @@ function StoreDashboardContent() {
         }
     };
 
-    // Date range helper
-    const getDateRange = (): { start: Date; end: Date } => {
-        const now = new Date();
-        let start = new Date();
-        let end = new Date();
-
-        switch (datePreset) {
-            case 'today':
-                start.setHours(0,0,0,0);
-                end.setHours(23,59,59,999);
-                break;
-            case 'yesterday':
-                start.setDate(now.getDate() - 1);
-                start.setHours(0,0,0,0);
-                end.setDate(now.getDate() - 1);
-                end.setHours(23,59,59,999);
-                break;
-            case '7days':
-                start.setDate(now.getDate() - 6);
-                start.setHours(0,0,0,0);
-                end.setHours(23,59,59,999);
-                break;
-            case 'thismonth':
-                start = new Date(now.getFullYear(), now.getMonth(), 1);
-                end.setHours(23,59,59,999);
-                break;
-            case 'lastmonth':
-                start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-                end = new Date(now.getFullYear(), now.getMonth(), 0);
-                end.setHours(23,59,59,999);
-                break;
-            case 'ytd':
-                start = new Date(now.getFullYear(), 0, 1);
-                end.setHours(23,59,59,999);
-                break;
-            case 'custom':
-                if (customStartDate) {
-                    const parsedStart = new Date(customStartDate);
-                    if (!isNaN(parsedStart.getTime())) {
-                        start = parsedStart;
-                        start.setHours(0,0,0,0);
-                    }
-                }
-                if (customEndDate) {
-                    const parsedEnd = new Date(customEndDate);
-                    if (!isNaN(parsedEnd.getTime())) {
-                        end = parsedEnd;
-                        end.setHours(23,59,59,999);
-                    }
-                }
-                break;
-        }
-        return { start, end };
-    };
-
-    const { start: filterStart, end: filterEnd } = getDateRange();
-
-    // Stats calculations
-    const sfinalizowaneOrders = orders.filter(o => o.status === 'paid' || o.status === 'shipped');
-    
-    // Filter orders in range
-    const ordersInRange = sfinalizowaneOrders.filter(o => {
-        const orderDate = new Date(o.created_at);
-        return orderDate >= filterStart && orderDate <= filterEnd;
-    });
-
-    // Filter order items in range
-    const itemsInRange = orderItems.filter(item => {
-        // Find parent order to ensure status is paid/shipped
-        const parentOrder = orders.find(o => o.id === item.order_id);
-        if (!parentOrder || (parentOrder.status !== 'paid' && parentOrder.status !== 'shipped')) {
-            return false;
-        }
-        const itemDate = new Date(item.created_at);
-        return itemDate >= filterStart && itemDate <= filterEnd;
-    });
-
-    // 1. KPI Calculations
-    const grossRevenue = ordersInRange.reduce((sum, o) => sum + Number(o.total_amount || 0), 0);
-    const totalOrders = ordersInRange.length;
-    const totalItemsSold = itemsInRange.reduce((sum, item) => sum + (item.quantity || 0), 0);
-    
-    const totalCost = itemsInRange.reduce((sum, item) => sum + (Number(item.purchase_price || 0) * (item.quantity || 0)), 0);
-    const netProfit = itemsInRange.reduce((sum, item) => sum + ((Number(item.price_sold || 0) - Number(item.purchase_price || 0)) * (item.quantity || 0)), 0);
-    const roi = totalCost > 0 ? (netProfit / totalCost) * 100 : 0;
-    
-    const aov = totalOrders > 0 ? grossRevenue / totalOrders : 0;
-    const upt = totalOrders > 0 ? totalItemsSold / totalOrders : 0;
-
-    // 2. Best Sellers
-    const productStatsMap = new Map<string, { name: string; quantity: number; revenue: number }>();
-    itemsInRange.forEach(item => {
-        const key = item.product_id || item.product_name;
-        const existing = productStatsMap.get(key) || { name: item.product_name, quantity: 0, revenue: 0 };
-        productStatsMap.set(key, {
-            name: item.product_name,
-            quantity: existing.quantity + (item.quantity || 0),
-            revenue: existing.revenue + (Number(item.price_sold || 0) * (item.quantity || 0))
-        });
-    });
-    const bestSellers = Array.from(productStatsMap.values())
-        .sort((a, b) => b.quantity - a.quantity)
-        .slice(0, 5);
-
-    // 3. Category & Genre Analysis
-    // Store categories (muzyka, bilety, ubrania)
-    const categoryStats: Record<string, { quantity: number; revenue: number }> = {
-        muzyka: { quantity: 0, revenue: 0 },
-        bilety: { quantity: 0, revenue: 0 },
-        ubrania: { quantity: 0, revenue: 0 }
-    };
-    // Music subcategories (PL, UK, USA, RAP W UK)
-    const musicCategoryStats: Record<string, { quantity: number; revenue: number }> = {
-        PL: { quantity: 0, revenue: 0 },
-        UK: { quantity: 0, revenue: 0 },
-        USA: { quantity: 0, revenue: 0 },
-        'RAP W UK': { quantity: 0, revenue: 0 }
-    };
-
-    itemsInRange.forEach(item => {
-        // Find corresponding product to get category details
-        const prod = products.find(p => p.id === item.product_id);
-        const cat = prod?.category || 'muzyka'; // Fallback
-        if (categoryStats[cat]) {
-            categoryStats[cat].quantity += (item.quantity || 0);
-            categoryStats[cat].revenue += (Number(item.price_sold || 0) * (item.quantity || 0));
-        }
-
-        if (cat === 'muzyka') {
-            // Find music category
-            const mCat = (prod as any)?.music_category || 'PL';
-            if (musicCategoryStats[mCat]) {
-                musicCategoryStats[mCat].quantity += (item.quantity || 0);
-                musicCategoryStats[mCat].revenue += (Number(item.price_sold || 0) * (item.quantity || 0));
-            }
-        }
-    });
-
-    // 4. Dead Stock
-    // Active products with stock > 0 but 0 units sold in the current date range, sorted by oldest creation date
-    const deadStock = products
-        .filter(p => p.is_active && p.stock > 0)
-        .filter(p => {
-            const soldCount = orderItems
-                .filter(item => {
-                    const parentOrder = orders.find(o => o.id === item.order_id);
-                    return parentOrder && (parentOrder.status === 'paid' || parentOrder.status === 'shipped');
-                })
-                .filter(item => item.product_id === p.id)
-                .reduce((sum, item) => sum + (item.quantity || 0), 0);
-            return soldCount === 0;
-        })
-        .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
-        .slice(0, 5);
-
-    // 5. Customer Analytics
-    // Unique customer emails in range
-    const customersInRange = Array.from(
-        new Set(
-            ordersInRange
-                .map(o => (o.customer_email || '').trim().toLowerCase())
-                .filter(Boolean)
-        )
-    );
-    let newCustomersCount = 0;
-    let returningCustomersCount = 0;
-
-    customersInRange.forEach(email => {
-        // Check if user had any sfinalizowane orders prior to start range
-        const hadPriorOrder = sfinalizowaneOrders.some(o => {
-            const orderDate = new Date(o.created_at);
-            const oEmail = (o.customer_email || '').trim().toLowerCase();
-            return oEmail === email && orderDate < filterStart;
-        });
-
-        if (hadPriorOrder) {
-            returningCustomersCount++;
-        } else {
-            newCustomersCount++;
-        }
-    });
-
-    const totalUniqueCustomersInRange = customersInRange.length;
-    const newCustomerRatio = totalUniqueCustomersInRange > 0 ? (newCustomersCount / totalUniqueCustomersInRange) * 100 : 0;
-    const returningCustomerRatio = totalUniqueCustomersInRange > 0 ? (returningCustomersCount / totalUniqueCustomersInRange) * 100 : 0;
-
-    // Top Customers LTV ranking (All time sfinalizowane orders)
-    const customerLtvMap = new Map<string, { email: string; totalSpent: number; ordersCount: number }>();
-    sfinalizowaneOrders.forEach(o => {
-        const email = (o.customer_email || '').trim().toLowerCase();
-        if (!email) return;
-        const existing = customerLtvMap.get(email) || { email: o.customer_email || 'Nieznany', totalSpent: 0, ordersCount: 0 };
-        customerLtvMap.set(email, {
-            email: o.customer_email || 'Nieznany',
-            totalSpent: existing.totalSpent + Number(o.total_amount || 0),
-            ordersCount: existing.ordersCount + 1
-        });
-    });
-    const topCustomers = Array.from(customerLtvMap.values())
-        .sort((a, b) => b.totalSpent - a.totalSpent)
-        .slice(0, 5);
-
-    // 6. Chart Data points
-    // Depending on date range length, we group either by Date or by Month
-    const msDiff = filterEnd.getTime() - filterStart.getTime();
-    const dayDiff = msDiff / (1000 * 60 * 60 * 24);
-    const groupByMonth = dayDiff > 60;
-
-    const chartPointsMap = new Map<string, number>();
-
-    if (groupByMonth) {
-        // Initialize months in range
-        let current = new Date(filterStart.getFullYear(), filterStart.getMonth(), 1);
-        while (current <= filterEnd) {
-            const key = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, '0')}`;
-            chartPointsMap.set(key, 0);
-            current.setMonth(current.getMonth() + 1);
-        }
-
-        ordersInRange.forEach(o => {
-            const d = new Date(o.created_at);
-            const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-            if (chartPointsMap.has(key)) {
-                chartPointsMap.set(key, chartPointsMap.get(key)! + Number(o.total_amount));
-            }
-        });
-    } else {
-        // Initialize days in range
-        let current = new Date(filterStart);
-        while (current <= filterEnd) {
-            const key = current.toISOString().split('T')[0];
-            chartPointsMap.set(key, 0);
-            current.setDate(current.getDate() + 1);
-        }
-
-        ordersInRange.forEach(o => {
-            const key = new Date(o.created_at).toISOString().split('T')[0];
-            if (chartPointsMap.has(key)) {
-                chartPointsMap.set(key, chartPointsMap.get(key)! + Number(o.total_amount));
-            }
-        });
-    }
-
-    const chartData = Array.from(chartPointsMap.entries()).map(([label, value]) => {
-        // Format label for visual display
-        let displayLabel = label;
-        if (groupByMonth) {
-            const [year, month] = label.split('-');
-            const monthsNames = ['Sty', 'Lut', 'Mar', 'Kwi', 'Maj', 'Cze', 'Lip', 'Sie', 'Wrz', 'Paź', 'Lis', 'Gru'];
-            displayLabel = `${monthsNames[parseInt(month) - 1]} ${year.substring(2)}`;
-        } else {
-            const [_, month, day] = label.split('-');
-            displayLabel = `${day}.${month}`;
-        }
-        return { label: displayLabel, rawLabel: label, value };
-    });
-
-    const maxChartValue = Math.max(...chartData.map(d => d.value), 10);
+    // (Stats calculations moved to StatsTabContent component)
 
     return (
         <div className="dashboard-container container animate-fade-in" style={{ paddingBottom: '4rem' }}>
@@ -674,359 +654,9 @@ function StoreDashboardContent() {
                         </div>
                     )}
 
-                    {/* 3. STATS TAB */}
+                    {/* 3. STATS TAB – rendered by isolated component */}
                     {activeTab === 'stats' && (
-                        <div className="space-y-6">
-                            {/* Controls and Filters */}
-                            <div className="glass-panel p-4 flex flex-wrap gap-4 items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <Calendar size={18} className="text-emerald-400" />
-                                    <span className="font-semibold text-sm">Zakres analizy:</span>
-                                </div>
-                                <div className="flex flex-wrap gap-2">
-                                    {[
-                                        { key: 'today', label: 'Dzisiaj' },
-                                        { key: 'yesterday', label: 'Wczoraj' },
-                                        { key: '7days', label: '7 dni' },
-                                        { key: 'thismonth', label: 'Bieżący miesiąc' },
-                                        { key: 'lastmonth', label: 'Poprzedni miesiąc' },
-                                        { key: 'ytd', label: 'Ten rok (YTD)' },
-                                        { key: 'custom', label: 'Niestandardowy' }
-                                    ].map(preset => (
-                                        <button
-                                            key={preset.key}
-                                            onClick={() => setDatePreset(preset.key)}
-                                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${datePreset === preset.key ? 'bg-emerald-500 text-white' : 'bg-white/5 text-secondary hover:text-white'}`}
-                                        >
-                                            {preset.label}
-                                        </button>
-                                    ))}
-                                </div>
-
-                                {datePreset === 'custom' && (
-                                    <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-white/5">
-                                        <input 
-                                            type="date" 
-                                            value={customStartDate} 
-                                            onChange={(e) => setCustomStartDate(e.target.value)} 
-                                            className="form-input py-1 px-2 text-xs" 
-                                            style={{ width: '130px' }}
-                                        />
-                                        <span className="text-secondary text-xs">do</span>
-                                        <input 
-                                            type="date" 
-                                            value={customEndDate} 
-                                            onChange={(e) => setCustomEndDate(e.target.value)} 
-                                            className="form-input py-1 px-2 text-xs" 
-                                            style={{ width: '130px' }}
-                                        />
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* KPI Grid */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-                                <div className="glass-panel p-4 flex flex-col justify-between" style={{ borderColor: 'rgba(16,185,129,0.15)' }}>
-                                    <div className="flex justify-between items-start">
-                                        <span className="text-xs text-secondary font-medium">Przychód brutto</span>
-                                        <div className="p-1.5 bg-emerald-500/10 rounded-lg"><DollarSign size={14} className="text-emerald-400" /></div>
-                                    </div>
-                                    <div className="mt-2">
-                                        <div className="text-xl font-black">£{grossRevenue.toFixed(2)}</div>
-                                        <p className="text-[10px] text-emerald-400/70 flex items-center gap-1 mt-1"><TrendingUp size={10} /> Sprzedane zamówienia</p>
-                                    </div>
-                                </div>
-
-                                <div className="glass-panel p-4 flex flex-col justify-between" style={{ borderColor: 'rgba(59,130,246,0.15)' }}>
-                                    <div className="flex justify-between items-start">
-                                        <span className="text-xs text-secondary font-medium">Zysk netto</span>
-                                        <div className="p-1.5 bg-blue-500/10 rounded-lg"><TrendingUp size={14} className="text-blue-400" /></div>
-                                    </div>
-                                    <div className="mt-2">
-                                        <div className="text-xl font-black" style={{ color: netProfit >= 0 ? '#60a5fa' : '#ef4444' }}>
-                                            {netProfit < 0 ? '-' : ''}£{Math.abs(netProfit).toFixed(2)}
-                                        </div>
-                                        <p className="text-[10px] text-blue-400/70 flex items-center gap-1 mt-1"><Info size={10} /> Cena sprzedaży - koszt</p>
-                                    </div>
-                                </div>
-
-                                <div className="glass-panel p-4 flex flex-col justify-between" style={{ borderColor: 'rgba(139,92,246,0.15)' }}>
-                                    <div className="flex justify-between items-start">
-                                        <span className="text-xs text-secondary font-medium">Zwrot z inwestycji (ROI)</span>
-                                        <div className="p-1.5 bg-violet-500/10 rounded-lg"><Percent size={14} className="text-violet-400" /></div>
-                                    </div>
-                                    <div className="mt-2">
-                                        <div className="text-xl font-black text-violet-400">{roi.toFixed(1)}%</div>
-                                        <p className="text-[10px] text-violet-400/70 flex items-center gap-1 mt-1"><TrendingUp size={10} /> Zysk / koszt zakupu</p>
-                                    </div>
-                                </div>
-
-                                <div className="glass-panel p-4 flex flex-col justify-between">
-                                    <div className="flex justify-between items-start">
-                                        <span className="text-xs text-secondary font-medium">Liczba zamówień</span>
-                                        <div className="p-1.5 bg-white/5 rounded-lg"><ClipboardList size={14} className="text-secondary" /></div>
-                                    </div>
-                                    <div className="mt-2">
-                                        <div className="text-xl font-black">{totalOrders}</div>
-                                        <p className="text-[10px] text-secondary/70 flex items-center gap-1 mt-1"><ShoppingBasket size={10} /> Sfinalizowane koszyki</p>
-                                    </div>
-                                </div>
-
-                                <div className="glass-panel p-4 flex flex-col justify-between">
-                                    <div className="flex justify-between items-start">
-                                        <span className="text-xs text-secondary font-medium">Średnia wartość (AOV)</span>
-                                        <div className="p-1.5 bg-white/5 rounded-lg"><DollarSign size={14} className="text-secondary" /></div>
-                                    </div>
-                                    <div className="mt-2">
-                                        <div className="text-xl font-black">£{aov.toFixed(2)}</div>
-                                        <p className="text-[10px] text-secondary/70 flex items-center gap-1 mt-1"><Info size={10} /> Średni rachunek koszyka</p>
-                                    </div>
-                                </div>
-
-                                <div className="glass-panel p-4 flex flex-col justify-between">
-                                    <div className="flex justify-between items-start">
-                                        <span className="text-xs text-secondary font-medium">Sztuk na transakcję</span>
-                                        <div className="p-1.5 bg-white/5 rounded-lg"><ShoppingBasket size={14} className="text-secondary" /></div>
-                                    </div>
-                                    <div className="mt-2">
-                                        <div className="text-xl font-black">{upt.toFixed(1)}</div>
-                                        <p className="text-[10px] text-secondary/70 flex items-center gap-1 mt-1"><Info size={10} /> Liczba fizycznych płyt/szt.</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Main Chart Card */}
-                            <div className="glass-panel p-6">
-                                <h3 className="text-sm font-bold mb-4 flex items-center gap-2">
-                                    <BarChart3 size={16} className="text-emerald-400" /> Dynamika przychodu
-                                </h3>
-                                {chartData.length === 0 || maxChartValue === 10 ? (
-                                    <div className="h-[200px] flex items-center justify-center text-secondary text-sm">
-                                        Brak danych do wygenerowania wykresu dla tego zakresu dat
-                                    </div>
-                                ) : (
-                                    <div className="w-full mt-4">
-                                        {/* SVG Chart */}
-                                        <svg viewBox="0 0 600 220" className="w-full overflow-visible">
-                                            <defs>
-                                                <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-                                                    <stop offset="0%" stopColor="#10b981" stopOpacity="0.4" />
-                                                    <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
-                                                </linearGradient>
-                                            </defs>
-                                            {/* Grid Lines */}
-                                            <line x1="0" y1="20" x2="600" y2="20" stroke="rgba(255,255,255,0.05)" strokeDasharray="3" />
-                                            <line x1="0" y1="65" x2="600" y2="65" stroke="rgba(255,255,255,0.05)" strokeDasharray="3" />
-                                            <line x1="0" y1="110" x2="600" y2="110" stroke="rgba(255,255,255,0.05)" strokeDasharray="3" />
-                                            <line x1="0" y1="155" x2="600" y2="155" stroke="rgba(255,255,255,0.05)" strokeDasharray="3" />
-                                            <line x1="0" y1="190" x2="600" y2="190" stroke="rgba(255,255,255,0.2)" />
-
-                                            {/* Columns */}
-                                            {chartData.map((d, i) => {
-                                                const xSpace = 600 / chartData.length;
-                                                const barWidth = Math.max(2, Math.min(25, xSpace * 0.5));
-                                                const x = i * xSpace + (xSpace - barWidth) / 2;
-                                                const height = (d.value / maxChartValue) * 170; // Max height is 170px
-                                                const y = 190 - height;
-                                                
-                                                return (
-                                                    <g key={i} className="group cursor-pointer">
-                                                        {/* Interactive Hover Area */}
-                                                        <rect 
-                                                            x={i * xSpace} 
-                                                            y="0" 
-                                                            width={xSpace} 
-                                                            height="190" 
-                                                            fill="transparent"
-                                                        />
-                                                        {/* Bar */}
-                                                        <rect 
-                                                            x={x} 
-                                                            y={y} 
-                                                            width={barWidth} 
-                                                            height={height} 
-                                                            fill="url(#chartGrad)" 
-                                                            stroke="#10b981"
-                                                            strokeWidth="1.5"
-                                                            rx="3"
-                                                            style={{ transition: 'all 0.3s' }}
-                                                            className="group-hover:fill-emerald-400/30"
-                                                        />
-                                                        {/* Label */}
-                                                        {(chartData.length < 15 || i % Math.ceil(chartData.length / 10) === 0) && (
-                                                            <text 
-                                                                x={i * xSpace + xSpace / 2} 
-                                                                y="210" 
-                                                                fontSize="8" 
-                                                                fill="#a1a1aa" 
-                                                                textAnchor="middle"
-                                                            >
-                                                                {d.label}
-                                                            </text>
-                                                        )}
-                                                        {/* Tooltip */}
-                                                        <title>{`${d.label}: £${d.value.toFixed(2)}`}</title>
-                                                    </g>
-                                                );
-                                            })}
-                                        </svg>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Secondary Stats Grid */}
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                {/* Best Sellers */}
-                                <div className="glass-panel p-5">
-                                    <h3 className="text-sm font-bold mb-4 flex items-center gap-2">
-                                        <TrendingUp size={16} className="text-emerald-400" /> Bestsellery (Top 5)
-                                    </h3>
-                                    {bestSellers.length === 0 ? (
-                                        <p className="text-secondary text-xs text-center py-6">Brak sprzedaży w tym zakresie dat</p>
-                                    ) : (
-                                        <div className="space-y-3">
-                                            {bestSellers.map((item, index) => (
-                                                <div key={index} className="flex justify-between items-center bg-white/2 p-3 rounded-lg border border-white/5">
-                                                    <div>
-                                                        <div className="text-xs font-bold text-white">{item.name}</div>
-                                                        <div className="text-[10px] text-secondary mt-0.5">{item.quantity} szt.</div>
-                                                    </div>
-                                                    <div className="text-sm font-black text-emerald-400">£{item.revenue.toFixed(2)}</div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Category analysis */}
-                                <div className="glass-panel p-5">
-                                    <h3 className="text-sm font-bold mb-4 flex items-center gap-2">
-                                        <PieChart size={16} className="text-emerald-400" /> Udział w sprzedaży
-                                    </h3>
-                                    <div className="space-y-4">
-                                        {/* Store Category progress */}
-                                        <div>
-                                            <div className="text-xs font-semibold text-secondary mb-2">Kategorie Sklepu</div>
-                                            <div className="space-y-2">
-                                                {Object.entries(categoryStats).map(([cat, val]) => {
-                                                    const pct = grossRevenue > 0 ? (val.revenue / grossRevenue) * 100 : 0;
-                                                    return (
-                                                        <div key={cat} className="text-xs">
-                                                            <div className="flex justify-between text-secondary mb-1">
-                                                                <span className="capitalize">{CATEGORY_LABELS[cat] || cat} ({val.quantity} szt.)</span>
-                                                                <span className="font-bold text-white">£{val.revenue.toFixed(2)} ({pct.toFixed(0)}%)</span>
-                                                            </div>
-                                                            <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden">
-                                                                <div className="bg-emerald-500 h-full rounded-full" style={{ width: `${pct}%` }}></div>
-                                                            </div>
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
-                                        </div>
-
-                                        {/* Music category progress */}
-                                        <div className="pt-2 border-t border-white/5">
-                                            <div className="text-xs font-semibold text-secondary mb-2">Muzyka - Pochodzenie/Gatunek</div>
-                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                                {Object.entries(musicCategoryStats).map(([cat, val]) => {
-                                                    const musicTotal = Object.values(musicCategoryStats).reduce((sum, v) => sum + v.revenue, 0);
-                                                    const pct = musicTotal > 0 ? (val.revenue / musicTotal) * 100 : 0;
-                                                    return (
-                                                        <div key={cat} className="bg-white/2 p-2.5 rounded-lg border border-white/5 text-xs">
-                                                            <div className="flex justify-between font-bold mb-1">
-                                                                <span>{cat}</span>
-                                                                <span className="text-emerald-400">£{val.revenue.toFixed(0)}</span>
-                                                            </div>
-                                                            <div className="text-[10px] text-secondary">{val.quantity} szt. ({pct.toFixed(0)}%)</div>
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Lower Stats Grid */}
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                {/* Customer Analytics (New vs Returning) */}
-                                <div className="glass-panel p-5">
-                                    <h3 className="text-sm font-bold mb-4 flex items-center gap-2">
-                                        <UserCheck size={16} className="text-emerald-400" /> Klienci Nowi vs Powracający
-                                    </h3>
-                                    {totalUniqueCustomersInRange === 0 ? (
-                                        <p className="text-secondary text-xs text-center py-6">Brak klientów w tym zakresie dat</p>
-                                    ) : (
-                                        <div className="space-y-4">
-                                            <div className="flex items-center justify-around py-2">
-                                                <div className="text-center">
-                                                    <div className="text-xs text-secondary">Nowi Klienci</div>
-                                                    <div className="text-lg font-black text-emerald-400 mt-1">{newCustomersCount}</div>
-                                                    <div className="text-[10px] text-secondary mt-0.5">({newCustomerRatio.toFixed(0)}%)</div>
-                                                </div>
-                                                <div className="text-center">
-                                                    <div className="text-xs text-secondary">Powracający</div>
-                                                    <div className="text-lg font-black text-blue-400 mt-1">{returningCustomersCount}</div>
-                                                    <div className="text-[10px] text-secondary mt-0.5">({returningCustomerRatio.toFixed(0)}%)</div>
-                                                </div>
-                                            </div>
-                                            <div className="w-full flex h-3 rounded-full overflow-hidden bg-white/5">
-                                                <div className="bg-emerald-500 h-full" style={{ width: `${newCustomerRatio}%` }}></div>
-                                                <div className="bg-blue-500 h-full" style={{ width: `${returningCustomerRatio}%` }}></div>
-                                            </div>
-                                            <p className="text-[10px] text-secondary/60 leading-relaxed">
-                                                Analiza bazuje na historii zamówień klienta. Powracający klient to taki, który złożył przynajmniej jedno sfinalizowane zamówienie przed wybranym okresem.
-                                            </p>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Top Customers LTV */}
-                                <div className="glass-panel p-5">
-                                    <h3 className="text-sm font-bold mb-4 flex items-center gap-2">
-                                        <Users size={16} className="text-emerald-400" /> Najlepsi Klienci (LTV Liderzy)
-                                    </h3>
-                                    {topCustomers.length === 0 ? (
-                                        <p className="text-secondary text-xs text-center py-6">Brak klientów w bazie</p>
-                                    ) : (
-                                        <div className="space-y-3">
-                                            {topCustomers.map((cust, idx) => (
-                                                <div key={idx} className="flex justify-between items-center bg-white/2 p-2.5 rounded-lg border border-white/5 text-xs">
-                                                    <div className="overflow-hidden mr-2">
-                                                        <div className="font-bold text-white truncate" title={cust.email}>{cust.email}</div>
-                                                        <div className="text-[10px] text-secondary mt-0.5">{cust.ordersCount} sfinalizowanych zamówień</div>
-                                                    </div>
-                                                    <div className="font-black text-emerald-400 whitespace-nowrap">£{cust.totalSpent.toFixed(2)}</div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Dead Stock */}
-                                <div className="glass-panel p-5">
-                                    <h3 className="text-sm font-bold mb-4 flex items-center gap-2">
-                                        <AlertTriangle size={16} className="text-amber-500" /> Martwy Asortyment (Dead Stock)
-                                    </h3>
-                                    {deadStock.length === 0 ? (
-                                        <p className="text-secondary text-xs text-center py-6">Brak martwych produktów na stanie</p>
-                                    ) : (
-                                        <div className="space-y-3">
-                                            {deadStock.map((prod, idx) => (
-                                                <div key={idx} className="flex justify-between items-center bg-white/2 p-2.5 rounded-lg border border-white/5 text-xs">
-                                                    <div className="overflow-hidden mr-2">
-                                                        <div className="font-bold text-white truncate" title={prod.title}>{prod.title}</div>
-                                                        <div className="text-[10px] text-amber-500/80 mt-0.5">Na stanie: {prod.stock} szt. — brak sprzedaży</div>
-                                                    </div>
-                                                    <div className="font-black text-secondary whitespace-nowrap">£{prod.price.toFixed(2)}</div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
+                        <StatsTabContent products={products} orders={orders} />
                     )}
                 </>
             )}
