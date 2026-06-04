@@ -212,12 +212,18 @@ function StoreDashboardContent() {
                 break;
             case 'custom':
                 if (customStartDate) {
-                    start = new Date(customStartDate);
-                    start.setHours(0,0,0,0);
+                    const parsedStart = new Date(customStartDate);
+                    if (!isNaN(parsedStart.getTime())) {
+                        start = parsedStart;
+                        start.setHours(0,0,0,0);
+                    }
                 }
                 if (customEndDate) {
-                    end = new Date(customEndDate);
-                    end.setHours(23,59,59,999);
+                    const parsedEnd = new Date(customEndDate);
+                    if (!isNaN(parsedEnd.getTime())) {
+                        end = parsedEnd;
+                        end.setHours(23,59,59,999);
+                    }
                 }
                 break;
         }
@@ -247,12 +253,12 @@ function StoreDashboardContent() {
     });
 
     // 1. KPI Calculations
-    const grossRevenue = ordersInRange.reduce((sum, o) => sum + Number(o.total_amount), 0);
+    const grossRevenue = ordersInRange.reduce((sum, o) => sum + Number(o.total_amount || 0), 0);
     const totalOrders = ordersInRange.length;
-    const totalItemsSold = itemsInRange.reduce((sum, item) => sum + item.quantity, 0);
+    const totalItemsSold = itemsInRange.reduce((sum, item) => sum + (item.quantity || 0), 0);
     
-    const totalCost = itemsInRange.reduce((sum, item) => sum + (Number(item.purchase_price) * item.quantity), 0);
-    const netProfit = itemsInRange.reduce((sum, item) => sum + ((Number(item.price_sold) - Number(item.purchase_price)) * item.quantity), 0);
+    const totalCost = itemsInRange.reduce((sum, item) => sum + (Number(item.purchase_price || 0) * (item.quantity || 0)), 0);
+    const netProfit = itemsInRange.reduce((sum, item) => sum + ((Number(item.price_sold || 0) - Number(item.purchase_price || 0)) * (item.quantity || 0)), 0);
     const roi = totalCost > 0 ? (netProfit / totalCost) * 100 : 0;
     
     const aov = totalOrders > 0 ? grossRevenue / totalOrders : 0;
@@ -265,8 +271,8 @@ function StoreDashboardContent() {
         const existing = productStatsMap.get(key) || { name: item.product_name, quantity: 0, revenue: 0 };
         productStatsMap.set(key, {
             name: item.product_name,
-            quantity: existing.quantity + item.quantity,
-            revenue: existing.revenue + (item.price_sold * item.quantity)
+            quantity: existing.quantity + (item.quantity || 0),
+            revenue: existing.revenue + (Number(item.price_sold || 0) * (item.quantity || 0))
         });
     });
     const bestSellers = Array.from(productStatsMap.values())
@@ -293,16 +299,16 @@ function StoreDashboardContent() {
         const prod = products.find(p => p.id === item.product_id);
         const cat = prod?.category || 'muzyka'; // Fallback
         if (categoryStats[cat]) {
-            categoryStats[cat].quantity += item.quantity;
-            categoryStats[cat].revenue += (item.price_sold * item.quantity);
+            categoryStats[cat].quantity += (item.quantity || 0);
+            categoryStats[cat].revenue += (Number(item.price_sold || 0) * (item.quantity || 0));
         }
 
         if (cat === 'muzyka') {
             // Find music category
             const mCat = (prod as any)?.music_category || 'PL';
             if (musicCategoryStats[mCat]) {
-                musicCategoryStats[mCat].quantity += item.quantity;
-                musicCategoryStats[mCat].revenue += (item.price_sold * item.quantity);
+                musicCategoryStats[mCat].quantity += (item.quantity || 0);
+                musicCategoryStats[mCat].revenue += (Number(item.price_sold || 0) * (item.quantity || 0));
             }
         }
     });
@@ -318,7 +324,7 @@ function StoreDashboardContent() {
                     return parentOrder && (parentOrder.status === 'paid' || parentOrder.status === 'shipped');
                 })
                 .filter(item => item.product_id === p.id)
-                .reduce((sum, item) => sum + item.quantity, 0);
+                .reduce((sum, item) => sum + (item.quantity || 0), 0);
             return soldCount === 0;
         })
         .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
@@ -326,7 +332,13 @@ function StoreDashboardContent() {
 
     // 5. Customer Analytics
     // Unique customer emails in range
-    const customersInRange = Array.from(new Set(ordersInRange.map(o => o.customer_email.trim().toLowerCase())));
+    const customersInRange = Array.from(
+        new Set(
+            ordersInRange
+                .map(o => (o.customer_email || '').trim().toLowerCase())
+                .filter(Boolean)
+        )
+    );
     let newCustomersCount = 0;
     let returningCustomersCount = 0;
 
@@ -334,7 +346,8 @@ function StoreDashboardContent() {
         // Check if user had any sfinalizowane orders prior to start range
         const hadPriorOrder = sfinalizowaneOrders.some(o => {
             const orderDate = new Date(o.created_at);
-            return o.customer_email.trim().toLowerCase() === email && orderDate < filterStart;
+            const oEmail = (o.customer_email || '').trim().toLowerCase();
+            return oEmail === email && orderDate < filterStart;
         });
 
         if (hadPriorOrder) {
@@ -351,11 +364,12 @@ function StoreDashboardContent() {
     // Top Customers LTV ranking (All time sfinalizowane orders)
     const customerLtvMap = new Map<string, { email: string; totalSpent: number; ordersCount: number }>();
     sfinalizowaneOrders.forEach(o => {
-        const email = o.customer_email.trim().toLowerCase();
-        const existing = customerLtvMap.get(email) || { email: o.customer_email, totalSpent: 0, ordersCount: 0 };
+        const email = (o.customer_email || '').trim().toLowerCase();
+        if (!email) return;
+        const existing = customerLtvMap.get(email) || { email: o.customer_email || 'Nieznany', totalSpent: 0, ordersCount: 0 };
         customerLtvMap.set(email, {
-            email: o.customer_email,
-            totalSpent: existing.totalSpent + Number(o.total_amount),
+            email: o.customer_email || 'Nieznany',
+            totalSpent: existing.totalSpent + Number(o.total_amount || 0),
             ordersCount: existing.ordersCount + 1
         });
     });
@@ -548,7 +562,7 @@ function StoreDashboardContent() {
                                         <div key={order.id} className="glass-panel animate-fade-in" style={{ padding: '1.5rem' }}>
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
                                                 <div>
-                                                    <div style={{ fontWeight: 700, fontSize: '1.05rem' }}>{order.customer_email}</div>
+                                                    <div style={{ fontWeight: 700, fontSize: '1.05rem' }}>{order.customer_email || 'Nieznany (Brak email)'}</div>
                                                     <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
                                                         {new Date(order.created_at).toLocaleString('pl-PL')}
                                                     </div>
