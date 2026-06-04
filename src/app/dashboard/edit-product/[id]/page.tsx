@@ -35,6 +35,7 @@ export default function EditProductPage() {
     const [slug, setSlug] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
+    const [purchasePrice, setPurchasePrice] = useState('0');
     const [category, setCategory] = useState<'muzyka' | 'bilety' | 'ubrania'>('muzyka');
     const [stock, setStock] = useState('1');
     const [isActive, setIsActive] = useState(true);
@@ -80,6 +81,7 @@ export default function EditProductPage() {
                 setSlug(data.slug);
                 setDescription(data.description || '');
                 setPrice(data.price.toString());
+                setPurchasePrice((data.purchase_price || 0).toString());
                 setCategory(data.category);
                 setStock(data.stock.toString());
                 setIsActive(data.is_active);
@@ -151,6 +153,7 @@ export default function EditProductPage() {
                     slug: slug || createSlug(title),
                     description,
                     price: parseFloat(price),
+                    purchase_price: parseFloat(purchasePrice) || 0.00,
                     category,
                     stock: parseInt(stock),
                     is_active: isActive,
@@ -174,8 +177,8 @@ export default function EditProductPage() {
                 }
             }
 
-            router.push('/dashboard/products');
-            router.refresh();
+             router.push('/dashboard/store?tab=products');
+             router.refresh();
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -189,10 +192,10 @@ export default function EditProductPage() {
 
     return (
         <div className="dashboard-container container animate-fade-in">
-            <header className="dashboard-header">
-                <div className="flex items-center gap-4">
-                    <Link href="/dashboard/products" className="action-btn"><ChevronLeft size={24} /></Link>
-                    <h1 className="text-2xl font-bold">Edytuj Produkt</h1>
+             <header className="dashboard-header">
+                 <div className="flex items-center gap-4">
+                     <Link href="/dashboard/store?tab=products" className="action-btn"><ChevronLeft size={24} /></Link>
+                     <h1 className="text-2xl font-bold">Edytuj Produkt</h1>
                 </div>
             </header>
             <form className="glass-panel p-8 max-w-2xl mx-auto" onSubmit={handleSubmit}>
@@ -219,8 +222,13 @@ export default function EditProductPage() {
                     </div>
                     {/* Price */}
                     <div className="form-group">
-                        <label className="form-label">Cena (£)</label>
+                        <label className="form-label">Cena sprzedaży (£)</label>
                         <input type="number" step="0.01" min="0" className="form-input" placeholder="9.99" value={price} onChange={(e) => setPrice(e.target.value)} required />
+                    </div>
+                    {/* Purchase Price */}
+                    <div className="form-group">
+                        <label className="form-label">Cena zakupu / Koszt (£)</label>
+                        <input type="number" step="0.01" min="0" className="form-input" placeholder="0.00" value={purchasePrice} onChange={(e) => setPurchasePrice(e.target.value)} />
                     </div>
                     {/* Stock */}
                     <div className="form-group">
@@ -228,7 +236,7 @@ export default function EditProductPage() {
                         <input type="number" min="0" className="form-input" value={stock} onChange={(e) => setStock(e.target.value)} required />
                     </div>
                     {/* Category */}
-                    <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                    <div className="form-group">
                         <label className="form-label">Kategoria</label>
                         <select className="form-input" value={category} onChange={(e) => setCategory(e.target.value as any)} required>
                             <option value="muzyka">🎵 Muzyka</option>

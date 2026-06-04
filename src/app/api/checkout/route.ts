@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
         for (const item of items) {
             const { data: product } = await supabaseAdmin
                 .from('products')
-                .select('stock, title, price, category, slug')
+                .select('stock, title, price, category, slug, purchase_price')
                 .eq('id', item.id)
                 .maybeSingle();
 
@@ -51,6 +51,7 @@ export async function POST(req: NextRequest) {
                 id: item.id,
                 title: product.title,
                 price: Number(product.price),
+                purchase_price: Number(product.purchase_price || 0),
                 quantity: item.quantity,
                 category: product.category,
                 slug: product.slug,
@@ -117,6 +118,24 @@ export async function POST(req: NextRequest) {
         if (orderErr) {
             console.error('[Checkout DB Error]', orderErr);
             throw new Error(`Błąd bazy danych: ${orderErr.message}`);
+        }
+
+        // Insert into order_items
+        const orderItemsToInsert = verifiedItems.map(item => ({
+            order_id: order.id,
+            product_id: item.id,
+            product_name: item.title,
+            price_sold: item.price,
+            purchase_price: item.purchase_price,
+            quantity: item.quantity
+        }));
+
+        const { error: itemsErr } = await supabaseAdmin
+            .from('order_items')
+            .insert(orderItemsToInsert);
+
+        if (itemsErr) {
+            console.error('[Checkout order_items Error]', itemsErr);
         }
 
         const stripe = getStripe();

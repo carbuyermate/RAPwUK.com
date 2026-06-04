@@ -35,6 +35,7 @@ export default function AddProductPage() {
     const [slug, setSlug] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
+    const [purchasePrice, setPurchasePrice] = useState('0');
     const [category, setCategory] = useState<'muzyka' | 'bilety' | 'ubrania'>('muzyka');
     const [stock, setStock] = useState('1');
     const [isActive, setIsActive] = useState(true);
@@ -92,6 +93,7 @@ export default function AddProductPage() {
 
             const { error: insertErr } = await supabase.from('products').insert([{
                 title, slug: slug || createSlug(title), description, price: parseFloat(price),
+                purchase_price: parseFloat(purchasePrice) || 0.00,
                 category, stock: parseInt(stock), is_active: isActive, image_url,
                 media_type: category === 'muzyka' && mediaType ? mediaType : null,
                 condition_media: category === 'muzyka' ? conditionMedia : null,
@@ -101,7 +103,7 @@ export default function AddProductPage() {
                 item_condition: category === 'muzyka' ? itemCondition : null,
             }]);
             if (insertErr) throw insertErr;
-            router.push('/dashboard/products');
+            router.push('/dashboard/store?tab=products');
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -113,7 +115,7 @@ export default function AddProductPage() {
         <div className="dashboard-container container animate-fade-in">
             <header className="dashboard-header">
                 <div className="flex items-center gap-4">
-                    <Link href="/dashboard/products" className="action-btn"><ChevronLeft size={24} /></Link>
+                    <Link href="/dashboard/store?tab=products" className="action-btn"><ChevronLeft size={24} /></Link>
                     <h1 className="text-2xl font-bold">Dodaj Produkt</h1>
                 </div>
             </header>
@@ -141,8 +143,13 @@ export default function AddProductPage() {
                     </div>
                     {/* Price */}
                     <div className="form-group">
-                        <label className="form-label">Cena (£)</label>
+                        <label className="form-label">Cena sprzedaży (£)</label>
                         <input type="number" step="0.01" min="0" className="form-input" placeholder="9.99" value={price} onChange={(e) => setPrice(e.target.value)} required />
+                    </div>
+                    {/* Purchase Price */}
+                    <div className="form-group">
+                        <label className="form-label">Cena zakupu / Koszt (£)</label>
+                        <input type="number" step="0.01" min="0" className="form-input" placeholder="0.00" value={purchasePrice} onChange={(e) => setPurchasePrice(e.target.value)} />
                     </div>
                     {/* Stock */}
                     <div className="form-group">
@@ -150,7 +157,7 @@ export default function AddProductPage() {
                         <input type="number" min="0" className="form-input" value={stock} onChange={(e) => setStock(e.target.value)} required />
                     </div>
                     {/* Category */}
-                    <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                    <div className="form-group">
                         <label className="form-label">Kategoria</label>
                         <select className="form-input" value={category} onChange={(e) => setCategory(e.target.value as any)} required>
                             <option value="muzyka">🎵 Muzyka</option>

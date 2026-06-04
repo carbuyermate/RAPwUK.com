@@ -125,7 +125,7 @@ export async function POST(req: NextRequest) {
                     price: (item.price?.unit_amount || 0) / 100
                 }));
 
-                const { error: insertErr } = await supabaseAdmin
+                const { data: newOrder, error: insertErr } = await supabaseAdmin
                     .from('orders')
                     .insert({
                         customer_email: customerDetails?.email || 'unknown@example.com',
@@ -134,9 +134,38 @@ export async function POST(req: NextRequest) {
                         stripe_session_id: session.id,
                         items: items,
                         shipping_address: shippingAddressObj
-                    });
+                    })
+                    .select('id')
+                    .single();
                 if (insertErr) throw insertErr;
                 console.log(`[Webhook] Order ${session.id} created on-the-fly as PAID`);
+
+                // Insert into order_items
+                if (newOrder) {
+                    const orderItemsToInsert = [];
+                    for (const item of items) {
+                        const { data: prod } = await supabaseAdmin
+                            .from('products')
+                            .select('id, purchase_price')
+                            .eq('title', item.title)
+                            .maybeSingle();
+
+                        orderItemsToInsert.push({
+                            order_id: newOrder.id,
+                            product_id: prod?.id || null,
+                            product_name: item.title,
+                            price_sold: item.price,
+                            purchase_price: prod?.purchase_price || 0.00,
+                            quantity: item.quantity
+                        });
+                    }
+                    const { error: itemsErr } = await supabaseAdmin
+                        .from('order_items')
+                        .insert(orderItemsToInsert);
+                    if (itemsErr) {
+                        console.error('[Webhook] order_items insert error:', itemsErr);
+                    }
+                }
             }
         } catch (err: any) {
             console.error('[Webhook Processing Error]', err.message);
