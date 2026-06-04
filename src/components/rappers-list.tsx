@@ -125,7 +125,9 @@ export default function RappersList({ initialRappers }: { initialRappers: Rapper
                                 </div>
                                 <div className="directory-item-meta">
                                     {(rapper.city_pl || rapper.city_uk) && (
-                                        <span className="directory-item-location" style={{ color: 'rgba(255, 255, 255, 0.65)' }}>📍 {rapper.city_uk || rapper.city_pl}</span>
+                                        <span className="directory-item-location" style={{ color: 'rgba(255, 255, 255, 0.65)' }}>
+                                            📍 {[rapper.city_uk ? `${rapper.city_uk} (UK)` : '', rapper.city_pl ? `${rapper.city_pl} (PL)` : ''].filter(Boolean).join(' / ')}
+                                        </span>
                                     )}
                                     {rapper.category && rapper.category.split(',').map(c => c.trim()).map(cat => (
                                         <span key={cat} className="directory-item-badge" style={{ borderColor: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', background: 'rgba(56, 189, 248, 0.05)' }}>{cat}</span>
@@ -160,7 +162,9 @@ export default function RappersList({ initialRappers }: { initialRappers: Rapper
                                         <span className="directory-item-name">{rapper.name}</span>
                                         <div className="directory-item-meta">
                                             {(rapper.city_pl || rapper.city_uk) && (
-                                                <span className="directory-item-location">📍 {rapper.city_uk || rapper.city_pl}</span>
+                                                <span className="directory-item-location">
+                                                    📍 {[rapper.city_uk ? `${rapper.city_uk} (UK)` : '', rapper.city_pl ? `${rapper.city_pl} (PL)` : ''].filter(Boolean).join(' / ')}
+                                                </span>
                                             )}
                                             {rapper.category && rapper.category.split(',').map(c => c.trim()).map(cat => (
                                                 <span key={cat} className="directory-item-badge">{cat}</span>
