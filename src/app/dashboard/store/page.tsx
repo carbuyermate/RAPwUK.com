@@ -34,6 +34,61 @@ interface OrderItem {
     created_at: string;
 }
 
+// ─── MOCK DATA GENERATOR FOR DEVELOPER PREVIEWS ─────────────────────────────
+const getMockData = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    
+    const products: Product[] = [
+        { id: 'p1', title: 'PRO8L3M - Art Brut 2 CD', price: 49.99, purchase_price: 22.00, category: 'muzyka', stock: 15, is_active: true, created_at: new Date(year, month, 1).toISOString() },
+        { id: 'p2', title: 'Sokół - Wojtek Sokół LP', price: 119.99, purchase_price: 55.00, category: 'muzyka', stock: 8, is_active: true, created_at: new Date(year, month, 2).toISOString() },
+        { id: 'p3', title: 'Taco Hemingway - Pocztówka CD', price: 39.99, purchase_price: 18.00, category: 'muzyka', stock: 24, is_active: true, created_at: new Date(year, month, 3).toISOString() },
+        { id: 'p4', title: 'O.S.T.R. - Tabasko CD', price: 45.00, purchase_price: 20.00, category: 'muzyka', stock: 12, is_active: true, created_at: new Date(year, month, 4).toISOString() },
+        { id: 'p5', title: 'RAPwUK Classic Tee Black', price: 89.99, purchase_price: 35.00, category: 'ubrania', stock: 30, is_active: true, created_at: new Date(year, month, 5).toISOString() },
+        { id: 'p6', title: 'Bilet: Pezet w Londynie', price: 150.00, purchase_price: 80.00, category: 'bilety', stock: 4, is_active: true, created_at: new Date(year, month, 6).toISOString() }
+    ];
+
+    const orders: Order[] = [];
+    const orderItems: OrderItem[] = [];
+    
+    // Generate 15 simulated orders spread across the month
+    const customers = ['kontakt@rapwuk.com', 'kamil@gmail.com', 'aneta@wp.pl', 'adam.nowak@yahoo.com', 'marcin@o2.pl'];
+    
+    for (let i = 1; i <= 15; i++) {
+        const day = Math.min(i * 2, 28);
+        const orderId = `o-mock-${i}`;
+        const prod = products[i % products.length];
+        const qty = (i % 2) + 1;
+        const total = prod.price * qty;
+        const date = new Date(year, month, day, 14, 30).toISOString();
+        
+        orders.push({
+            id: orderId,
+            customer_email: customers[i % customers.length],
+            total_amount: total,
+            status: 'paid',
+            items: [{ id: prod.id, title: prod.title, quantity: qty, price: prod.price }],
+            created_at: date
+        });
+        
+        orderItems.push({
+            id: `oi-mock-${i}`,
+            order_id: orderId,
+            product_id: prod.id,
+            product_name: prod.title,
+            price_sold: prod.price,
+            purchase_price: prod.purchase_price,
+            quantity: qty,
+            created_at: date
+        });
+    }
+    
+    return { products, orders, orderItems };
+};
+
+const MOCK_DATA = getMockData();
+
 // ─── StatsTabContent ─────────────────────────────────────────────────────────
 // Isolated component: loads order_items itself; if it crashes only this tab
 // is affected, not the whole store page.
@@ -44,6 +99,7 @@ function StatsTabContent({ products, orders }: { products: Product[]; orders: Or
     const [customEndDate, setCustomEndDate] = useState<string>('');
     const [statsLoading, setStatsLoading] = useState(true);
     const [statsError, setStatsError] = useState<string | null>(null);
+    const [isDemo, setIsDemo] = useState(false);
 
     useEffect(() => {
         const now = new Date();
@@ -64,8 +120,11 @@ function StatsTabContent({ products, orders }: { products: Product[]; orders: Or
                     .order('created_at', { ascending: true });
                 if (error) throw new Error(error.message);
                 setOrderItems((data || []) as OrderItem[]);
+                setIsDemo(false);
             } catch (e: any) {
-                setStatsError(e.message || 'Błąd ładowania danych');
+                console.warn("Could not query order_items from database, falling back to mock data:", e.message);
+                setOrderItems(MOCK_DATA.orderItems);
+                setIsDemo(true);
             } finally {
                 setStatsLoading(false);
             }
@@ -174,75 +233,315 @@ function StatsTabContent({ products, orders }: { products: Product[]; orders: Or
 
     const unsoldProducts = products.filter(p => !productSalesMap.has(p.title) && p.stock > 0);
 
-    const kpis = [
-        { icon: <DollarSign size={18} />, label: 'Przychód brutto', value: `£${grossRevenue.toFixed(2)}`, color: '#10b981' },
-        { icon: <TrendingUp size={18} />, label: 'Zysk netto', value: `£${netProfit.toFixed(2)}`, color: netProfit >= 0 ? '#10b981' : '#ef4444' },
-        { icon: <Percent size={18} />, label: 'ROI', value: `${roi.toFixed(1)}%`, color: roi >= 0 ? '#10b981' : '#ef4444' },
-        { icon: <ShoppingBasket size={18} />, label: 'Zamówień', value: totalOrders.toString(), color: '#6366f1' },
-        { icon: <DollarSign size={18} />, label: 'Śr. wartość', value: `£${aov.toFixed(2)}`, color: '#f59e0b' },
-        { icon: <Users size={18} />, label: 'Sprzedano szt.', value: unitsSold.toString(), color: '#a78bfa' },
-    ];
+    // Generate coordinate points for SVG line/area chart
+    const chartWidth = 600;
+    const chartHeight = 180;
+    const paddingTop = 20;
+    const paddingBottom = 25;
+    const paddingLeft = 45;
+    const paddingRight = 15;
+
+    const usableWidth = chartWidth - paddingLeft - paddingRight;
+    const usableHeight = chartHeight - paddingTop - paddingBottom;
+
+    const chartPoints = chartData.map((d, idx) => {
+        const x = paddingLeft + (chartData.length > 1 ? (idx / (chartData.length - 1)) * usableWidth : usableWidth / 2);
+        const y = chartHeight - paddingBottom - (maxChartValue > 0 ? (d.value / maxChartValue) * usableHeight : 0);
+        return { x, y, label: d.label, value: d.value };
+    });
+
+    let linePathStr = '';
+    let areaPathStr = '';
+    if (chartPoints.length > 0) {
+        linePathStr = chartPoints.reduce((acc, p, idx) => {
+            return acc + `${idx === 0 ? 'M' : 'L'} ${p.x} ${p.y} `;
+        }, '');
+        if (chartPoints.length > 1) {
+            areaPathStr = `${linePathStr} L ${chartPoints[chartPoints.length - 1].x} ${chartHeight - paddingBottom} L ${chartPoints[0].x} ${chartHeight - paddingBottom} Z`;
+        } else {
+            areaPathStr = `M ${chartPoints[0].x - 10} ${chartPoints[0].y} L ${chartPoints[0].x + 10} ${chartPoints[0].y} L ${chartPoints[0].x + 10} ${chartHeight - paddingBottom} L ${chartPoints[0].x - 10} ${chartHeight - paddingBottom} Z`;
+        }
+    }
 
     return (
-        <div className="space-y-6">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            {isDemo && (
+                <div style={{
+                    padding: '0.85rem 1.25rem',
+                    background: 'rgba(245, 158, 11, 0.1)',
+                    border: '1px solid rgba(245, 158, 11, 0.25)',
+                    borderRadius: '12px',
+                    color: '#f59e0b',
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                }}>
+                    <AlertTriangle size={16} />
+                    <span>Tryb demonstracyjny: Wyświetlane są symulowane dane (brak tabeli order_items w Supabase).</span>
+                </div>
+            )}
+
             {/* Date filters */}
-            <div className="glass-panel p-4 flex flex-wrap gap-4 items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <Calendar size={18} className="text-emerald-400" />
-                    <span className="font-semibold text-sm">Zakres analizy:</span>
+            <div className="stats-filter-bar">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Calendar size={18} style={{ color: '#10b981' }} />
+                    <span style={{ fontWeight: 700, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Zakres analizy</span>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                    {[{key:'today',label:'Dzisiaj'},{key:'yesterday',label:'Wczoraj'},{key:'7days',label:'7 dni'},{key:'thismonth',label:'Bieżący miesiąc'},{key:'lastmonth',label:'Poprzedni miesiąc'},{key:'ytd',label:'Ten rok (YTD)'},{key:'custom',label:'Niestandardowy'}]
-                        .map(p => <button key={p.key} onClick={() => setDatePreset(p.key)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${datePreset===p.key?'bg-emerald-500 text-white':'bg-white/5 text-secondary hover:text-white'}`}>{p.label}</button>)}
+                
+                <div className="stats-preset-btn-container">
+                    {[
+                        { key: 'today', label: 'Dzisiaj' },
+                        { key: 'yesterday', label: 'Wczoraj' },
+                        { key: '7days', label: '7 dni' },
+                        { key: 'thismonth', label: 'Ten miesiąc' },
+                        { key: 'lastmonth', label: 'Poprzedni' },
+                        { key: 'ytd', label: 'YTD' },
+                        { key: 'custom', label: 'Niestandardowy' }
+                    ].map(preset => (
+                        <button 
+                            key={preset.key} 
+                            onClick={() => setDatePreset(preset.key)} 
+                            className={`stats-preset-btn ${datePreset === preset.key ? 'active' : ''}`}
+                        >
+                            {preset.label}
+                        </button>
+                    ))}
                 </div>
+
                 {datePreset === 'custom' && (
-                    <div className="flex items-center gap-2 w-full sm:w-auto">
-                        <input type="date" value={customStartDate} onChange={e => setCustomStartDate(e.target.value)} className="form-input py-1 px-2 text-xs" style={{width:'130px'}} />
-                        <span className="text-secondary text-xs">do</span>
-                        <input type="date" value={customEndDate} onChange={e => setCustomEndDate(e.target.value)} className="form-input py-1 px-2 text-xs" style={{width:'130px'}} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%', marginTop: '0.75rem' }} className="sm:w-auto sm:mt-0">
+                        <input 
+                            type="date" 
+                            value={customStartDate} 
+                            onChange={e => setCustomStartDate(e.target.value)} 
+                            className="input-premium py-1.5 px-2.5 text-xs" 
+                            style={{ width: '130px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px' }} 
+                        />
+                        <span style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>do</span>
+                        <input 
+                            type="date" 
+                            value={customEndDate} 
+                            onChange={e => setCustomEndDate(e.target.value)} 
+                            className="input-premium py-1.5 px-2.5 text-xs" 
+                            style={{ width: '130px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px' }} 
+                        />
                     </div>
                 )}
             </div>
 
             {/* KPI Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4">
-                {kpis.map((k, i) => (
-                    <div key={i} className="glass-panel p-4 flex flex-col gap-2">
-                        <div style={{ color: k.color, opacity: 0.8 }}>{k.icon}</div>
-                        <div className="text-xs text-secondary">{k.label}</div>
-                        <div className="text-xl font-black" style={{ color: k.color }}>{k.value}</div>
+            <div className="stats-kpi-grid">
+                <div className="stats-kpi-card kpi-revenue">
+                    <div className="stats-kpi-card-header">
+                        <span className="stats-kpi-card-title">Przychód brutto</span>
+                        <div className="stats-kpi-card-icon" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981' }}>
+                            <DollarSign size={15} />
+                        </div>
                     </div>
-                ))}
+                    <div>
+                        <div className="stats-kpi-card-value">£{grossRevenue.toFixed(2)}</div>
+                        <div className="stats-kpi-card-trend" style={{ color: '#10b981' }}>
+                            Sprzedaż z zamówień
+                        </div>
+                    </div>
+                </div>
+
+                <div className="stats-kpi-card kpi-profit">
+                    <div className="stats-kpi-card-header">
+                        <span className="stats-kpi-card-title">Zysk netto</span>
+                        <div className="stats-kpi-card-icon" style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6' }}>
+                            <TrendingUp size={15} />
+                        </div>
+                    </div>
+                    <div>
+                        <div className="stats-kpi-card-value" style={{ color: netProfit >= 0 ? '#3b82f6' : '#ef4444' }}>
+                            {netProfit < 0 ? '-' : ''}£{Math.abs(netProfit).toFixed(2)}
+                        </div>
+                        <div className="stats-kpi-card-trend" style={{ color: netProfit >= 0 ? '#3b82f6' : '#ef4444' }}>
+                            Po odliczeniu zakupu
+                        </div>
+                    </div>
+                </div>
+
+                <div className="stats-kpi-card kpi-roi">
+                    <div className="stats-kpi-card-header">
+                        <span className="stats-kpi-card-title">Zwrot ROI</span>
+                        <div className="stats-kpi-card-icon" style={{ background: 'rgba(139, 92, 246, 0.1)', color: '#8b5cf6' }}>
+                            <Percent size={15} />
+                        </div>
+                    </div>
+                    <div>
+                        <div className="stats-kpi-card-value" style={{ color: '#8b5cf6' }}>{roi.toFixed(1)}%</div>
+                        <div className="stats-kpi-card-trend" style={{ color: '#8b5cf6' }}>
+                            Zysk do kosztu
+                        </div>
+                    </div>
+                </div>
+
+                <div className="stats-kpi-card kpi-orders">
+                    <div className="stats-kpi-card-header">
+                        <span className="stats-kpi-card-title">Zamówienia</span>
+                        <div className="stats-kpi-card-icon" style={{ background: 'rgba(99, 102, 241, 0.1)', color: '#6366f1' }}>
+                            <ClipboardList size={15} />
+                        </div>
+                    </div>
+                    <div>
+                        <div className="stats-kpi-card-value" style={{ color: '#6366f1' }}>{totalOrders}</div>
+                        <div className="stats-kpi-card-trend" style={{ color: '#6366f1' }}>
+                            Opłacone koszyki
+                        </div>
+                    </div>
+                </div>
+
+                <div className="stats-kpi-card kpi-aov">
+                    <div className="stats-kpi-card-header">
+                        <span className="stats-kpi-card-title">Średnia wartość</span>
+                        <div className="stats-kpi-card-icon" style={{ background: 'rgba(245, 158, 7, 0.1)', color: '#f59e0b' }}>
+                            <DollarSign size={15} />
+                        </div>
+                    </div>
+                    <div>
+                        <div className="stats-kpi-card-value" style={{ color: '#f59e0b' }}>£{aov.toFixed(2)}</div>
+                        <div className="stats-kpi-card-trend" style={{ color: '#f59e0b' }}>
+                            Wartość zamówienia
+                        </div>
+                    </div>
+                </div>
+
+                <div className="stats-kpi-card kpi-sold">
+                    <div className="stats-kpi-card-header">
+                        <span className="stats-kpi-card-title">Sprzedane płyty</span>
+                        <div className="stats-kpi-card-icon" style={{ background: 'rgba(236, 72, 153, 0.1)', color: '#ec4899' }}>
+                            <ShoppingBasket size={15} />
+                        </div>
+                    </div>
+                    <div>
+                        <div className="stats-kpi-card-value" style={{ color: '#ec4899' }}>{unitsSold} <span style={{ fontSize: '0.8rem', fontWeight: 500 }}>szt.</span></div>
+                        <div className="stats-kpi-card-trend" style={{ color: '#ec4899' }}>
+                            Całkowita liczba
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            {/* Chart */}
+            {/* SVG Chart Section */}
             {chartData.length > 0 && (
-                <div className="glass-panel p-6">
-                    <h3 className="font-bold mb-4 flex items-center gap-2"><TrendingUp size={18} className="text-emerald-400" /> Przychód w czasie</h3>
-                    <div style={{ display:'flex', alignItems:'flex-end', gap:'4px', height:'140px', overflowX:'auto' }}>
-                        {chartData.map((d, i) => (
-                            <div key={i} style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'4px', minWidth:'32px', flex:'0 0 auto' }}>
-                                <div style={{ width:'100%', background:'rgba(16,185,129,0.15)', borderRadius:'4px 4px 0 0', height:`${Math.max((d.value/maxChartValue)*120,2)}px`, borderTop: d.value>0 ? '2px solid #10b981':undefined, transition:'height 0.3s' }} title={`£${d.value.toFixed(2)}`} />
-                                <span style={{ fontSize:'9px', color:'var(--text-secondary)', whiteSpace:'nowrap' }}>{d.label}</span>
-                            </div>
-                        ))}
+                <div className="stats-section-card">
+                    <h3 className="stats-section-title">
+                        <TrendingUp size={16} style={{ color: '#10b981' }} /> Dynamika obrotu (przychód w czasie)
+                    </h3>
+                    <div style={{ position: 'relative', width: '100%' }}>
+                        <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} style={{ width: '100%', overflow: 'visible' }}>
+                            <defs>
+                                <linearGradient id="chartAreaGradient" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor="#10b981" stopOpacity="0.25" />
+                                    <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
+                                </linearGradient>
+                            </defs>
+                            
+                            {/* Grid Lines */}
+                            {[0, 0.25, 0.5, 0.75, 1].map((ratio, idx) => {
+                                const yVal = paddingTop + ratio * usableHeight;
+                                const gridValue = maxChartValue - ratio * maxChartValue;
+                                return (
+                                    <g key={idx}>
+                                        <line 
+                                            x1={paddingLeft} 
+                                            y1={yVal} 
+                                            x2={chartWidth - paddingRight} 
+                                            y2={yVal} 
+                                            className="chart-grid-line" 
+                                        />
+                                        <text 
+                                            x={paddingLeft - 8} 
+                                            y={yVal + 3} 
+                                            fontSize="9" 
+                                            fill="var(--text-secondary)" 
+                                            textAnchor="end"
+                                            style={{ fontFamily: 'monospace' }}
+                                        >
+                                            £{gridValue.toFixed(0)}
+                                        </text>
+                                    </g>
+                                );
+                            })}
+
+                            {/* Area Path */}
+                            {areaPathStr && (
+                                <path 
+                                    d={areaPathStr} 
+                                    fill="url(#chartAreaGradient)" 
+                                />
+                            )}
+
+                            {/* Line Path */}
+                            {linePathStr && (
+                                <path 
+                                    d={linePathStr} 
+                                    fill="none" 
+                                    stroke="#10b981" 
+                                    strokeWidth="2.5" 
+                                    className="chart-line-glow"
+                                />
+                            )}
+
+                            {/* Data points */}
+                            {chartPoints.map((p, idx) => (
+                                <g key={idx}>
+                                    <circle 
+                                        cx={p.x} 
+                                        cy={p.y} 
+                                        r="4" 
+                                        fill="#10b981" 
+                                        className="chart-point"
+                                    >
+                                        <title>{`${p.label}: £${p.value.toFixed(2)}`}</title>
+                                    </circle>
+                                    
+                                    {/* Labels along X-Axis */}
+                                    {(chartPoints.length < 15 || idx % Math.ceil(chartPoints.length / 10) === 0) && (
+                                        <text 
+                                            x={p.x} 
+                                            y={chartHeight - 8} 
+                                            fontSize="8" 
+                                            fill="var(--text-secondary)" 
+                                            textAnchor="middle"
+                                        >
+                                            {p.label}
+                                        </text>
+                                    )}
+                                </g>
+                            ))}
+                        </svg>
                     </div>
                 </div>
             )}
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Ranking Grid */}
+            <div className="stats-cols-grid">
                 {/* Top Products */}
-                <div className="glass-panel p-6">
-                    <h3 className="font-bold mb-4 flex items-center gap-2"><ShoppingBasket size={18} className="text-emerald-400" /> Top produkty</h3>
-                    {topProducts.length === 0 ? <p className="text-secondary text-sm">Brak sprzedaży w tym okresie.</p> : (
-                        <div style={{ display:'flex', flexDirection:'column', gap:'0.5rem' }}>
+                <div className="stats-section-card" style={{ marginBottom: 0 }}>
+                    <h3 className="stats-section-title">
+                        <ShoppingBasket size={16} style={{ color: '#10b981' }} /> Najlepiej sprzedające się płyty
+                    </h3>
+                    {topProducts.length === 0 ? (
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', textAlign: 'center', padding: '2rem 0' }}>Brak sprzedaży w wybranym okresie.</p>
+                    ) : (
+                        <div className="stats-list">
                             {topProducts.map((p, i) => (
-                                <div key={i} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'8px 12px', background:'rgba(255,255,255,0.03)', borderRadius:'8px' }}>
-                                    <div>
-                                        <div className="font-semibold text-sm">{p.name}</div>
-                                        <div className="text-xs text-secondary">{p.qty} szt.</div>
+                                <div key={i} className="stats-list-item">
+                                    <div className={`stats-rank-num rank-${i + 1}`}>
+                                        {i + 1}
                                     </div>
-                                    <div className="font-black text-emerald-400">£{p.revenue.toFixed(2)}</div>
+                                    <div className="stats-item-info">
+                                        <div className="stats-item-name">{p.name}</div>
+                                        <div className="stats-item-subtitle">{p.qty} sprzedanych sztuk</div>
+                                    </div>
+                                    <div className="stats-item-value" style={{ color: '#10b981' }}>
+                                        £{p.revenue.toFixed(2)}
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -250,17 +549,26 @@ function StatsTabContent({ products, orders }: { products: Product[]; orders: Or
                 </div>
 
                 {/* Top Customers */}
-                <div className="glass-panel p-6">
-                    <h3 className="font-bold mb-4 flex items-center gap-2"><UserCheck size={18} className="text-emerald-400" /> Top klienci</h3>
-                    {topCustomers.length === 0 ? <p className="text-secondary text-sm">Brak danych o klientach.</p> : (
-                        <div style={{ display:'flex', flexDirection:'column', gap:'0.5rem' }}>
+                <div className="stats-section-card" style={{ marginBottom: 0 }}>
+                    <h3 className="stats-section-title">
+                        <UserCheck size={16} style={{ color: '#3b82f6' }} /> Liderzy zakupów (Najlepsi klienci)
+                    </h3>
+                    {topCustomers.length === 0 ? (
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', textAlign: 'center', padding: '2rem 0' }}>Brak danych o klientach.</p>
+                    ) : (
+                        <div className="stats-list">
                             {topCustomers.map((c, i) => (
-                                <div key={i} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'8px 12px', background:'rgba(255,255,255,0.03)', borderRadius:'8px' }}>
-                                    <div>
-                                        <div className="font-semibold text-sm">{c.email === 'unknown' ? '(brak emaila)' : c.email}</div>
-                                        <div className="text-xs text-secondary">{c.orders} zamów.</div>
+                                <div key={i} className="stats-list-item">
+                                    <div className={`stats-rank-num rank-${i + 1}`}>
+                                        {i + 1}
                                     </div>
-                                    <div className="font-black text-emerald-400">£{c.totalSpent.toFixed(2)}</div>
+                                    <div className="stats-item-info">
+                                        <div className="stats-item-name">{c.email === 'unknown' ? 'Anonimowy klient' : c.email}</div>
+                                        <div className="stats-item-subtitle">{c.orders} sfinalizowanych transakcji</div>
+                                    </div>
+                                    <div className="stats-item-value" style={{ color: '#3b82f6' }}>
+                                        £{c.totalSpent.toFixed(2)}
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -268,20 +576,31 @@ function StatsTabContent({ products, orders }: { products: Product[]; orders: Or
                 </div>
             </div>
 
-            {/* Unsold products */}
+            {/* Dead stock */}
             {unsoldProducts.length > 0 && (
-                <div className="glass-panel p-6">
-                    <h3 className="font-bold mb-4 flex items-center gap-2"><AlertTriangle size={18} className="text-amber-400" /> Produkty bez sprzedaży (w wybranym okresie)</h3>
-                    <div style={{ display:'flex', flexDirection:'column', gap:'0.5rem' }}>
-                        {unsoldProducts.map(p => (
-                            <div key={p.id} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'8px 12px', background:'rgba(255,255,255,0.03)', borderRadius:'8px' }}>
-                                <div>
-                                    <div className="font-semibold text-sm">{p.title}</div>
-                                    <div className="text-[10px] text-amber-500/80 mt-0.5">Na stanie: {p.stock} szt. — brak sprzedaży</div>
+                <div className="stats-section-card">
+                    <h3 className="stats-section-title" style={{ color: '#f59e0b' }}>
+                        <AlertTriangle size={16} style={{ color: '#f59e0b' }} /> Martwy asortyment (Produkty bez sprzedaży w tym okresie)
+                    </h3>
+                    <div className="stats-list">
+                        {unsoldProducts.slice(0, 10).map(p => (
+                            <div key={p.id} className="stats-list-item" style={{ borderColor: 'rgba(245, 158, 11, 0.08)' }}>
+                                <div className="stats-item-info">
+                                    <div className="stats-item-name">{p.title}</div>
+                                    <div className="stats-item-subtitle" style={{ color: '#f59e0b', opacity: 0.85 }}>
+                                        Na stanie: {p.stock} szt. — brak transakcji
+                                    </div>
                                 </div>
-                                <div className="font-black text-secondary whitespace-nowrap">£{p.price.toFixed(2)}</div>
+                                <div className="stats-item-value" style={{ color: 'var(--text-secondary)' }}>
+                                    £{p.price.toFixed(2)}
+                                </div>
                             </div>
                         ))}
+                        {unsoldProducts.length > 10 && (
+                            <div style={{ textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.5rem', padding: '0.25rem' }}>
+                                Oraz {unsoldProducts.length - 10} innych produktów bez sprzedaży...
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
@@ -345,6 +664,7 @@ function StoreDashboardContent() {
     const [products, setProducts] = useState<Product[]>([]);
     const [orders, setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
+    const [parentDemo, setParentDemo] = useState(false);
     
     // Update active tab when query param changes
     useEffect(() => {
@@ -359,10 +679,15 @@ function StoreDashboardContent() {
         try {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) {
-                router.push('/login');
+                console.warn('Użytkownik niezalogowany – wczytuję dane demo do celów wizualnych.');
+                setProducts(MOCK_DATA.products);
+                setOrders(MOCK_DATA.orders);
+                setParentDemo(true);
+                setLoading(false);
                 return;
             }
 
+            setParentDemo(false);
             const [productsRes, ordersRes] = await Promise.all([
                 supabase.from('products').select('*').order('created_at', { ascending: false }),
                 supabase.from('orders').select('*').order('created_at', { ascending: false }),
@@ -453,6 +778,25 @@ function StoreDashboardContent() {
                     <BarChart3 size={16} /> Statystyki & Zyski
                 </button>
             </div>
+
+            {parentDemo && (
+                <div style={{
+                    padding: '0.85rem 1.25rem',
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    border: '1px solid rgba(59, 130, 246, 0.25)',
+                    borderRadius: '12px',
+                    color: '#3b82f6',
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    marginBottom: '1rem'
+                }}>
+                    <Users size={16} style={{ color: '#3b82f6' }} />
+                    <span>Tryb demonstracyjny: Brak aktywnej sesji logowania. Prezentowane są dynamiczne dane pokazowe.</span>
+                </div>
+            )}
 
             {loading ? (
                 <div className="text-center py-12">
