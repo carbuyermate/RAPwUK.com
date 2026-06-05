@@ -19,36 +19,19 @@ interface Event {
 }
 
 function getPageNumbers(currentPage: number, totalPages: number) {
-    const pages: (number | string)[] = [];
-    pages.push(1);
-    
-    let start = Math.max(2, currentPage - 1);
-    let end = Math.min(totalPages - 1, currentPage + 1);
-    
-    if (currentPage <= 3) {
-        end = Math.min(totalPages - 1, 4);
+    if (totalPages <= 4) {
+        return Array.from({ length: totalPages }, (_, i) => i + 1);
     }
-    if (currentPage >= totalPages - 2) {
-        start = Math.max(2, totalPages - 3);
+
+    if (currentPage <= 2) {
+        return [1, 2, '...', totalPages];
     }
     
-    if (start > 2) {
-        pages.push('...');
+    if (currentPage >= totalPages - 1) {
+        return [1, '...', totalPages - 1, totalPages];
     }
     
-    for (let i = start; i <= end; i++) {
-        pages.push(i);
-    }
-    
-    if (end < totalPages - 1) {
-        pages.push('...');
-    }
-    
-    if (totalPages > 1) {
-        pages.push(totalPages);
-    }
-    
-    return pages;
+    return [1, '...', currentPage, totalPages];
 }
 
 interface EventsListProps {
