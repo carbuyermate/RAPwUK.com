@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
-import { Clock, Newspaper, ChevronLeft, ChevronRight } from "lucide-react";
+import { Clock, Newspaper, ChevronLeft, ChevronRight, ThumbsUp, ThumbsDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import "./news.css";
 import { ViewTracker } from "@/components/ViewTracker";
@@ -222,10 +222,12 @@ export default function NewsPage() {
                       </div>
                       <div className="news-meta-reactions">
                         <span className="news-meta-reaction">
-                          👍 {item.likes || 0}
+                          <ThumbsUp size={11} style={{ opacity: 0.7 }} />
+                          <span>{item.likes || 0}</span>
                         </span>
                         <span className="news-meta-reaction">
-                          👎 {item.dislikes || 0}
+                          <ThumbsDown size={11} style={{ opacity: 0.7 }} />
+                          <span>{item.dislikes || 0}</span>
                         </span>
                       </div>
                     </div>

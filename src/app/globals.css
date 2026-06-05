@@ -370,7 +370,8 @@ a.glass-panel:hover,
 }
 
 /* News reactions in metadata (read-only counters) */
-.news-meta {
+.news-page__card-body .news-meta,
+.news-card__body .news-meta {
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;

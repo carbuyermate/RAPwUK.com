@@ -1,6 +1,6 @@
 import Link from "next/link";
 import "./page.css";
-import { CalendarDays, ExternalLink, Newspaper, Clock, MapPin, ArrowRight, Tag } from "lucide-react";
+import { CalendarDays, ExternalLink, Newspaper, Clock, MapPin, ArrowRight, Tag, ThumbsUp, ThumbsDown } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { PromoWidget } from "@/components/PromoWidget";
 import { ViewTracker } from "@/components/ViewTracker";
@@ -156,10 +156,12 @@ export default async function Home() {
                             </div>
                             <div className="news-meta-reactions">
                               <span className="news-meta-reaction">
-                                👍 {item.likes || 0}
+                                <ThumbsUp size={11} style={{ opacity: 0.7 }} />
+                                <span>{item.likes || 0}</span>
                               </span>
                               <span className="news-meta-reaction">
-                                👎 {item.dislikes || 0}
+                                <ThumbsDown size={11} style={{ opacity: 0.7 }} />
+                                <span>{item.dislikes || 0}</span>
                               </span>
                             </div>
                           </div>
