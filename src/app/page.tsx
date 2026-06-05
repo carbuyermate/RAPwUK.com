@@ -18,6 +18,8 @@ interface NewsItem {
   tags?: string[];
   image_url?: string;
   created_at: string;
+  likes?: number;
+  dislikes?: number;
 }
 
 interface EventItem {
@@ -147,10 +149,20 @@ export default async function Home() {
                             )}
                           </div>
                           <h3 className="news-card__title">{item.title}</h3>
-                          <p className="news-meta">
-                            <Clock size={12} />
-                            {timeAgo(item.created_at)}
-                          </p>
+                          <div className="news-meta">
+                            <div className="news-meta-left">
+                              <Clock size={12} />
+                              {timeAgo(item.created_at)}
+                            </div>
+                            <div className="news-meta-reactions">
+                              <span className="news-meta-reaction">
+                                👍 {item.likes || 0}
+                              </span>
+                              <span className="news-meta-reaction">
+                                👎 {item.dislikes || 0}
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </Link>
                     ))}

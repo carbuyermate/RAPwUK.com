@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Clock, ChevronLeft, User } from "lucide-react";
 import { ViewTracker } from "@/components/ViewTracker";
+import { NewsReactions } from "@/components/NewsReactions";
 import "../news.css";
 import "./article.css";
 
@@ -22,6 +23,8 @@ interface NewsDetail {
   instagram_url?: string;
   facebook_url?: string;
   created_at: string;
+  likes?: number;
+  dislikes?: number;
 }
 
 export const dynamic = 'force-dynamic';
@@ -279,6 +282,12 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
               ></iframe>
           </div>
         )}
+
+        <NewsReactions 
+          newsId={article.id} 
+          initialLikes={article.likes || 0} 
+          initialDislikes={article.dislikes || 0} 
+        />
       </article>
 
       {/* Czytaj też: 5 najnowszych newsów (z miniaturkami) */}

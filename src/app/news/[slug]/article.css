@@ -208,3 +208,96 @@
   text-decoration: none;
   transition: color 0.2s ease;
 }
+
+/* News reactions styling */
+.news-reactions-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 3rem auto 1.5rem;
+  padding: 2rem;
+  max-width: 450px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  backdrop-filter: blur(10px);
+  text-align: center;
+  width: 100%;
+}
+
+.news-reactions-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.news-reactions-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.news-reactions-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  user-select: none;
+}
+
+.news-reactions-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.news-reactions-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.news-reactions-btn:hover:not(:disabled) svg {
+  transform: scale(1.15);
+}
+
+.news-reactions-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.news-reactions-btn--like.news-reactions-btn--active {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.4);
+  color: #22c55e;
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.15);
+}
+
+.news-reactions-btn--dislike.news-reactions-btn--active {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.15);
+}
+
+.news-reactions-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.news-reactions-count {
+  font-variant-numeric: tabular-nums;
+}
+

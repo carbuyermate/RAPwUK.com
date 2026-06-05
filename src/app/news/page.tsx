@@ -16,6 +16,8 @@ interface NewsItem {
   tags?: string[];        // new
   image_url?: string;
   created_at: string;
+  likes?: number;
+  dislikes?: number;
 }
 
 // Fixed ordered filter tabs (new system)
@@ -66,7 +68,7 @@ export default function NewsPage() {
 
         let query = supabase
           .from('news')
-          .select('id, slug, title, content, category, tags, image_url, created_at', { count: 'exact' });
+          .select('id, slug, title, content, category, tags, image_url, created_at, likes, dislikes', { count: 'exact' });
 
         if (selectedTag) {
           // Filter by new tags[] OR legacy category for backward compat
@@ -214,8 +216,18 @@ export default function NewsPage() {
                       </p>
                     )}
                     <div className="news-meta">
-                      <Clock size={12} />
-                      {timeAgo(item.created_at)}
+                      <div className="news-meta-left">
+                        <Clock size={12} />
+                        {timeAgo(item.created_at)}
+                      </div>
+                      <div className="news-meta-reactions">
+                        <span className="news-meta-reaction">
+                          👍 {item.likes || 0}
+                        </span>
+                        <span className="news-meta-reaction">
+                          👎 {item.dislikes || 0}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </Link>

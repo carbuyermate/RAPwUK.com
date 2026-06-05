@@ -62,18 +62,24 @@ export default function ManagingNewsPage() {
                             <th>Data Dodania</th>
                             <th>Tytuł</th>
                             <th>Kategoria</th>
+                            <th>Popularność</th>
                             <th>Akcje</th>
                         </tr>
                     </thead>
                     <tbody>
                         {loading ? (
-                            <tr><td colSpan={4} className="text-center py-4">Ładowanie...</td></tr>
+                            <tr><td colSpan={5} className="text-center py-4">Ładowanie...</td></tr>
                         ) : news.length > 0 ? (
                             news.map((item) => (
                                 <tr key={item.id} className="event-row">
                                     <td>{new Date(item.created_at).toLocaleDateString('pl-PL')}</td>
                                     <td className="font-semibold">{item.title}</td>
                                     <td><span className="news-tag">{item.category}</span></td>
+                                    <td style={{ whiteSpace: 'nowrap' }}>
+                                        <span style={{ color: '#22c55e', fontWeight: 600 }}>👍 {item.likes || 0}</span>
+                                        <span style={{ margin: '0 8px', opacity: 0.3 }}>|</span>
+                                        <span style={{ color: '#ef4444', fontWeight: 600 }}>👎 {item.dislikes || 0}</span>
+                                    </td>
                                     <td>
                                         <div className="action-btns">
                                             <Link href={`/dashboard/edit-news/${item.id}`} className="action-btn" title="Edytuj">
@@ -88,7 +94,7 @@ export default function ManagingNewsPage() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={4} className="text-center py-8 text-secondary">
+                                <td colSpan={5} className="text-center py-8 text-secondary">
                                     Brak dodanych newsów.
                                 </td>
                             </tr>
