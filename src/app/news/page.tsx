@@ -31,6 +31,39 @@ function timeAgo(dateStr: string) {
   return new Date(dateStr).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
+function getPageNumbers(currentPage: number, totalPages: number) {
+  const pages: (number | string)[] = [];
+  pages.push(1);
+  
+  let start = Math.max(2, currentPage - 1);
+  let end = Math.min(totalPages - 1, currentPage + 1);
+  
+  if (currentPage <= 3) {
+    end = Math.min(totalPages - 1, 4);
+  }
+  if (currentPage >= totalPages - 2) {
+    start = Math.max(2, totalPages - 3);
+  }
+  
+  if (start > 2) {
+    pages.push('...');
+  }
+  
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+  
+  if (end < totalPages - 1) {
+    pages.push('...');
+  }
+  
+  if (totalPages > 1) {
+    pages.push(totalPages);
+  }
+  
+  return pages;
+}
+
 const ITEMS_PER_PAGE = 12;
 
 export default function NewsPage() {
@@ -218,15 +251,36 @@ export default function NewsPage() {
                 <ChevronLeft size={20} />
               </button>
 
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                <button
-                  key={page}
-                  className={`pagination-btn ${currentPage === page ? 'pagination-btn--active' : ''}`}
-                  onClick={() => handlePageChange(page)}
-                >
-                  {page}
-                </button>
-              ))}
+              {getPageNumbers(currentPage, totalPages).map((page, index) => {
+                if (page === '...') {
+                  return (
+                    <span
+                      key={`dots-${index}`}
+                      className="pagination-dots"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '40px',
+                        height: '40px',
+                        color: 'var(--text-secondary)',
+                        userSelect: 'none'
+                      }}
+                    >
+                      ...
+                    </span>
+                  );
+                }
+                return (
+                  <button
+                    key={page}
+                    className={`pagination-btn ${currentPage === page ? 'pagination-btn--active' : ''}`}
+                    onClick={() => handlePageChange(page as number)}
+                  >
+                    {page}
+                  </button>
+                );
+              })}
 
               <button
                 className="pagination-btn pagination-btn--icon"
