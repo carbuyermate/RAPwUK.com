@@ -65,10 +65,10 @@ export default function ManagingRappersPage() {
                     </thead>
                     <tbody>
                         {loading ? (
-                            <tr><td colSpan={4} className="text-center py-4">Ładowanie...</td></tr>
+                            <tr><td colSpan={3} className="text-center py-4">Ładowanie...</td></tr>
                         ) : rappers.length > 0 ? (
                             rappers.map((rapper) => (
-                                <tr key={rapper.id} className="event-row">
+                                <tr key={rapper.id} className="dash-table-row">
                                     <td className="font-semibold">{rapper.name}</td>
                                     <td><span className="text-secondary">{rapper.category || 'Raper/Skład'}</span></td>
                                     <td>
@@ -85,7 +85,7 @@ export default function ManagingRappersPage() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={4} className="text-center py-8 text-secondary">
+                                <td colSpan={3} className="text-center py-8 text-secondary">
                                     Brak raperów w systemie.
                                 </td>
                             </tr>

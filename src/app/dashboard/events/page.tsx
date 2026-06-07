@@ -70,7 +70,7 @@ export default function ManagingEventsPage() {
                             <tr><td colSpan={5} className="text-center py-4">Ładowanie...</td></tr>
                         ) : events.length > 0 ? (
                             events.map((event) => (
-                                <tr key={event.id} className="event-row">
+                                <tr key={event.id} className="dash-table-row">
                                     <td>{new Date(event.event_date).toLocaleDateString('pl-PL')}</td>
                                     <td className="font-semibold">{event.title}</td>
                                     <td>{event.city}, {event.venue}</td>

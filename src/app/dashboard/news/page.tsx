@@ -71,7 +71,7 @@ export default function ManagingNewsPage() {
                             <tr><td colSpan={5} className="text-center py-4">Ładowanie...</td></tr>
                         ) : news.length > 0 ? (
                             news.map((item) => (
-                                <tr key={item.id} className="event-row">
+                                <tr key={item.id} className="dash-table-row">
                                     <td>{new Date(item.created_at).toLocaleDateString('pl-PL')}</td>
                                     <td className="font-semibold">{item.title}</td>
                                     <td><span className="news-tag">{item.category}</span></td>
