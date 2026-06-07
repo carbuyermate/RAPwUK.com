@@ -10,21 +10,33 @@ import '../dashboard.css';
 export default function ManagingNewsPage() {
     const [news, setNews] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalCount, setTotalCount] = useState(0);
+    const ITEMS_PER_PAGE = 15;
 
-    const fetchNews = async () => {
+    const fetchNews = async (page: number) => {
         setLoading(true);
-        const { data } = await supabase
+        const from = (page - 1) * ITEMS_PER_PAGE;
+        const to = from + ITEMS_PER_PAGE - 1;
+
+        const { data, count, error } = await supabase
             .from('news')
-            .select('*')
-            .order('created_at', { ascending: false });
+            .select('*', { count: 'exact' })
+            .order('created_at', { ascending: false })
+            .range(from, to);
         
-        if (data) setNews(data);
+        if (error) {
+            console.error('Błąd pobierania newsów:', error);
+        } else {
+            if (data) setNews(data);
+            if (count !== null) setTotalCount(count);
+        }
         setLoading(false);
     };
 
     useEffect(() => {
-        fetchNews();
-    }, []);
+        fetchNews(currentPage);
+    }, [currentPage]);
 
     const handleDelete = async (id: string, title: string) => {
         if (!window.confirm(`Czy wiesz na pewno, że chcesz usunąć news: "${title}"?`)) {
@@ -33,10 +45,45 @@ export default function ManagingNewsPage() {
 
         try {
             await deleteNews(id);
-            setNews(news.filter(n => n.id !== id));
+            if (news.length === 1 && currentPage > 1) {
+                setCurrentPage(prev => prev - 1);
+            } else {
+                fetchNews(currentPage);
+            }
         } catch (error: any) {
             alert('Błąd usuwania: ' + error.message);
         }
+    };
+
+    const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+
+    const getPageNumbers = () => {
+        const delta = 2;
+        const left = currentPage - delta;
+        const right = currentPage + delta + 1;
+        const range = [];
+        const rangeWithDots: (number | string)[] = [];
+        let l;
+
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === 1 || i === totalPages || (i >= left && i < right)) {
+                range.push(i);
+            }
+        }
+
+        for (const i of range) {
+            if (l) {
+                if (i - l === 2) {
+                    rangeWithDots.push(l + 1);
+                } else if (i - l > 2) {
+                    rangeWithDots.push('...');
+                }
+            }
+            rangeWithDots.push(i);
+            l = i;
+        }
+
+        return rangeWithDots;
     };
 
     return (
@@ -101,6 +148,47 @@ export default function ManagingNewsPage() {
                         )}
                     </tbody>
                 </table>
+
+                {totalPages > 1 && (
+                    <div className="pagination-container">
+                        <p className="text-secondary text-sm">
+                            Pokazuje {Math.min((currentPage - 1) * ITEMS_PER_PAGE + 1, totalCount)} - {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} z {totalCount} newsów
+                        </p>
+                        <div className="pagination-controls">
+                            <button
+                                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                disabled={currentPage === 1 || loading}
+                                className="pagination-btn"
+                            >
+                                Poprzednia
+                            </button>
+                            
+                            {getPageNumbers().map((pageNum, idx) => {
+                                if (pageNum === '...') {
+                                    return <span key={`dots-${idx}`} className="pagination-ellipsis">...</span>;
+                                }
+                                return (
+                                    <button
+                                        key={`page-${pageNum}`}
+                                        onClick={() => setCurrentPage(Number(pageNum))}
+                                        disabled={loading}
+                                        className={`pagination-btn pagination-number ${currentPage === pageNum ? 'active' : ''}`}
+                                    >
+                                        {pageNum}
+                                    </button>
+                                );
+                            })}
+
+                            <button
+                                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                disabled={currentPage === totalPages || loading}
+                                className="pagination-btn"
+                            >
+                                Następna
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
