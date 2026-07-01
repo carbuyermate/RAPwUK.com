@@ -175,7 +175,7 @@ export default function AddListingPage() {
                     </div>
 
                     <div style={{ display: 'flex', gap: '1rem' }}>
-                        <Link href="/shop/gielda" className="btn-secondary flex-1 py-3" style={{ textDecoration: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '0.85rem' }}>
+                        <Link href="/shop/gielda" className="btn-secondary flex-1">
                             Wróć do Giełdy
                         </Link>
                         <button onClick={() => {
@@ -186,7 +186,7 @@ export default function AddListingPage() {
                             setImageFile(null);
                             setImagePreview(null);
                             setSuccessData(null);
-                        }} className="btn-primary flex-1 py-3" style={{ borderRadius: '10px', fontWeight: 700, fontSize: '0.85rem' }}>
+                        }} className="btn-primary flex-1">
                             Dodaj kolejne
                         </button>
                     </div>
@@ -339,10 +339,10 @@ export default function AddListingPage() {
                     </div>
 
                     <div className="mt-8 flex gap-4">
-                        <button type="submit" className="btn-primary flex-1 py-3" disabled={loading} style={{ borderRadius: '10px', fontWeight: 700 }}>
+                        <button type="submit" className="btn-primary flex-1" disabled={loading}>
                             {loading ? 'Publikowanie...' : 'Opublikuj Ogłoszenie'}
                         </button>
-                        <Link href="/shop/gielda" className="btn-secondary py-3 px-8" style={{ textDecoration: 'none', borderRadius: '10px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Link href="/shop/gielda" className="btn-secondary flex-1">
                             Anuluj
                         </Link>
                     </div>

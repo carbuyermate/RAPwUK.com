@@ -256,3 +256,83 @@ select.gielda-form-input option {
     text-align: left;
     margin-bottom: 2rem;
 }
+
+/* ============================================================
+   Resets & Font Proportions
+   ============================================================ */
+
+.gielda-form-wrapper button,
+.gielda-form-wrapper input,
+.gielda-form-wrapper select,
+.gielda-form-wrapper textarea,
+.gielda-filters-bar button,
+.gielda-filters-bar input,
+.gielda-filters-bar select,
+.gielda-success-card button,
+.gielda-success-card input,
+.gielda-success-card a {
+    font-family: 'Inter', sans-serif !important;
+}
+
+/* Harmonized sizes */
+.gielda-form-label {
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
+    color: var(--text-secondary, rgba(255, 255, 255, 0.5)) !important;
+}
+
+.gielda-form-input {
+    font-size: 0.9rem !important;
+    border-radius: 8px !important;
+}
+
+/* Premium Buttons inside Gielda forms/success page */
+.gielda-form-wrapper .btn-primary,
+.gielda-form-wrapper .btn-secondary,
+.gielda-success-card .btn-primary,
+.gielda-success-card .btn-secondary {
+    font-family: 'Inter', sans-serif !important;
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
+    padding: 12px 24px !important;
+    border-radius: 8px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    height: 44px !important; /* Identical consistent height */
+    box-sizing: border-box !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    margin: 0 !important;
+}
+
+.gielda-form-wrapper .btn-primary,
+.gielda-success-card .btn-primary {
+    background: var(--text-primary, #fff) !important;
+    color: var(--bg-primary, #000) !important;
+    border: 1px solid var(--text-primary, #fff) !important;
+}
+
+.gielda-form-wrapper .btn-primary:hover,
+.gielda-success-card .btn-primary:hover {
+    background: transparent !important;
+    color: var(--text-primary, #fff) !important;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15) !important;
+}
+
+.gielda-form-wrapper .btn-secondary,
+.gielda-success-card .btn-secondary {
+    background: rgba(255, 255, 255, 0.02) !important;
+    color: var(--text-primary, #fff) !important;
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15)) !important;
+}
+
+.gielda-form-wrapper .btn-secondary:hover,
+.gielda-success-card .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: var(--text-primary, #fff) !important;
+}
+
