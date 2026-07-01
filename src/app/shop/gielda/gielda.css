@@ -1,0 +1,258 @@
+/* ============================================================
+   RAPwUK GIELDA — Premium, On-brand Classified Ads Styling
+   ============================================================ */
+
+.gielda-filters-bar {
+    background: var(--glass-bg, rgba(255, 255, 255, 0.03));
+    border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.08));
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    box-shadow: var(--glass-shadow);
+}
+
+.gielda-search-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.gielda-search-input {
+    width: 100%;
+    padding: 14px 16px 14px 2.75rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+    color: var(--text-primary, #fff);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.gielda-search-input:focus {
+    outline: none;
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15);
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.gielda-filter-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.gielda-filter-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary, rgba(255, 255, 255, 0.5));
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.gielda-pills-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.gielda-pill {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary, rgba(255, 255, 255, 0.6));
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.gielda-pill:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--text-primary, #fff);
+}
+
+.gielda-pill.active {
+    background: var(--text-primary, #fff);
+    color: var(--bg-primary, #000);
+    border-color: var(--text-primary, #fff);
+    font-weight: 700;
+}
+
+/* Form Styles */
+.gielda-form-wrapper {
+    max-width: 680px;
+    margin: 0 auto;
+}
+
+.gielda-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+@media (max-width: 640px) {
+    .gielda-form-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+}
+
+.gielda-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.gielda-form-group.full-width {
+    grid-column: span 2;
+}
+
+@media (max-width: 640px) {
+    .gielda-form-group.full-width {
+        grid-column: span 1;
+    }
+}
+
+.gielda-form-label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary, rgba(255, 255, 255, 0.5));
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 0.15rem;
+}
+
+.gielda-form-input {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+    color: var(--text-primary, #fff);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.gielda-form-input:focus {
+    outline: none;
+    border-color: var(--text-primary, #fff);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.gielda-form-input::placeholder {
+    color: rgba(255, 255, 255, 0.25);
+}
+
+select.gielda-form-input {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 14px;
+    padding-right: 40px;
+    cursor: pointer;
+}
+
+select.gielda-form-input option {
+    background: #121212;
+    color: #fff;
+}
+
+/* Upload Zone */
+.gielda-upload-zone {
+    border: 2px dashed rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.005);
+    transition: all 0.2s ease;
+    text-align: center;
+    color: var(--text-secondary, rgba(255, 255, 255, 0.5));
+}
+
+.gielda-upload-zone:hover {
+    border-color: var(--text-primary, #fff);
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--text-primary, #fff);
+}
+
+.gielda-image-preview-wrapper {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: inline-block;
+    max-width: 100%;
+}
+
+.gielda-image-preview {
+    max-height: 250px;
+    max-width: 100%;
+    display: block;
+    object-fit: contain;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.gielda-image-remove-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #ef4444;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.gielda-image-remove-btn:hover {
+    background: #ef4444;
+    color: #fff;
+    border-color: #ef4444;
+}
+
+/* Success Card */
+.gielda-success-card {
+    background: var(--glass-bg, rgba(255, 255, 255, 0.03));
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 16px;
+    box-shadow: var(--glass-shadow);
+    padding: 2.5rem;
+    text-align: center;
+}
+
+.gielda-alert-box {
+    background: rgba(245, 158, 11, 0.03);
+    border: 1px dashed rgba(245, 158, 11, 0.25);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    text-align: left;
+    margin-bottom: 2rem;
+}

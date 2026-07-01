@@ -9,6 +9,7 @@ import {
     MessageSquare, CheckCircle, Clipboard, AlertCircle 
 } from 'lucide-react';
 import '../../shop.css';
+import '../gielda.css';
 
 async function compressImage(file: File, maxPx = 1000, quality = 0.8): Promise<File> {
     return new Promise((resolve) => {
@@ -136,7 +137,7 @@ export default function AddListingPage() {
     if (successData) {
         return (
             <div className="container animate-fade-in" style={{ paddingTop: '4rem', paddingBottom: '4rem' }}>
-                <div className="glass-panel p-8 max-w-xl mx-auto text-center" style={{ borderColor: 'rgba(16,185,129,0.3)' }}>
+                <div className="gielda-success-card max-w-xl mx-auto">
                     <CheckCircle size={56} style={{ color: '#10b981', margin: '0 auto 1.5rem' }} />
                     
                     <h1 style={{ fontFamily: 'Outfit', fontWeight: 900, fontSize: '1.8rem', margin: '0 0 10px', color: 'var(--text-primary)' }}>
@@ -147,14 +148,7 @@ export default function AddListingPage() {
                     </p>
 
                     {/* Deletion Link Alert Box */}
-                    <div style={{
-                        background: 'rgba(245,158,11,0.04)',
-                        border: '1px dashed rgba(245,158,11,0.3)',
-                        borderRadius: '12px',
-                        padding: '1.5rem',
-                        textAlign: 'left',
-                        marginBottom: '2rem'
-                    }}>
+                    <div className="gielda-alert-box">
                         <h4 style={{ margin: '0 0 8px', color: '#f59e0b', fontSize: '0.9rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '6px' }}>
                             <AlertCircle size={15} /> Link do usuwania ogłoszenia
                         </h4>
@@ -167,7 +161,7 @@ export default function AddListingPage() {
                                 type="text" 
                                 readOnly 
                                 value={getDeleteLink()} 
-                                className="form-input text-xs" 
+                                className="gielda-form-input text-xs" 
                                 style={{ flex: 1, fontFamily: 'monospace', background: 'rgba(0,0,0,0.3)' }} 
                             />
                             <button 
@@ -203,156 +197,157 @@ export default function AddListingPage() {
 
     return (
         <div className="container animate-fade-in" style={{ paddingTop: '2rem', paddingBottom: '4rem' }}>
-            <header className="page-header" style={{ marginBottom: '1.5rem' }}>
-                <div className="flex items-center gap-4">
+            <header className="page-header" style={{ marginBottom: '2rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <Link href="/shop/gielda" className="action-btn"><ChevronLeft size={24} /></Link>
                     <h1 className="text-2xl font-bold">Wystaw Przedmiot za Darmo</h1>
                 </div>
             </header>
 
-            <form className="glass-panel p-8 max-w-2xl mx-auto" onSubmit={handleSubmit}>
-                {error && (
-                    <div className="error-message mb-6" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', color: '#ef4444', borderRadius: '8px', fontSize: '0.85rem' }}>
-                        <AlertCircle size={16} />
-                        <span>{error}</span>
+            <div className="gielda-form-wrapper">
+                <form className="glass-panel p-8" onSubmit={handleSubmit}>
+                    {error && (
+                        <div className="error-message mb-6" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', color: '#ef4444', borderRadius: '8px', fontSize: '0.85rem' }}>
+                            <AlertCircle size={16} />
+                            <span>{error}</span>
+                        </div>
+                    )}
+
+                    <div className="gielda-form-grid">
+                        
+                        {/* Title */}
+                        <div className="gielda-form-group full-width">
+                            <label className="gielda-form-label"><Tag size={14} /> Tytuł ogłoszenia</label>
+                            <input 
+                                type="text" 
+                                className="gielda-form-input" 
+                                placeholder="np. O.S.T.R. - Tabasko CD (2002) Pierwsze wydanie" 
+                                value={title} 
+                                onChange={(e) => setTitle(e.target.value)} 
+                                required 
+                                disabled={loading}
+                            />
+                        </div>
+
+                        {/* Category */}
+                        <div className="gielda-form-group">
+                            <label className="gielda-form-label">Kategoria</label>
+                            <select 
+                                className="gielda-form-input" 
+                                value={category} 
+                                onChange={(e) => setCategory(e.target.value as any)} 
+                                required
+                                disabled={loading}
+                            >
+                                <option value="muzyka">🎵 Muzyka</option>
+                                <option value="ubrania">👕 Ubrania</option>
+                                <option value="bilety">🎟️ Bilety</option>
+                                <option value="inne">📦 Inne</option>
+                            </select>
+                        </div>
+
+                        {/* Item Condition */}
+                        <div className="gielda-form-group">
+                            <label className="gielda-form-label">Stan przedmiotu</label>
+                            <select 
+                                className="gielda-form-input" 
+                                value={itemCondition} 
+                                onChange={(e) => setItemCondition(e.target.value as any)} 
+                                required
+                                disabled={loading}
+                            >
+                                <option value="Nowa w folii">🆕 Nowa w folii</option>
+                                <option value="Nowa">✨ Nowa</option>
+                                <option value="Używana">💿 Używana</option>
+                            </select>
+                        </div>
+
+                        {/* Price */}
+                        <div className="gielda-form-group">
+                            <label className="gielda-form-label"><DollarSign size={14} /> Cena (£)</label>
+                            <input 
+                                type="number" 
+                                step="0.01" 
+                                min="0" 
+                                className="gielda-form-input" 
+                                placeholder="np. 20.00" 
+                                value={price} 
+                                onChange={(e) => setPrice(e.target.value)} 
+                                required 
+                                disabled={loading}
+                            />
+                        </div>
+
+                        {/* Contact Info */}
+                        <div className="gielda-form-group">
+                            <label className="gielda-form-label"><MessageSquare size={14} /> Dane kontaktowe</label>
+                            <input 
+                                type="text" 
+                                className="gielda-form-input" 
+                                placeholder="np. Tel: +44 777... lub FB: Jan Kowalski" 
+                                value={contactInfo} 
+                                onChange={(e) => setContactInfo(e.target.value)} 
+                                required 
+                                disabled={loading}
+                            />
+                        </div>
+
+                        {/* Description */}
+                        <div className="gielda-form-group full-width">
+                            <label className="gielda-form-label"><FileText size={14} /> Opis przedmiotu</label>
+                            <textarea 
+                                className="gielda-form-input" 
+                                style={{ minHeight: '120px', resize: 'vertical' }} 
+                                placeholder="Opisz sprzedawany przedmiot (np. stan płyty/okładki, szczegóły wysyłki lub odbioru osobistego)..."
+                                value={description} 
+                                onChange={(e) => setDescription(e.target.value)}
+                                disabled={loading}
+                            />
+                        </div>
+
+                        {/* Image Upload */}
+                        <div className="gielda-form-group full-width">
+                            <label className="gielda-form-label">Zdjęcie przedmiotu</label>
+                            {imagePreview ? (
+                                <div className="gielda-image-preview-wrapper">
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img src={imagePreview} alt="Podgląd" className="gielda-image-preview" />
+                                    <button 
+                                        type="button" 
+                                        className="gielda-image-remove-btn" 
+                                        onClick={() => { setImageFile(null); setImagePreview(null); }}
+                                    >
+                                        <X size={14} /> Usuń
+                                    </button>
+                                </div>
+                            ) : (
+                                <label className="gielda-upload-zone" htmlFor="listing-image">
+                                    <Upload size={32} strokeWidth={1.5} />
+                                    <span>Kliknij, aby dodać zdjęcie</span>
+                                    <input 
+                                        id="listing-image" 
+                                        type="file" 
+                                        accept="image/*" 
+                                        style={{ display: 'none' }} 
+                                        onChange={handleImageChange}
+                                        disabled={loading}
+                                    />
+                                </label>
+                            )}
+                        </div>
+
                     </div>
-                )}
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-                    
-                    {/* Title */}
-                    <div className="form-group" style={{ gridColumn: 'span 2' }}>
-                        <label className="form-label"><Tag size={14} /> Tytuł ogłoszenia</label>
-                        <input 
-                            type="text" 
-                            className="form-input" 
-                            placeholder="np. O.S.T.R. - Tabasko CD (2002) Pierwsze wydanie" 
-                            value={title} 
-                            onChange={(e) => setTitle(e.target.value)} 
-                            required 
-                            disabled={loading}
-                        />
+                    <div className="mt-8 flex gap-4">
+                        <button type="submit" className="btn-primary flex-1 py-3" disabled={loading} style={{ borderRadius: '10px', fontWeight: 700 }}>
+                            {loading ? 'Publikowanie...' : 'Opublikuj Ogłoszenie'}
+                        </button>
+                        <Link href="/shop/gielda" className="btn-secondary py-3 px-8" style={{ textDecoration: 'none', borderRadius: '10px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                            Anuluj
+                        </Link>
                     </div>
-
-                    {/* Category */}
-                    <div className="form-group">
-                        <label className="form-label">Kategoria</label>
-                        <select 
-                            className="form-input" 
-                            value={category} 
-                            onChange={(e) => setCategory(e.target.value as any)} 
-                            required
-                            disabled={loading}
-                        >
-                            <option value="muzyka">🎵 Muzyka</option>
-                            <option value="ubrania">👕 Ubrania</option>
-                            <option value="bilety">🎟️ Bilety</option>
-                            <option value="inne">📦 Inne</option>
-                        </select>
-                    </div>
-
-                    {/* Item Condition */}
-                    <div className="form-group">
-                        <label className="form-label">Stan przedmiotu</label>
-                        <select 
-                            className="form-input" 
-                            value={itemCondition} 
-                            onChange={(e) => setItemCondition(e.target.value as any)} 
-                            required
-                            disabled={loading}
-                        >
-                            <option value="Nowa w folii">🆕 Nowa w folii</option>
-                            <option value="Nowa">✨ Nowa</option>
-                            <option value="Używana">💿 Używana</option>
-                        </select>
-                    </div>
-
-                    {/* Price */}
-                    <div className="form-group">
-                        <label className="form-label"><DollarSign size={14} /> Cena (£)</label>
-                        <input 
-                            type="number" 
-                            step="0.01" 
-                            min="0" 
-                            className="form-input" 
-                            placeholder="np. 20.00" 
-                            value={price} 
-                            onChange={(e) => setPrice(e.target.value)} 
-                            required 
-                            disabled={loading}
-                        />
-                    </div>
-
-                    {/* Contact Info */}
-                    <div className="form-group">
-                        <label className="form-label"><MessageSquare size={14} /> Dane kontaktowe</label>
-                        <input 
-                            type="text" 
-                            className="form-input" 
-                            placeholder="np. Tel: +44 777... lub FB: Jan Kowalski" 
-                            value={contactInfo} 
-                            onChange={(e) => setContactInfo(e.target.value)} 
-                            required 
-                            disabled={loading}
-                        />
-                    </div>
-
-                    {/* Description */}
-                    <div className="form-group" style={{ gridColumn: 'span 2' }}>
-                        <label className="form-label"><FileText size={14} /> Opis przedmiotu</label>
-                        <textarea 
-                            className="form-input" 
-                            style={{ minHeight: '120px', resize: 'vertical' }} 
-                            placeholder="Opisz sprzedawany przedmiot (np. stan płyty/okładki, szczegóły wysyłki lub odbioru osobistego)..."
-                            value={description} 
-                            onChange={(e) => setDescription(e.target.value)}
-                            disabled={loading}
-                        />
-                    </div>
-
-                    {/* Image Upload */}
-                    <div className="form-group" style={{ gridColumn: 'span 2' }}>
-                        <label className="form-label">Zdjęcie przedmiotu</label>
-                        {imagePreview ? (
-                            <div className="image-preview-wrapper" style={{ position: 'relative', display: 'inline-block' }}>
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={imagePreview} alt="Podgląd" className="image-preview" style={{ maxHeight: '200px', borderRadius: '8px' }} />
-                                <button 
-                                    type="button" 
-                                    className="image-remove-btn" 
-                                    onClick={() => { setImageFile(null); setImagePreview(null); }}
-                                    style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(0,0,0,0.7)', border: 'none', color: '#ff4d4d', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', fontWeight: 'bold' }}
-                                >
-                                    <X size={14} /> Usuń
-                                </button>
-                            </div>
-                        ) : (
-                            <label className="upload-zone" htmlFor="listing-image" style={{ border: '2px dashed var(--border-color)', borderRadius: '12px', padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: 'pointer', background: 'rgba(255,255,255,0.01)', transition: 'border-color 0.2s' }}>
-                                <Upload size={32} strokeWidth={1.5} style={{ color: 'var(--text-secondary)' }} />
-                                <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Kliknij, aby dodać zdjęcie</span>
-                                <input 
-                                    id="listing-image" 
-                                    type="file" 
-                                    accept="image/*" 
-                                    style={{ display: 'none' }} 
-                                    onChange={handleImageChange}
-                                    disabled={loading}
-                                />
-                            </label>
-                        )}
-                    </div>
-
-                </div>
-
-                <div className="mt-8 flex gap-4">
-                    <button type="submit" className="btn-primary flex-1 py-3" disabled={loading} style={{ borderRadius: '10px', fontWeight: 700 }}>
-                        {loading ? 'Publikowanie...' : 'Opublikuj Ogłoszenie'}
-                    </button>
-                    <Link href="/shop/gielda" className="btn-secondary py-3 px-8" style={{ textDecoration: 'none', borderRadius: '10px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-                        Anuluj
-                    </Link>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     );
 }

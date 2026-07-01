@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase';
 import { deleteListingWithToken } from '../../actions';
 import { ChevronLeft, Trash2, CheckCircle, AlertTriangle, RefreshCw } from 'lucide-react';
 import '../../../shop.css';
+import '../../gielda.css';
 
 interface Listing {
     id: string;

@@ -8,6 +8,7 @@ import {
     ChevronLeft, MessageSquare, AlertCircle, RefreshCw, X 
 } from 'lucide-react';
 import '../shop.css';
+import './gielda.css';
 
 interface Listing {
     id: string;
@@ -108,49 +109,85 @@ export default function GieldaPage() {
             </header>
 
             {/* Filters Bar */}
-            <div className="glass-panel" style={{ padding: '1.25rem', marginBottom: '2rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+            <div className="gielda-filters-bar">
                 {/* Search */}
-                <div style={{ position: 'relative' }}>
+                <div className="gielda-search-wrapper">
                     <input 
                         type="text" 
                         placeholder="Szukaj ogłoszenia..." 
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="form-input" 
-                        style={{ paddingLeft: '2.5rem', width: '100%' }}
+                        className="gielda-search-input" 
                     />
-                    <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
+                    <Search size={18} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
                 </div>
 
                 {/* Category Filter */}
-                <div>
-                    <select 
-                        value={categoryFilter}
-                        onChange={(e) => setCategoryFilter(e.target.value)}
-                        className="form-input"
-                        style={{ width: '100%', cursor: 'pointer' }}
-                    >
-                        <option value="all">Wszystkie kategorie</option>
-                        <option value="muzyka">🎵 Muzyka</option>
-                        <option value="ubrania">👕 Ubrania</option>
-                        <option value="bilety">🎟️ Bilety</option>
-                        <option value="inne">📦 Inne</option>
-                    </select>
+                <div className="gielda-filter-row">
+                    <span className="gielda-filter-label">Kategoria:</span>
+                    <div className="gielda-pills-container">
+                        <button 
+                            className={`gielda-pill ${categoryFilter === 'all' ? 'active' : ''}`}
+                            onClick={() => setCategoryFilter('all')}
+                        >
+                            Wszystko
+                        </button>
+                        <button 
+                            className={`gielda-pill ${categoryFilter === 'muzyka' ? 'active' : ''}`}
+                            onClick={() => setCategoryFilter('muzyka')}
+                        >
+                            🎵 Muzyka
+                        </button>
+                        <button 
+                            className={`gielda-pill ${categoryFilter === 'ubrania' ? 'active' : ''}`}
+                            onClick={() => setCategoryFilter('ubrania')}
+                        >
+                            👕 Ubrania
+                        </button>
+                        <button 
+                            className={`gielda-pill ${categoryFilter === 'bilety' ? 'active' : ''}`}
+                            onClick={() => setCategoryFilter('bilety')}
+                        >
+                            🎟️ Bilety
+                        </button>
+                        <button 
+                            className={`gielda-pill ${categoryFilter === 'inne' ? 'active' : ''}`}
+                            onClick={() => setCategoryFilter('inne')}
+                        >
+                            📦 Inne
+                        </button>
+                    </div>
                 </div>
 
                 {/* Condition Filter */}
-                <div>
-                    <select 
-                        value={conditionFilter}
-                        onChange={(e) => setConditionFilter(e.target.value)}
-                        className="form-input"
-                        style={{ width: '100%', cursor: 'pointer' }}
-                    >
-                        <option value="all">Dowolny stan</option>
-                        <option value="Nowa w folii">🆕 Nowa w folii</option>
-                        <option value="Nowa">✨ Nowa</option>
-                        <option value="Używana">💿 Używana</option>
-                    </select>
+                <div className="gielda-filter-row">
+                    <span className="gielda-filter-label">Stan przedmiotu:</span>
+                    <div className="gielda-pills-container">
+                        <button 
+                            className={`gielda-pill ${conditionFilter === 'all' ? 'active' : ''}`}
+                            onClick={() => setConditionFilter('all')}
+                        >
+                            Wszystkie stany
+                        </button>
+                        <button 
+                            className={`gielda-pill ${conditionFilter === 'Nowa w folii' ? 'active' : ''}`}
+                            onClick={() => setConditionFilter('Nowa w folii')}
+                        >
+                            🆕 Nowa w folii
+                        </button>
+                        <button 
+                            className={`gielda-pill ${conditionFilter === 'Nowa' ? 'active' : ''}`}
+                            onClick={() => setConditionFilter('Nowa')}
+                        >
+                            ✨ Nowa
+                        </button>
+                        <button 
+                            className={`gielda-pill ${conditionFilter === 'Używana' ? 'active' : ''}`}
+                            onClick={() => setConditionFilter('Używana')}
+                        >
+                            💿 Używana
+                        </button>
+                    </div>
                 </div>
             </div>
 
