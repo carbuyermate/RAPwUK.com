@@ -276,7 +276,7 @@ a.glass-panel:hover,
 /* ── PAGINATION ── */
 .pagination-container {
   display: flex;
-  justify-content: center;
+  justify-content: center !important;
   align-items: center;
   gap: 8px;
   margin-top: 4rem; /* Standardized space above the line */
