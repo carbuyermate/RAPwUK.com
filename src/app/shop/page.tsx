@@ -47,7 +47,7 @@ const CATEGORIES = [
     {
         id: 'gielda',
         title: 'Giełda',
-        icon: <Tag size={20} strokeWidth={1.5} style={{ color: '#f59e0b' }} />,
+        icon: <Tag size={20} strokeWidth={1.5} />,
         href: '/shop/gielda',
     },
 ];
