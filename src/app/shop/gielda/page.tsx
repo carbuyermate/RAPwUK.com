@@ -43,7 +43,6 @@ export default function GieldaPage() {
     // Filtry
     const [searchTerm, setSearchTerm] = useState('');
     const [categoryFilter, setCategoryFilter] = useState<string>('all');
-    const [conditionFilter, setConditionFilter] = useState<string>('all');
 
     // Szczegóły wybranego ogłoszenia
     const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
@@ -77,8 +76,7 @@ export default function GieldaPage() {
         const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                              (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase()));
         const matchesCategory = categoryFilter === 'all' || item.category === categoryFilter;
-        const matchesCondition = conditionFilter === 'all' || item.item_condition === conditionFilter;
-        return matchesSearch && matchesCategory && matchesCondition;
+        return matchesSearch && matchesCategory;
     });
 
     const formatDate = (dateStr: string) => {
@@ -159,36 +157,6 @@ export default function GieldaPage() {
                     </div>
                 </div>
 
-                {/* Condition Filter */}
-                <div className="gielda-filter-row">
-                    <span className="gielda-filter-label">Stan przedmiotu:</span>
-                    <div className="gielda-pills-container">
-                        <button 
-                            className={`gielda-pill ${conditionFilter === 'all' ? 'active' : ''}`}
-                            onClick={() => setConditionFilter('all')}
-                        >
-                            Wszystkie stany
-                        </button>
-                        <button 
-                            className={`gielda-pill ${conditionFilter === 'Nowa w folii' ? 'active' : ''}`}
-                            onClick={() => setConditionFilter('Nowa w folii')}
-                        >
-                            🆕 Nowa w folii
-                        </button>
-                        <button 
-                            className={`gielda-pill ${conditionFilter === 'Nowa' ? 'active' : ''}`}
-                            onClick={() => setConditionFilter('Nowa')}
-                        >
-                            ✨ Nowa
-                        </button>
-                        <button 
-                            className={`gielda-pill ${conditionFilter === 'Używana' ? 'active' : ''}`}
-                            onClick={() => setConditionFilter('Używana')}
-                        >
-                            💿 Używana
-                        </button>
-                    </div>
-                </div>
             </div>
 
             {/* Main Content */}
