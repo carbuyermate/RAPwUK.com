@@ -44,12 +44,6 @@ const CATEGORIES = [
         icon: <Shirt size={20} strokeWidth={1.5} />,
         href: '/shop/ubrania',
     },
-    {
-        id: 'gielda',
-        title: 'Giełda',
-        icon: <Tag size={20} strokeWidth={1.5} style={{ color: '#f59e0b' }} />,
-        href: '/shop/gielda',
-    },
 ];
 
 export default async function ShopPage() {
