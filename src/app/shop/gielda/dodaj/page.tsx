@@ -205,7 +205,7 @@ export default function AddListingPage() {
             </header>
 
             <div className="gielda-form-wrapper">
-                <form className="glass-panel p-8" onSubmit={handleSubmit}>
+                <form className="glass-panel gielda-form" onSubmit={handleSubmit}>
                     {error && (
                         <div className="error-message mb-6" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', color: '#ef4444', borderRadius: '8px', fontSize: '0.85rem' }}>
                             <AlertCircle size={16} />
@@ -338,7 +338,7 @@ export default function AddListingPage() {
 
                     </div>
 
-                    <div className="mt-8 flex gap-4">
+                    <div className="gielda-btn-row">
                         <button type="submit" className="btn-primary flex-1" disabled={loading}>
                             {loading ? 'Publikowanie...' : 'Opublikuj Ogłoszenie'}
                         </button>

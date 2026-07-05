@@ -89,8 +89,36 @@
 
 /* Form Styles */
 .gielda-form-wrapper {
-    max-width: 680px;
+    max-width: 800px; /* Increased from 680px for spacious layout */
     margin: 0 auto;
+}
+
+.gielda-form {
+    padding: 2.5rem; /* Spacious padding for deskop */
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+@media (max-width: 640px) {
+    .gielda-form {
+        padding: 1.5rem;
+        gap: 1.25rem;
+    }
+}
+
+.gielda-btn-row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+@media (max-width: 640px) {
+    .gielda-btn-row {
+        flex-direction: column-reverse;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+    }
 }
 
 .gielda-form-grid {
