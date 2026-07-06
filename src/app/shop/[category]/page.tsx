@@ -4,6 +4,7 @@ import { ProductCard } from '@/components/shop/ProductCard';
 import Link from 'next/link';
 import { ChevronLeft, Music, Ticket, Shirt } from 'lucide-react';
 import type { Product } from '@/app/shop/page';
+import { ProductSort } from '@/components/shop/ProductSort';
 import '../shop.css';
 
 export const dynamic = 'force-dynamic';
@@ -33,10 +34,10 @@ export default async function CategoryPage({
     searchParams,
 }: {
     params: Promise<{ category: string }>;
-    searchParams: Promise<{ sub?: string }>;
+    searchParams: Promise<{ sub?: string; sort?: string }>;
 }) {
     const { category } = await params;
-    const { sub } = await searchParams;
+    const { sub, sort } = await searchParams;
 
     if (!VALID_CATEGORIES.includes(category)) return notFound();
 
@@ -57,6 +58,17 @@ export default async function CategoryPage({
 
     const products = (data || []) as Product[];
 
+    // Sortowanie produktów
+    if (sort === 'price_asc') {
+        products.sort((a, b) => a.price - b.price);
+    } else if (sort === 'price_desc') {
+        products.sort((a, b) => b.price - a.price);
+    } else if (sort === 'artist_asc') {
+        products.sort((a, b) => a.title.localeCompare(b.title, 'pl'));
+    } else if (sort === 'artist_desc') {
+        products.sort((a, b) => b.title.localeCompare(a.title, 'pl'));
+    }
+
     return (
         <div className="container animate-fade-in" style={{ paddingTop: '2rem', paddingBottom: '4rem' }}>
             <Link href="/shop" className="back-btn">
@@ -69,52 +81,58 @@ export default async function CategoryPage({
                 </h1>
             </header>
 
-            {category === 'muzyka' && (
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '2.5rem' }}>
-                    <Link
-                        href="/shop/muzyka"
-                        style={{
-                            padding: '8px 16px',
-                            borderRadius: '8px',
-                            fontSize: '0.85rem',
-                            fontWeight: 600,
-                            background: !sub ? 'var(--text-primary)' : 'var(--bg-secondary)',
-                            color: !sub ? 'var(--bg-primary)' : 'var(--text-secondary)',
-                            border: '1px solid var(--border-color)',
-                            textDecoration: 'none',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.5px',
-                            transition: 'all 0.2s ease',
-                        }}
-                    >
-                        Wszystko
-                    </Link>
-                    {['PL', 'UK', 'USA', 'RAP W UK'].map((item) => {
-                        const isActive = sub === item;
-                        return (
-                            <Link
-                                key={item}
-                                href={`/shop/muzyka?sub=${encodeURIComponent(item)}`}
-                                style={{
-                                    padding: '8px 16px',
-                                    borderRadius: '8px',
-                                    fontSize: '0.85rem',
-                                    fontWeight: 600,
-                                    background: isActive ? 'var(--text-primary)' : 'var(--bg-secondary)',
-                                    color: isActive ? 'var(--bg-primary)' : 'var(--text-secondary)',
-                                    border: '1px solid var(--border-color)',
-                                    textDecoration: 'none',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '0.5px',
-                                    transition: 'all 0.2s ease',
-                                }}
-                            >
-                                {item}
-                            </Link>
-                        );
-                    })}
-                </div>
-            )}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '2.5rem' }}>
+                {category === 'muzyka' ? (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                        <Link
+                            href={sort ? `/shop/muzyka?sort=${sort}` : '/shop/muzyka'}
+                            style={{
+                                padding: '8px 16px',
+                                borderRadius: '8px',
+                                fontSize: '0.85rem',
+                                fontWeight: 600,
+                                background: !sub ? 'var(--text-primary)' : 'var(--bg-secondary)',
+                                color: !sub ? 'var(--bg-primary)' : 'var(--text-secondary)',
+                                border: '1px solid var(--border-color)',
+                                textDecoration: 'none',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.5px',
+                                transition: 'all 0.2s ease',
+                            }}
+                        >
+                            Wszystko
+                        </Link>
+                        {['PL', 'UK', 'USA', 'RAP W UK'].map((item) => {
+                            const isActive = sub === item;
+                            return (
+                                <Link
+                                    key={item}
+                                    href={`/shop/muzyka?sub=${encodeURIComponent(item)}${sort ? `&sort=${sort}` : ''}`}
+                                    style={{
+                                        padding: '8px 16px',
+                                        borderRadius: '8px',
+                                        fontSize: '0.85rem',
+                                        fontWeight: 600,
+                                        background: isActive ? 'var(--text-primary)' : 'var(--bg-secondary)',
+                                        color: isActive ? 'var(--bg-primary)' : 'var(--text-secondary)',
+                                        border: '1px solid var(--border-color)',
+                                        textDecoration: 'none',
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.5px',
+                                        transition: 'all 0.2s ease',
+                                    }}
+                                >
+                                    {item}
+                                </Link>
+                            );
+                        })}
+                    </div>
+                ) : (
+                    <div />
+                )}
+                
+                <ProductSort />
+            </div>
 
             {products.length > 0 ? (
                 <div className="product-grid">
