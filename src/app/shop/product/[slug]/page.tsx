@@ -1,7 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
+import { BackButton } from '@/components/shop/BackButton';
 import { AddToCartButton } from '@/components/shop/AddToCartButton';
 import { ShippingInfoButton } from '@/components/shop/ShippingInfoButton';
 import { ConditionGuideButton } from '@/components/shop/ConditionGuideButton';
@@ -28,9 +27,10 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
     return (
         <div className="container animate-fade-in" style={{ paddingBottom: '5rem' }}>
-            <Link href={`/shop/${product.category}`} className="back-btn" style={{ marginTop: '2rem', display: 'inline-flex' }}>
-                <ChevronLeft size={18} /> {categoryLabels[product.category]}
-            </Link>
+            <BackButton 
+                fallbackUrl={`/shop/${product.category}`} 
+                label={categoryLabels[product.category]} 
+            />
 
             <div className="product-detail-grid">
                 {/* Image */}
