@@ -4,6 +4,7 @@ import { BackButton } from '@/components/shop/BackButton';
 import { AddToCartButton } from '@/components/shop/AddToCartButton';
 import { ShippingInfoButton } from '@/components/shop/ShippingInfoButton';
 import { ConditionGuideButton } from '@/components/shop/ConditionGuideButton';
+import { ProductInquiryButton } from '@/components/shop/ProductInquiryButton';
 import type { Product } from '@/app/shop/page';
 import '../../shop.css';
 
@@ -149,8 +150,9 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                         Na stanie: {product.stock} szt.
                     </p>
 
-                    <div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         <ShippingInfoButton />
+                        <ProductInquiryButton product={product} />
                     </div>
                 </div>
             </div>
