@@ -5,7 +5,8 @@ import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { 
     Search, Plus, Tag, Phone, ExternalLink, Calendar, 
-    ChevronLeft, MessageSquare, AlertCircle, RefreshCw, X 
+    ChevronLeft, MessageSquare, AlertCircle, RefreshCw, X,
+    Facebook, Instagram
 } from 'lucide-react';
 import '../shop.css';
 import './gielda.css';
@@ -18,7 +19,10 @@ interface Listing {
     item_condition: 'Nowa w folii' | 'Nowa' | 'Używana';
     category: 'muzyka' | 'ubrania' | 'bilety' | 'inne';
     image_url: string | null;
-    contact_info: string;
+    contact_info?: string | null;
+    phone?: string | null;
+    facebook_url?: string | null;
+    instagram_url?: string | null;
     created_at: string;
 }
 
@@ -181,64 +185,53 @@ export default function GieldaPage() {
                     </Link>
                 </div>
             ) : (
-                <div className="product-grid">
+                <div className="gielda-list">
                     {filteredListings.map((listing) => (
                         <div 
                             key={listing.id} 
                             onClick={() => setSelectedListing(listing)}
-                            className="product-card" 
-                            style={{ cursor: 'pointer' }}
+                            className="gielda-item-row"
                         >
-                            <div className="product-card-image" style={{ background: 'var(--bg-secondary)', position: 'relative' }}>
+                            <div className="gielda-item-image">
                                 {listing.image_url ? (
                                     // eslint-disable-next-line @next/next/no-img-element
-                                    <img src={listing.image_url} alt={listing.title} style={{ transition: 'transform 0.2s' }} />
+                                    <img src={listing.image_url} alt={listing.title} />
                                 ) : (
-                                    <span style={{ fontSize: '2.5rem' }}>
+                                    <span style={{ fontSize: '1.8rem' }}>
                                         {listing.category === 'muzyka' ? '💿' : listing.category === 'ubrania' ? '👕' : listing.category === 'bilety' ? '🎟️' : '📦'}
                                     </span>
                                 )}
-                                <span style={{
-                                    position: 'absolute',
-                                    bottom: '10px',
-                                    left: '10px',
-                                    background: 'rgba(0,0,0,0.7)',
-                                    color: '#f59e0b',
-                                    fontSize: '0.65rem',
-                                    fontWeight: 700,
-                                    padding: '3px 8px',
-                                    borderRadius: '5px',
-                                    textTransform: 'uppercase',
-                                    border: '1px solid rgba(245,158,11,0.3)',
-                                    letterSpacing: '0.5px'
-                                }}>
-                                    {listing.item_condition}
-                                </span>
                             </div>
                             
-                            <div className="product-card-body" style={{ flex: 1, padding: '1rem' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                                    <span className="product-card-category" style={{ fontSize: '0.65rem' }}>
+                            <div className="gielda-item-details">
+                                <div className="gielda-item-header">
+                                    <span className="gielda-item-category">
                                         {CATEGORY_LABELS[listing.category]}
                                     </span>
-                                    <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                        <Calendar size={10} />
+                                    <span className="gielda-item-date">
+                                        <Calendar size={12} />
                                         {formatDate(listing.created_at)}
                                     </span>
                                 </div>
                                 
-                                <h3 className="product-card-title" style={{ fontSize: '0.92rem', fontWeight: 700, margin: '4px 0 8px', lineClamp: 2, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                                <h3 className="gielda-item-title">
                                     {listing.title}
                                 </h3>
-
-                                <div className="product-card-price" style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.03)' }}>
-                                    <span style={{ fontSize: '1.15rem', fontWeight: 900, color: 'var(--text-primary)' }}>
-                                        £{Number(listing.price).toFixed(2)}
-                                    </span>
-                                    <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#f59e0b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                                        Szczegóły →
+                                
+                                <div className="gielda-item-meta">
+                                    <span className="gielda-item-condition">
+                                        {listing.item_condition}
                                     </span>
                                 </div>
+                            </div>
+                            
+                            <div className="gielda-item-right">
+                                <span className="gielda-item-price">
+                                    £{Number(listing.price).toFixed(2)}
+                                </span>
+                                <span className="gielda-item-action">
+                                    Szczegóły →
+                                </span>
                             </div>
                         </div>
                     ))}
@@ -322,29 +315,94 @@ export default function GieldaPage() {
                                     border: '1px solid rgba(245, 158, 11, 0.25)', 
                                     borderRadius: '12px', 
                                     padding: '1.25rem',
-                                    textAlign: 'center' 
+                                    textAlign: 'center',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    gap: '8px'
                                 }}>
-                                    <h4 style={{ margin: '0 0 6px', fontSize: '0.85rem', color: '#f59e0b', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.5px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                                    <h4 style={{ margin: '0', fontSize: '0.85rem', color: '#f59e0b', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.5px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
                                         <MessageSquare size={14} /> Skontaktuj się ze sprzedawcą
                                     </h4>
-                                    <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '0 0 12px' }}>
+                                    <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '0' }}>
                                         Wspomnij, że dzwonisz z portalu RAPwUK.com
                                     </p>
-                                    <div style={{
-                                        fontFamily: 'monospace',
-                                        fontSize: '1.1rem',
-                                        fontWeight: 700,
-                                        background: 'rgba(0,0,0,0.4)',
-                                        padding: '10px 14px',
-                                        borderRadius: '8px',
-                                        border: '1px solid rgba(255,255,255,0.06)',
-                                        display: 'inline-block',
-                                        color: '#fff',
-                                        wordBreak: 'break-all',
-                                        maxWidth: '100%'
-                                    }}>
-                                        {selectedListing.contact_info}
-                                    </div>
+                                    
+                                    {(selectedListing.phone || selectedListing.contact_info) && (
+                                        <div style={{
+                                            fontFamily: 'monospace',
+                                            fontSize: '1.1rem',
+                                            fontWeight: 700,
+                                            background: 'rgba(0,0,0,0.4)',
+                                            padding: '10px 14px',
+                                            borderRadius: '8px',
+                                            border: '1px solid rgba(255,255,255,0.06)',
+                                            display: 'inline-block',
+                                            color: '#fff',
+                                            wordBreak: 'break-all',
+                                            maxWidth: '100%',
+                                            marginTop: '4px',
+                                            width: '100%'
+                                        }}>
+                                            {selectedListing.phone || selectedListing.contact_info}
+                                        </div>
+                                    )}
+
+                                    {selectedListing.facebook_url && (
+                                        <a 
+                                            href={selectedListing.facebook_url} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                gap: '8px',
+                                                width: '100%',
+                                                padding: '10px 14px',
+                                                borderRadius: '8px',
+                                                background: '#1877F2',
+                                                color: '#fff',
+                                                fontWeight: 700,
+                                                fontSize: '0.85rem',
+                                                textDecoration: 'none',
+                                                transition: 'opacity 0.2s',
+                                                marginTop: '4px'
+                                            }}
+                                            onMouseOver={(e) => e.currentTarget.style.opacity = '0.9'}
+                                            onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
+                                        >
+                                            <Facebook size={16} /> Profil Facebook
+                                        </a>
+                                    )}
+
+                                    {selectedListing.instagram_url && (
+                                        <a 
+                                            href={selectedListing.instagram_url} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                gap: '8px',
+                                                width: '100%',
+                                                padding: '10px 14px',
+                                                borderRadius: '8px',
+                                                background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
+                                                color: '#fff',
+                                                fontWeight: 700,
+                                                fontSize: '0.85rem',
+                                                textDecoration: 'none',
+                                                transition: 'opacity 0.2s',
+                                                marginTop: '4px'
+                                            }}
+                                            onMouseOver={(e) => e.currentTarget.style.opacity = '0.9'}
+                                            onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
+                                        >
+                                            <Instagram size={16} /> Profil Instagram
+                                        </a>
+                                    )}
                                 </div>
 
                             </div>

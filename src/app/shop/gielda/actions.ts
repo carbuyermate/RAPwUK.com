@@ -42,7 +42,10 @@ interface CreateListingData {
     price: number;
     category: 'muzyka' | 'ubrania' | 'bilety' | 'inne';
     item_condition: 'Nowa w folii' | 'Nowa' | 'Używana';
-    contact_info: string;
+    contact_info?: string | null;
+    phone: string;
+    facebook_url?: string;
+    instagram_url?: string;
     image_base64?: string;
     image_name?: string;
 }
@@ -89,7 +92,9 @@ export async function createListing(data: CreateListingData) {
                 price: Number(data.price),
                 category: data.category,
                 item_condition: data.item_condition,
-                contact_info: data.contact_info,
+                phone: data.phone,
+                facebook_url: data.facebook_url || null,
+                instagram_url: data.instagram_url || null,
                 image_url: image_url,
                 is_active: true
             }])

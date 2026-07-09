@@ -57,7 +57,9 @@ export default function AddListingPage() {
     const [price, setPrice] = useState('');
     const [category, setCategory] = useState<'muzyka' | 'ubrania' | 'bilety' | 'inne'>('muzyka');
     const [itemCondition, setItemCondition] = useState<'Nowa w folii' | 'Nowa' | 'Używana'>('Używana');
-    const [contactInfo, setContactInfo] = useState('');
+    const [phone, setPhone] = useState('');
+    const [facebookUrl, setFacebookUrl] = useState('');
+    const [instagramUrl, setInstagramUrl] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
@@ -90,7 +92,7 @@ export default function AddListingPage() {
         try {
             if (!title.trim()) throw new Error('Wpisz tytuł ogłoszenia.');
             if (!price || parseFloat(price) <= 0) throw new Error('Podaj poprawną cenę.');
-            if (!contactInfo.trim()) throw new Error('Podaj dane kontaktowe.');
+            if (!phone.trim()) throw new Error('Podaj numer telefonu.');
 
             let image_base64: string | undefined = undefined;
             if (imageFile) {
@@ -103,7 +105,9 @@ export default function AddListingPage() {
                 price: parseFloat(price),
                 category,
                 item_condition: itemCondition,
-                contact_info: contactInfo,
+                phone,
+                facebook_url: facebookUrl,
+                instagram_url: instagramUrl,
                 image_base64,
                 image_name: imageFile?.name
             });
@@ -278,16 +282,42 @@ export default function AddListingPage() {
                             />
                         </div>
 
-                        {/* Contact Info */}
+                        {/* Phone Number */}
                         <div className="gielda-form-group">
-                            <label className="gielda-form-label"><MessageSquare size={14} /> Dane kontaktowe</label>
+                            <label className="gielda-form-label"><MessageSquare size={14} /> Numer telefonu</label>
                             <input 
-                                type="text" 
+                                type="tel" 
                                 className="gielda-form-input" 
-                                placeholder="np. Tel: +44 777... lub FB: Jan Kowalski" 
-                                value={contactInfo} 
-                                onChange={(e) => setContactInfo(e.target.value)} 
+                                placeholder="np. +44 777 888 999" 
+                                value={phone} 
+                                onChange={(e) => setPhone(e.target.value)} 
                                 required 
+                                disabled={loading}
+                            />
+                        </div>
+
+                        {/* Facebook Link */}
+                        <div className="gielda-form-group">
+                            <label className="gielda-form-label">Link do Facebooka (opcjonalnie)</label>
+                            <input 
+                                type="url" 
+                                className="gielda-form-input" 
+                                placeholder="np. https://facebook.com/twoj.profil" 
+                                value={facebookUrl} 
+                                onChange={(e) => setFacebookUrl(e.target.value)} 
+                                disabled={loading}
+                            />
+                        </div>
+
+                        {/* Instagram Link */}
+                        <div className="gielda-form-group">
+                            <label className="gielda-form-label">Link do Instagrama (opcjonalnie)</label>
+                            <input 
+                                type="url" 
+                                className="gielda-form-input" 
+                                placeholder="np. https://instagram.com/twoj.profil" 
+                                value={instagramUrl} 
+                                onChange={(e) => setInstagramUrl(e.target.value)} 
                                 disabled={loading}
                             />
                         </div>
