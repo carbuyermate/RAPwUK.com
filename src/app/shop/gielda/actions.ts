@@ -212,3 +212,116 @@ export async function adminDeleteListing(id: string) {
         return { success: false, error: err.message };
     }
 }
+
+export async function verifyListingPin(id: string, token: string) {
+    try {
+        const { data: listing, error: fetchError } = await supabaseAdmin
+            .from('listings')
+            .select('delete_token')
+            .eq('id', id)
+            .maybeSingle();
+
+        if (fetchError) throw fetchError;
+        if (!listing) throw new Error('Ogłoszenie nie istnieje.');
+        if (listing.delete_token !== token) {
+            return { success: false, error: 'Nieprawidłowy kod PIN.' };
+        }
+        return { success: true };
+    } catch (err: any) {
+        return { success: false, error: err.message };
+    }
+}
+
+interface UpdateListingData {
+    title: string;
+    description: string;
+    price: number;
+    category: 'muzyka' | 'ubrania' | 'bilety' | 'inne';
+    item_condition: 'Nowa w folii' | 'Nowa' | 'Używana';
+    phone: string;
+    facebook_url?: string;
+    instagram_url?: string;
+    image_base64?: string;
+    image_name?: string;
+    keep_existing_image?: boolean;
+}
+
+export async function updateListing(id: string, token: string, data: UpdateListingData) {
+    try {
+        // 1. Verify token first
+        const { data: listing, error: fetchError } = await supabaseAdmin
+            .from('listings')
+            .select('delete_token, image_url')
+            .eq('id', id)
+            .maybeSingle();
+
+        if (fetchError) throw fetchError;
+        if (!listing) throw new Error('Ogłoszenie nie istnieje.');
+        if (listing.delete_token !== token) throw new Error('Nieprawidłowy kod PIN.');
+
+        let image_url = listing.image_url;
+
+        // 2. Handle image upload if new base64 provided
+        if (data.image_base64) {
+            const base64Data = data.image_base64.replace(/^data:image\/\w+;base64,/, '');
+            const buffer = Buffer.from(base64Data, 'base64');
+            const fileExt = data.image_name ? data.image_name.split('.').pop() : 'webp';
+            const fileName = `listings/${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
+
+            const { error: uploadError } = await supabaseAdmin.storage
+                .from('uploads')
+                .upload(fileName, buffer, {
+                    contentType: `image/${fileExt === 'webp' ? 'webp' : fileExt === 'png' ? 'png' : 'jpeg'}`,
+                    upsert: false
+                });
+
+            if (uploadError) {
+                console.error('[Storage Upload Error]', uploadError);
+                throw new Error(`Błąd wysyłania pliku: ${uploadError.message}`);
+            }
+
+            const { data: { publicUrl } } = supabaseAdmin.storage
+                .from('uploads')
+                .getPublicUrl(fileName);
+
+            image_url = publicUrl;
+        } else if (!data.keep_existing_image) {
+            // User removed image
+            if (listing.image_url) {
+                const parts = listing.image_url.split('/uploads/');
+                if (parts.length > 1) {
+                    const filePath = parts[1];
+                    await supabaseAdmin.storage.from('uploads').remove([filePath]);
+                }
+            }
+            image_url = null;
+        }
+
+        // 3. Update the listing row
+        const { error: updateError } = await supabaseAdmin
+            .from('listings')
+            .update({
+                title: data.title,
+                description: data.description,
+                price: Number(data.price),
+                category: data.category,
+                item_condition: data.item_condition,
+                phone: data.phone,
+                facebook_url: data.facebook_url || null,
+                instagram_url: data.instagram_url || null,
+                image_url: image_url
+            })
+            .eq('id', id);
+
+        if (updateError) {
+            console.error('[Database Update Error]', updateError);
+            throw new Error(`Błąd aktualizacji ogłoszenia: ${updateError.message}`);
+        }
+
+        revalidatePath('/shop/gielda');
+        return { success: true };
+    } catch (err: any) {
+        console.error('[updateListing Error]', err);
+        return { success: false, error: err.message };
+    }
+}

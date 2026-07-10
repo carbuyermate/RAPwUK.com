@@ -3,12 +3,13 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { 
     Search, Plus, Tag, Phone, ExternalLink, Calendar, 
     ChevronLeft, MessageSquare, AlertCircle, RefreshCw, X,
     Facebook, Instagram
 } from 'lucide-react';
-import { deleteListingWithToken } from './actions';
+import { deleteListingWithToken, verifyListingPin } from './actions';
 import '../shop.css';
 import './gielda.css';
 
@@ -41,6 +42,7 @@ const CONDITION_LABELS = {
 };
 
 export default function GieldaPage() {
+    const router = useRouter();
     const [listings, setListings] = useState<Listing[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -58,12 +60,22 @@ export default function GieldaPage() {
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [deleteError, setDeleteError] = useState<string | null>(null);
 
+    // Edycja ogłoszenia przez użytkownika z kodem PIN
+    const [showEditConfirm, setShowEditConfirm] = useState(false);
+    const [editPin, setEditPin] = useState('');
+    const [editLoading, setEditLoading] = useState(false);
+    const [editError, setEditError] = useState<string | null>(null);
+
     const handleCloseModal = () => {
         setSelectedListing(null);
         setShowDeleteConfirm(false);
         setDeletePin('');
         setDeleteLoading(false);
         setDeleteError(null);
+        setShowEditConfirm(false);
+        setEditPin('');
+        setEditLoading(false);
+        setEditError(null);
     };
 
     const handleUserDelete = async () => {
@@ -87,6 +99,28 @@ export default function GieldaPage() {
             setDeleteError(err.message);
         } finally {
             setDeleteLoading(false);
+        }
+    };
+
+    const handleUserEditVerify = async () => {
+        if (!selectedListing) return;
+        if (!editPin.trim()) {
+            setEditError('Wpisz kod PIN.');
+            return;
+        }
+        setEditLoading(true);
+        setEditError(null);
+        try {
+            const result = await verifyListingPin(selectedListing.id, editPin);
+            if (!result.success) {
+                throw new Error(result.error || 'Nieprawidłowy kod PIN.');
+            }
+            // PIN jest poprawny, przekieruj do edycji
+            router.push(`/shop/gielda/edytuj/${selectedListing.id}?token=${encodeURIComponent(editPin)}`);
+        } catch (err: any) {
+            setEditError(err.message);
+        } finally {
+            setEditLoading(false);
         }
     };
 
@@ -444,31 +478,54 @@ export default function GieldaPage() {
                                     )}
                                 </div>
 
-                                {/* Usunięcie ogłoszenia przez użytkownika */}
+                                {/* Zarządzanie ogłoszeniem przez użytkownika (Edycja/Usuwanie) */}
                                 <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                    {!showDeleteConfirm ? (
-                                        <button 
-                                            onClick={() => setShowDeleteConfirm(true)}
-                                            style={{
-                                                background: 'rgba(239, 68, 68, 0.08)',
-                                                border: '1px solid rgba(239, 68, 68, 0.2)',
-                                                color: '#ef4444',
-                                                borderRadius: '10px',
-                                                padding: '10px 14px',
-                                                fontSize: '0.85rem',
-                                                fontWeight: 700,
-                                                cursor: 'pointer',
-                                                transition: 'all 0.2s',
-                                                width: '100%',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                gap: '6px'
-                                            }}
-                                        >
-                                            ❌ Chcę usunąć to ogłoszenie
-                                        </button>
-                                    ) : (
+                                    {!showDeleteConfirm && !showEditConfirm ? (
+                                        <div style={{ display: 'flex', gap: '8px' }}>
+                                            <button 
+                                                onClick={() => setShowEditConfirm(true)}
+                                                style={{
+                                                    flex: 1,
+                                                    background: 'rgba(245, 158, 11, 0.08)',
+                                                    border: '1px solid rgba(245, 158, 11, 0.2)',
+                                                    color: '#f59e0b',
+                                                    borderRadius: '10px',
+                                                    padding: '10px 14px',
+                                                    fontSize: '0.85rem',
+                                                    fontWeight: 700,
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.2s',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    gap: '6px'
+                                                }}
+                                            >
+                                                ✏️ Edytuj ogłoszenie
+                                            </button>
+                                            <button 
+                                                onClick={() => setShowDeleteConfirm(true)}
+                                                style={{
+                                                    flex: 1,
+                                                    background: 'rgba(239, 68, 68, 0.08)',
+                                                    border: '1px solid rgba(239, 68, 68, 0.2)',
+                                                    color: '#ef4444',
+                                                    borderRadius: '10px',
+                                                    padding: '10px 14px',
+                                                    fontSize: '0.85rem',
+                                                    fontWeight: 700,
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.2s',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    gap: '6px'
+                                                }}
+                                            >
+                                                ❌ Usuń ogłoszenie
+                                            </button>
+                                        </div>
+                                    ) : showDeleteConfirm ? (
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', background: 'rgba(239, 68, 68, 0.03)', border: '1px dashed rgba(239, 68, 68, 0.2)', padding: '12px', borderRadius: '10px' }}>
                                             <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Wpisz kod PIN podany podczas dodawania ogłoszenia:</span>
                                             <div style={{ display: 'flex', gap: '8px' }}>
@@ -497,6 +554,37 @@ export default function GieldaPage() {
                                             </div>
                                             {deleteError && (
                                                 <span style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '4px', fontWeight: 'bold' }}>⚠️ Błąd: {deleteError}</span>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', background: 'rgba(245, 158, 11, 0.03)', border: '1px dashed rgba(245, 158, 11, 0.2)', padding: '12px', borderRadius: '10px' }}>
+                                            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Wpisz kod PIN podany podczas dodawania ogłoszenia:</span>
+                                            <div style={{ display: 'flex', gap: '8px' }}>
+                                                <input 
+                                                    type="password" 
+                                                    placeholder="Kod PIN"
+                                                    value={editPin}
+                                                    onChange={(e) => setEditPin(e.target.value)}
+                                                    style={{ flex: 1, padding: '8px 12px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border-color)', color: '#fff', borderRadius: '6px', fontSize: '0.85rem' }}
+                                                />
+                                                <button 
+                                                    onClick={handleUserEditVerify}
+                                                    disabled={editLoading}
+                                                    className="btn-primary" 
+                                                    style={{ padding: '8px 14px', borderRadius: '6px', fontSize: '0.75rem', background: '#f59e0b', borderColor: '#f59e0b', color: '#000', fontWeight: 'bold', cursor: 'pointer' }}
+                                                >
+                                                    {editLoading ? 'Weryfikacja...' : 'Potwierdź'}
+                                                </button>
+                                                <button 
+                                                    onClick={() => { setShowEditConfirm(false); setEditPin(''); setEditError(null); }}
+                                                    className="btn-secondary"
+                                                    style={{ padding: '8px 12px', borderRadius: '6px', fontSize: '0.75rem', cursor: 'pointer' }}
+                                                >
+                                                    Anuluj
+                                                </button>
+                                            </div>
+                                            {editError && (
+                                                <span style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '4px', fontWeight: 'bold' }}>⚠️ Błąd: {editError}</span>
                                             )}
                                         </div>
                                     )}
