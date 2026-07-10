@@ -186,7 +186,9 @@ export default function AddListingPage() {
                             setTitle('');
                             setDescription('');
                             setPrice('');
-                            setContactInfo('');
+                            setPhone('');
+                            setFacebookUrl('');
+                            setInstagramUrl('');
                             setImageFile(null);
                             setImagePreview(null);
                             setSuccessData(null);
