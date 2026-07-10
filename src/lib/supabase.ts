@@ -9,4 +9,12 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 // createBrowserClient automatycznie zarządza sesją w ciasteczkach (Cookies)
 // co rozwiązuje problemy z synchronizacją sesji po przeładowaniu strony.
-export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey, {
+    global: {
+        headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        }
+    }
+});
