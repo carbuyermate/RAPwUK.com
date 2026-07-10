@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
     title: 'RAPwUK Shop',
-    description: 'Oficjalny sklep RAPwUK.com - Muzyka, Bilety, Ubrania, Elektronika',
+    description: 'Oficjalny sklep RAPwUK.com - Muzyka, Bilety, Ubrania',
     robots: { index: false, follow: false },
 };
 

@@ -649,8 +649,7 @@ const STATUS_LABELS: Record<string, string> = {
 const CATEGORY_LABELS: Record<string, string> = {
     muzyka: '🎵 Muzyka',
     bilety: '🎟️ Bilety',
-    ubrania: '👕 Ubrania',
-    elektronika: '💻 Elektronika'
+    ubrania: '👕 Ubrania'
 };
 
 function StoreDashboardContent() {

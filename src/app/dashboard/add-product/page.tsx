@@ -36,7 +36,7 @@ export default function AddProductPage() {
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
     const [purchasePrice, setPurchasePrice] = useState('0');
-    const [category, setCategory] = useState<'muzyka' | 'bilety' | 'ubrania' | 'elektronika'>('muzyka');
+    const [category, setCategory] = useState<'muzyka' | 'bilety' | 'ubrania'>('muzyka');
     const [stock, setStock] = useState('1');
     const [isActive, setIsActive] = useState(true);
     const [imageFile, setImageFile] = useState<File | null>(null);
@@ -49,7 +49,7 @@ export default function AddProductPage() {
     const [conditionMedia, setConditionMedia] = useState('');
     const [conditionCover, setConditionCover] = useState('');
     const [conditionNotes, setConditionNotes] = useState('');
-    const [musicCategory, setMusicCategory] = useState<'RAP PL' | 'RAP UK' | 'RAP USA' | 'POLSKI RAP W UK' | ''>('');
+    const [musicCategory, setMusicCategory] = useState<'RAP PL' | 'RAP UK' | 'RAP USA' | 'POLSKI RAP W UK' | 'ELEKTRONIKA' | ''>('');
     const [itemCondition, setItemCondition] = useState<'Nowa w folii' | 'Nowa' | 'Używana' | ''>('');
     
     const router = useRouter();
@@ -76,7 +76,7 @@ export default function AddProductPage() {
         setError(null);
         try {
             if (category === 'muzyka' && !musicCategory) {
-                throw new Error('Musisz wybrać kategorię muzyczną (RAP PL, RAP UK, RAP USA lub POLSKI RAP W UK) dla produktu z kategorii Muzyka.');
+                throw new Error('Musisz wybrać kategorię muzyczną (RAP PL, RAP UK, RAP USA, POLSKI RAP W UK lub ELEKTRONIKA) dla produktu z kategorii Muzyka.');
             }
             if (category === 'muzyka' && !itemCondition) {
                 throw new Error('Musisz wybrać stan ogólny produktu (Nowa w folii, Nowa lub Używana).');
@@ -163,7 +163,6 @@ export default function AddProductPage() {
                             <option value="muzyka">🎵 Muzyka</option>
                             <option value="bilety">🎟️ Bilety</option>
                             <option value="ubrania">👕 Ubrania</option>
-                            <option value="elektronika">💻 Elektronika</option>
                         </select>
                     </div>
                     {category === 'muzyka' && (
@@ -188,6 +187,7 @@ export default function AddProductPage() {
                                     <option value="RAP UK">RAP UK</option>
                                     <option value="RAP USA">RAP USA</option>
                                     <option value="POLSKI RAP W UK">POLSKI RAP W UK</option>
+                                    <option value="ELEKTRONIKA">ELEKTRONIKA</option>
                                 </select>
                             </div>
                             <div className="form-group" style={{ gridColumn: 'span 2' }}>
