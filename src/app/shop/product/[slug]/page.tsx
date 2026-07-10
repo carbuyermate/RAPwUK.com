@@ -23,8 +23,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     if (!data) return notFound();
     const product = data as Product;
 
-    const categoryLabels: Record<string, string> = { muzyka: 'Muzyka', bilety: 'Bilety', ubrania: 'Ubrania' };
-    const categoryEmoji: Record<string, string> = { muzyka: '🎵', bilety: '🎟️', ubrania: '👕' };
+    const categoryLabels: Record<string, string> = { muzyka: 'Muzyka', bilety: 'Bilety', ubrania: 'Ubrania', elektronika: 'Elektronika' };
+    const categoryEmoji: Record<string, string> = { muzyka: '🎵', bilety: '🎟️', ubrania: '👕', elektronika: '💻' };
 
     return (
         <div className="container animate-fade-in" style={{ paddingBottom: '5rem' }}>

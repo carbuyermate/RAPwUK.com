@@ -29,6 +29,7 @@ export function ProductCard({ product }: { product: Product }) {
         muzyka: 'Muzyka',
         bilety: 'Bilety',
         ubrania: 'Ubrania',
+        elektronika: 'Elektronika',
     };
 
     return (
@@ -39,7 +40,7 @@ export function ProductCard({ product }: { product: Product }) {
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={product.image_url} alt={product.title} />
                     ) : (
-                        <span>{product.category === 'muzyka' ? '🎵' : product.category === 'bilety' ? '🎟️' : '👕'}</span>
+                        <span>{product.category === 'muzyka' ? '🎵' : product.category === 'bilety' ? '🎟️' : product.category === 'ubrania' ? '👕' : '💻'}</span>
                     )}
                 </div>
                 <div className="product-card-body">

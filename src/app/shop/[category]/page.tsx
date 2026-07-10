@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 import { ProductCard } from '@/components/shop/ProductCard';
 import Link from 'next/link';
-import { ChevronLeft, Music, Ticket, Shirt } from 'lucide-react';
+import { ChevronLeft, Music, Ticket, Shirt, Laptop } from 'lucide-react';
 import type { Product } from '@/app/shop/page';
 import { ProductSort } from '@/components/shop/ProductSort';
 import '../shop.css';
@@ -24,6 +24,11 @@ const CATEGORY_META: Record<string, { title: string; desc: string; icon: React.R
         title: 'Ubrania',
         desc: 'Streetwear, kolekcje limitowane, hoodki i tshirty.',
         icon: <Shirt size={28} />,
+    },
+    elektronika: {
+        title: 'Elektronika',
+        desc: 'Sprzęt audio, słuchawki, odtwarzacze i gadżety.',
+        icon: <Laptop size={28} />,
     },
 };
 
@@ -50,7 +55,7 @@ export default async function CategoryPage({
         .eq('is_active', true)
         .gt('stock', 0);
 
-    if (category === 'muzyka' && sub && ['PL', 'UK', 'USA', 'RAP W UK'].includes(sub)) {
+    if (category === 'muzyka' && sub && ['RAP PL', 'RAP UK', 'RAP USA', 'POLSKI RAP W UK'].includes(sub)) {
         query = query.eq('music_category', sub);
     }
 
@@ -102,7 +107,7 @@ export default async function CategoryPage({
                         >
                             Wszystko
                         </Link>
-                        {['PL', 'UK', 'USA', 'RAP W UK'].map((item) => {
+                        {['RAP PL', 'RAP UK', 'RAP USA', 'POLSKI RAP W UK'].map((item) => {
                             const isActive = sub === item;
                             return (
                                 <Link

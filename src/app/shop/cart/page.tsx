@@ -74,7 +74,7 @@ export default function CartPage() {
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img src={item.image_url} alt={item.title} />
                                 ) : (
-                                    <span>{item.category === 'muzyka' ? '🎵' : item.category === 'bilety' ? '🎟️' : '👕'}</span>
+                                    <span>{item.category === 'muzyka' ? '🎵' : item.category === 'bilety' ? '🎟️' : item.category === 'ubrania' ? '👕' : '💻'}</span>
                                 )}
                             </div>
                             <div className="cart-item-info">

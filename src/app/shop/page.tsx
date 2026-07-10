@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
-import { ArrowRight, Music, Ticket, Shirt, ShoppingBag, Tag } from 'lucide-react';
+import { ArrowRight, Music, Ticket, Shirt, ShoppingBag, Tag, Laptop } from 'lucide-react';
 import { ProductCard } from '@/components/shop/ProductCard';
 import { ShippingInfoButton } from '@/components/shop/ShippingInfoButton';
 import './shop.css';
@@ -13,7 +13,7 @@ export interface Product {
     title: string;
     description: string;
     price: number;
-    category: 'muzyka' | 'bilety' | 'ubrania';
+    category: 'muzyka' | 'bilety' | 'ubrania' | 'elektronika';
     image_url?: string;
     stripe_price_id?: string;
     stock: number;
@@ -21,7 +21,7 @@ export interface Product {
     condition_media?: string | null;
     condition_cover?: string | null;
     condition_notes?: string | null;
-    music_category?: 'PL' | 'UK' | 'USA' | 'RAP W UK' | null;
+    music_category?: 'RAP PL' | 'RAP UK' | 'RAP USA' | 'POLSKI RAP W UK' | null;
     item_condition?: 'Nowa w folii' | 'Nowa' | 'Używana' | null;
 }
 
@@ -43,6 +43,12 @@ const CATEGORIES = [
         title: 'Ubrania',
         icon: <Shirt size={20} strokeWidth={1.5} />,
         href: '/shop/ubrania',
+    },
+    {
+        id: 'elektronika',
+        title: 'Elektronika',
+        icon: <Laptop size={20} strokeWidth={1.5} />,
+        href: '/shop/elektronika',
     },
     {
         id: 'gielda',
