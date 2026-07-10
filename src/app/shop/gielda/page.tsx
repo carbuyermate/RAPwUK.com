@@ -8,6 +8,7 @@ import {
     ChevronLeft, MessageSquare, AlertCircle, RefreshCw, X,
     Facebook, Instagram
 } from 'lucide-react';
+import { deleteListingWithToken } from './actions';
 import '../shop.css';
 import './gielda.css';
 
@@ -50,6 +51,44 @@ export default function GieldaPage() {
 
     // Szczegóły wybranego ogłoszenia
     const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
+
+    // Usuwanie ogłoszenia przez użytkownika z kodem PIN
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [deletePin, setDeletePin] = useState('');
+    const [deleteLoading, setDeleteLoading] = useState(false);
+    const [deleteError, setDeleteError] = useState<string | null>(null);
+
+    const handleCloseModal = () => {
+        setSelectedListing(null);
+        setShowDeleteConfirm(false);
+        setDeletePin('');
+        setDeleteLoading(false);
+        setDeleteError(null);
+    };
+
+    const handleUserDelete = async () => {
+        if (!selectedListing) return;
+        if (!deletePin.trim()) {
+            setDeleteError('Wpisz kod PIN.');
+            return;
+        }
+        setDeleteLoading(true);
+        setDeleteError(null);
+        try {
+            const result = await deleteListingWithToken(selectedListing.id, deletePin);
+            if (!result.success) {
+                throw new Error(result.error || 'Nieprawidłowy kod PIN.');
+            }
+            // Usuń z listy na kliencie
+            setListings(prev => prev.filter(item => item.id !== selectedListing.id));
+            handleCloseModal();
+            alert('Ogłoszenie zostało usunięte!');
+        } catch (err: any) {
+            setDeleteError(err.message);
+        } finally {
+            setDeleteLoading(false);
+        }
+    };
 
     const fetchListings = async () => {
         setLoading(true);
@@ -240,7 +279,7 @@ export default function GieldaPage() {
 
             {/* Listing Details Modal */}
             {selectedListing && (
-                <div className="shipping-modal-overlay animate-fade-in" onClick={() => setSelectedListing(null)}>
+                <div className="shipping-modal-overlay animate-fade-in" onClick={handleCloseModal}>
                     <div 
                         className="shipping-modal-content" 
                         onClick={(e) => e.stopPropagation()} 
@@ -251,7 +290,7 @@ export default function GieldaPage() {
                             <h2 className="shipping-modal-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.05rem' }}>
                                 {CATEGORY_LABELS[selectedListing.category]}
                             </h2>
-                            <button className="shipping-modal-close-btn" onClick={() => setSelectedListing(null)}>
+                            <button className="shipping-modal-close-btn" onClick={handleCloseModal}>
                                 <X size={20} />
                             </button>
                         </div>
@@ -402,6 +441,64 @@ export default function GieldaPage() {
                                         >
                                             <Instagram size={16} /> Profil Instagram
                                         </a>
+                                    )}
+                                </div>
+
+                                {/* Usunięcie ogłoszenia przez użytkownika */}
+                                <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                    {!showDeleteConfirm ? (
+                                        <button 
+                                            onClick={() => setShowDeleteConfirm(true)}
+                                            style={{
+                                                background: 'rgba(239, 68, 68, 0.08)',
+                                                border: '1px solid rgba(239, 68, 68, 0.2)',
+                                                color: '#ef4444',
+                                                borderRadius: '10px',
+                                                padding: '10px 14px',
+                                                fontSize: '0.85rem',
+                                                fontWeight: 700,
+                                                cursor: 'pointer',
+                                                transition: 'all 0.2s',
+                                                width: '100%',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                gap: '6px'
+                                            }}
+                                        >
+                                            ❌ Chcę usunąć to ogłoszenie
+                                        </button>
+                                    ) : (
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', background: 'rgba(239, 68, 68, 0.03)', border: '1px dashed rgba(239, 68, 68, 0.2)', padding: '12px', borderRadius: '10px' }}>
+                                            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Wpisz kod PIN podany podczas dodawania ogłoszenia:</span>
+                                            <div style={{ display: 'flex', gap: '8px' }}>
+                                                <input 
+                                                    type="password" 
+                                                    placeholder="Kod PIN"
+                                                    value={deletePin}
+                                                    onChange={(e) => setDeletePin(e.target.value)}
+                                                    style={{ flex: 1, padding: '8px 12px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border-color)', color: '#fff', borderRadius: '6px', fontSize: '0.85rem' }}
+                                                />
+                                                <button 
+                                                    onClick={handleUserDelete}
+                                                    disabled={deleteLoading}
+                                                    className="btn-primary" 
+                                                    style={{ padding: '8px 14px', borderRadius: '6px', fontSize: '0.75rem', background: '#ef4444', borderColor: '#ef4444', fontWeight: 'bold', cursor: 'pointer' }}
+                                                >
+                                                    {deleteLoading ? 'Usuwanie...' : 'Potwierdź'}
+                                                </button>
+                                                <button 
+                                                    onClick={() => { setShowDeleteConfirm(false); setDeletePin(''); setDeleteError(null); }}
+                                                    className="btn-secondary"
+                                                    style={{ padding: '8px 12px', borderRadius: '6px', fontSize: '0.75rem', cursor: 'pointer' }}
+                                                >
+                                                    Anuluj
+                                                </button>
+                                            </div>
+                                            {deleteError && (
+                                                <span style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '4px', fontWeight: 'bold' }}>⚠️ Błąd: {deleteError}</span>
+                                            )}
+                                        </div>
                                     )}
                                 </div>
 

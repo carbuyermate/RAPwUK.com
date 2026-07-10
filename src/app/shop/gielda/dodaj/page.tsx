@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { createListing } from '../actions';
 import { 
     ChevronLeft, Tag, FileText, Upload, X, DollarSign, 
-    MessageSquare, CheckCircle, Clipboard, AlertCircle 
+    MessageSquare, CheckCircle, Clipboard, AlertCircle, Lock 
 } from 'lucide-react';
 import '../../shop.css';
 import '../gielda.css';
@@ -60,6 +60,7 @@ export default function AddListingPage() {
     const [phone, setPhone] = useState('');
     const [facebookUrl, setFacebookUrl] = useState('');
     const [instagramUrl, setInstagramUrl] = useState('');
+    const [pin, setPin] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
@@ -93,6 +94,7 @@ export default function AddListingPage() {
             if (!title.trim()) throw new Error('Wpisz tytuł ogłoszenia.');
             if (!price || parseFloat(price) <= 0) throw new Error('Podaj poprawną cenę.');
             if (!phone.trim()) throw new Error('Podaj numer telefonu.');
+            if (!pin.trim() || pin.length < 4) throw new Error('Podaj kod PIN (minimum 4 znaki).');
 
             let image_base64: string | undefined = undefined;
             if (imageFile) {
@@ -109,7 +111,8 @@ export default function AddListingPage() {
                 facebook_url: facebookUrl,
                 instagram_url: instagramUrl,
                 image_base64,
-                image_name: imageFile?.name
+                image_name: imageFile?.name,
+                delete_pin: pin
             });
 
             if (!result.success || !result.listing) {
@@ -189,6 +192,7 @@ export default function AddListingPage() {
                             setPhone('');
                             setFacebookUrl('');
                             setInstagramUrl('');
+                            setPin('');
                             setImageFile(null);
                             setImagePreview(null);
                             setSuccessData(null);
@@ -293,6 +297,22 @@ export default function AddListingPage() {
                                 placeholder="np. +44 777 888 999" 
                                 value={phone} 
                                 onChange={(e) => setPhone(e.target.value)} 
+                                required 
+                                disabled={loading}
+                            />
+                        </div>
+
+                        {/* PIN Code */}
+                        <div className="gielda-form-group">
+                            <label className="gielda-form-label"><Lock size={14} /> Kod PIN do usunięcia ogłoszenia</label>
+                            <input 
+                                type="text" 
+                                pattern="[0-9a-zA-Z]{4,8}"
+                                maxLength={8}
+                                className="gielda-form-input" 
+                                placeholder="np. 1234 (od 4 do 8 znaków)" 
+                                value={pin} 
+                                onChange={(e) => setPin(e.target.value.replace(/[^0-9a-zA-Z]/g, ''))} 
                                 required 
                                 disabled={loading}
                             />

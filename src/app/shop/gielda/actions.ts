@@ -48,6 +48,7 @@ interface CreateListingData {
     instagram_url?: string;
     image_base64?: string;
     image_name?: string;
+    delete_pin?: string;
 }
 
 /**
@@ -83,6 +84,9 @@ export async function createListing(data: CreateListingData) {
             image_url = publicUrl;
         }
 
+        // Generate fallback token if none provided
+        const generatedToken = data.delete_pin || (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 10));
+
         // Wstawienie rekordu do tabeli
         const { data: inserted, error: insertError } = await supabaseAdmin
             .from('listings')
@@ -96,6 +100,7 @@ export async function createListing(data: CreateListingData) {
                 facebook_url: data.facebook_url || null,
                 instagram_url: data.instagram_url || null,
                 image_url: image_url,
+                delete_token: generatedToken,
                 is_active: true
             }])
             .select('id, delete_token')
