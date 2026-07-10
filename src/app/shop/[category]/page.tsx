@@ -58,15 +58,23 @@ export default async function CategoryPage({
 
     const products = (data || []) as Product[];
 
-    // Sortowanie produktów
-    if (sort === 'price_asc') {
-        products.sort((a, b) => a.price - b.price);
-    } else if (sort === 'price_desc') {
-        products.sort((a, b) => b.price - a.price);
-    } else if (sort === 'artist_asc') {
+    // Sortowanie produktów (domyślnie Artysta: A-Z)
+    const activeSort = sort || 'artist_asc';
+
+    if (activeSort === 'artist_asc') {
         products.sort((a, b) => a.title.localeCompare(b.title, 'pl'));
-    } else if (sort === 'artist_desc') {
+    } else if (activeSort === 'artist_desc') {
         products.sort((a, b) => b.title.localeCompare(a.title, 'pl'));
+    } else if (activeSort === 'price_asc') {
+        products.sort((a, b) => a.price - b.price);
+    } else if (activeSort === 'price_desc') {
+        products.sort((a, b) => b.price - a.price);
+    } else if (activeSort === 'newest') {
+        products.sort((a, b) => {
+            const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+            const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+            return dateB - dateA;
+        });
     }
 
     return (

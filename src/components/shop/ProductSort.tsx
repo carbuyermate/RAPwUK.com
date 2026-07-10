@@ -6,12 +6,12 @@ export function ProductSort() {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
-    const currentSort = searchParams.get('sort') || 'default';
+    const currentSort = searchParams.get('sort') || 'artist_asc';
 
     const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.target.value;
         const params = new URLSearchParams(searchParams.toString());
-        if (value === 'default') {
+        if (value === 'artist_asc') {
             params.delete('sort');
         } else {
             params.set('sort', value);
@@ -47,7 +47,13 @@ export function ProductSort() {
                         backgroundSize: '12px',
                     }}
                 >
-                    <option value="default" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
+                    <option value="artist_asc" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
+                        Artysta: A-Z
+                    </option>
+                    <option value="artist_desc" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
+                        Artysta: Z-A
+                    </option>
+                    <option value="newest" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
                         Najnowsze
                     </option>
                     <option value="price_asc" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
@@ -55,12 +61,6 @@ export function ProductSort() {
                     </option>
                     <option value="price_desc" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
                         Cena: od najwyższej
-                    </option>
-                    <option value="artist_asc" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
-                        Artysta: A-Z
-                    </option>
-                    <option value="artist_desc" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
-                        Artysta: Z-A
                     </option>
                 </select>
             </div>

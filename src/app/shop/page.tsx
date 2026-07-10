@@ -23,6 +23,7 @@ export interface Product {
     condition_notes?: string | null;
     music_category?: 'RAP PL' | 'RAP UK' | 'RAP USA' | 'POLSKI RAP W UK' | 'ELEKTRONIKA' | null;
     item_condition?: 'Nowa w folii' | 'Nowa' | 'Używana' | null;
+    created_at?: string;
 }
 
 const CATEGORIES = [
