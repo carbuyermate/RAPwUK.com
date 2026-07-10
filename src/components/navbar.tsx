@@ -35,6 +35,7 @@ export function Navbar() {
                 <div className={`navbar-links ${mobileOpen ? "open" : ""}`}>
                     <Link href="/news" className={isActive("/news") ? "active" : ""} onClick={() => setMobileOpen(false)}>Newsy</Link>
                     <Link href="/events" className={isActive("/events") ? "active" : ""} onClick={() => setMobileOpen(false)}>Imprezy</Link>
+                    <Link href="/shop" className={isActive("/shop") ? "active" : ""} onClick={() => setMobileOpen(false)}>Sklep</Link>
                     <Link href="/rappers" className={isActive("/rappers") ? "active" : ""} onClick={() => setMobileOpen(false)}>Scena</Link>
                     <Link href="/contact" className={isActive("/contact") ? "active" : ""} onClick={() => setMobileOpen(false)}>Kontakt</Link>
 
