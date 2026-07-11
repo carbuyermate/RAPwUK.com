@@ -162,7 +162,9 @@ export default function EditListingPage({ params, searchParams }: PageProps) {
         try {
             if (!title.trim()) throw new Error('Wpisz tytuł ogłoszenia.');
             if (!price || parseFloat(price) <= 0) throw new Error('Podaj poprawną cenę.');
-            if (!phone.trim()) throw new Error('Podaj numer telefonu.');
+            if (!phone.trim() && !facebookUrl.trim() && !instagramUrl.trim()) {
+                throw new Error('Musisz podać co najmniej jedną metodę kontaktu (telefon, Facebook lub Instagram).');
+            }
 
             let image_base64: string | undefined = undefined;
             if (imageFile) {
@@ -333,7 +335,6 @@ export default function EditListingPage({ params, searchParams }: PageProps) {
                                 className="gielda-form-input" 
                                 value={phone} 
                                 onChange={(e) => setPhone(e.target.value)} 
-                                required 
                                 disabled={saving}
                             />
                         </div>

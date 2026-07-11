@@ -93,7 +93,9 @@ export default function AddListingPage() {
         try {
             if (!title.trim()) throw new Error('Wpisz tytuł ogłoszenia.');
             if (!price || parseFloat(price) <= 0) throw new Error('Podaj poprawną cenę.');
-            if (!phone.trim()) throw new Error('Podaj numer telefonu.');
+            if (!phone.trim() && !facebookUrl.trim() && !instagramUrl.trim()) {
+                throw new Error('Musisz podać co najmniej jedną metodę kontaktu (telefon, Facebook lub Instagram).');
+            }
             if (!pin.trim() || pin.length < 4) throw new Error('Podaj kod PIN (minimum 4 znaki).');
 
             let image_base64: string | undefined = undefined;
@@ -297,7 +299,6 @@ export default function AddListingPage() {
                                 placeholder="np. +44 777 888 999" 
                                 value={phone} 
                                 onChange={(e) => setPhone(e.target.value)} 
-                                required 
                                 disabled={loading}
                             />
                         </div>
