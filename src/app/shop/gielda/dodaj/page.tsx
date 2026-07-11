@@ -323,9 +323,9 @@ export default function AddListingPage() {
                         <div className="gielda-form-group">
                             <label className="gielda-form-label">Link do Facebooka (opcjonalnie)</label>
                             <input 
-                                type="url" 
+                                type="text" 
                                 className="gielda-form-input" 
-                                placeholder="np. https://facebook.com/twoj.profil" 
+                                placeholder="np. facebook.com/twoj.profil" 
                                 value={facebookUrl} 
                                 onChange={(e) => setFacebookUrl(e.target.value)} 
                                 disabled={loading}
@@ -336,9 +336,9 @@ export default function AddListingPage() {
                         <div className="gielda-form-group">
                             <label className="gielda-form-label">Link do Instagrama (opcjonalnie)</label>
                             <input 
-                                type="url" 
+                                type="text" 
                                 className="gielda-form-input" 
-                                placeholder="np. https://instagram.com/twoj.profil" 
+                                placeholder="np. instagram.com/twoj.profil" 
                                 value={instagramUrl} 
                                 onChange={(e) => setInstagramUrl(e.target.value)} 
                                 disabled={loading}

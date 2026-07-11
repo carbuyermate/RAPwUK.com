@@ -36,6 +36,16 @@ async function getSupabase() {
     );
 }
 
+function ensureAbsoluteUrl(url: string | null | undefined): string | null {
+    if (!url) return null;
+    const trimmed = url.trim();
+    if (!trimmed) return null;
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+        return trimmed;
+    }
+    return `https://${trimmed}`;
+}
+
 interface CreateListingData {
     title: string;
     description: string;
@@ -97,8 +107,8 @@ export async function createListing(data: CreateListingData) {
                 category: data.category,
                 item_condition: data.item_condition,
                 phone: data.phone,
-                facebook_url: data.facebook_url || null,
-                instagram_url: data.instagram_url || null,
+                facebook_url: ensureAbsoluteUrl(data.facebook_url),
+                instagram_url: ensureAbsoluteUrl(data.instagram_url),
                 image_url: image_url,
                 delete_token: generatedToken,
                 is_active: true
@@ -307,8 +317,8 @@ export async function updateListing(id: string, token: string, data: UpdateListi
                 category: data.category,
                 item_condition: data.item_condition,
                 phone: data.phone,
-                facebook_url: data.facebook_url || null,
-                instagram_url: data.instagram_url || null,
+                facebook_url: ensureAbsoluteUrl(data.facebook_url),
+                instagram_url: ensureAbsoluteUrl(data.instagram_url),
                 image_url: image_url
             })
             .eq('id', id);

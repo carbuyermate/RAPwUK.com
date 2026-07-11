@@ -343,8 +343,9 @@ export default function EditListingPage({ params, searchParams }: PageProps) {
                         <div className="gielda-form-group">
                             <label className="gielda-form-label">Link do Facebooka (opcjonalnie)</label>
                             <input 
-                                type="url" 
+                                type="text" 
                                 className="gielda-form-input" 
+                                placeholder="np. facebook.com/twoj.profil"
                                 value={facebookUrl} 
                                 onChange={(e) => setFacebookUrl(e.target.value)} 
                                 disabled={saving}
@@ -355,8 +356,9 @@ export default function EditListingPage({ params, searchParams }: PageProps) {
                         <div className="gielda-form-group">
                             <label className="gielda-form-label">Link do Instagrama (opcjonalnie)</label>
                             <input 
-                                type="url" 
+                                type="text" 
                                 className="gielda-form-input" 
+                                placeholder="np. instagram.com/twoj.profil"
                                 value={instagramUrl} 
                                 onChange={(e) => setInstagramUrl(e.target.value)} 
                                 disabled={saving}
