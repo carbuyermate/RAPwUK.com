@@ -153,7 +153,7 @@ export async function POST(req: NextRequest) {
 
         if (physicalQty > 0) {
             sessionOptions.shipping_address_collection = {
-                allowed_countries: ['GB', 'PL', 'DE', 'FR', 'NL', 'IE'],
+                allowed_countries: ['GB'],
             };
             sessionOptions.phone_number_collection = {
                 enabled: true,
