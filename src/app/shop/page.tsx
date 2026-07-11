@@ -4,8 +4,31 @@ import { ArrowRight, Music, Ticket, Shirt, ShoppingBag, Tag } from 'lucide-react
 import { ProductCard } from '@/components/shop/ProductCard';
 import { ShippingInfoButton } from '@/components/shop/ShippingInfoButton';
 import './shop.css';
+import { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+    title: 'Polski Sklep Muzyczny w UK | Płyty CD, Winyle, Hip-Hop | RAPwUK',
+    description: 'Jedyny i oficjalny polski sklep muzyczny w UK (Wielkiej Brytanii). Kupuj polskie płyty rapowe, hip-hopowe, CD, kasety, ubrania i bilety na koncerty. Szybka wysyłka paczkomatem InPost w UK.',
+    keywords: [
+        'polski sklep muzyczny w uk',
+        'sklep muzyczny w uk',
+        'polski sklep z płytami w uk',
+        'polski hip hop w uk',
+        'płyty cd uk',
+        'rap w uk',
+        'polskie płyty w wielkiej brytanii',
+        'inpost uk',
+        'kup płyty w uk'
+    ],
+    openGraph: {
+        title: 'Polski Sklep Muzyczny w UK | Płyty CD, Winyle, Hip-Hop | RAPwUK',
+        description: 'Jedyny i oficjalny polski sklep muzyczny w UK (Wielkiej Brytanii). Kupuj polskie płyty rapowe, hip-hopowe, CD, kasety, ubrania i bilety na koncerty. Szybka wysyłka paczkomatem InPost w UK.',
+        type: 'website',
+        url: 'https://rapwuk.com/shop',
+    }
+};
 
 export interface Product {
     id: string;

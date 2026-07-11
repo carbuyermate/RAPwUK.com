@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ChevronLeft, Music, Ticket, Shirt } from 'lucide-react';
 import type { Product } from '@/app/shop/page';
 import { ProductSort } from '@/components/shop/ProductSort';
+import { Metadata } from 'next';
 import '../shop.css';
 
 export const dynamic = 'force-dynamic';
@@ -28,6 +29,37 @@ const CATEGORY_META: Record<string, { title: string; desc: string; icon: React.R
 };
 
 const VALID_CATEGORIES = Object.keys(CATEGORY_META);
+
+export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
+    const { category } = await params;
+    const meta = CATEGORY_META[category];
+    if (!meta) return {};
+    
+    let title = `${meta.title} | Polski Sklep Muzyczny w UK | RAPwUK`;
+    let description = `Kupuj ${meta.title.toLowerCase()} w jedynym polskim sklepie muzycznym w Wielkiej Brytanii. Oferujemy ${meta.desc.toLowerCase()} Szybka wysyłka paczkomatem InPost w UK.`;
+    
+    if (category === 'muzyka') {
+        title = `Polskie Płyty CD, Winyle i Rap w UK | Polski Sklep Muzyczny | RAPwUK`;
+        description = `Polskie płyty rapowe w UK. Największy wybór polskich płyt CD, kaset i albumów hip-hop w Wielkiej Brytanii. Bezpieczna i szybka wysyłka InPost w UK.`;
+    } else if (category === 'bilety') {
+        title = `Bilety na Koncerty Hip-Hop w UK | Polski Sklep Muzyczny | RAPwUK`;
+        description = `Kup bilety na polskie koncerty i imprezy rapowe w Wielkiej Brytanii. Oficjalna dystrybucja biletów, bezpieczne płatności Stripe, natychmiastowa wysyłka.`;
+    } else if (category === 'ubrania') {
+        title = `Polski Streetwear i Odzież w UK | Polski Sklep Muzyczny | RAPwUK`;
+        description = `Oryginalna odzież streetwearowa, koszulki i bluzy hip-hopowe w UK. Kupuj polskie marki odzieżowe z szybką dostawą paczkomatem InPost w UK.`;
+    }
+
+    return {
+        title,
+        description,
+        openGraph: {
+            title,
+            description,
+            type: 'website',
+            url: `https://rapwuk.com/shop/${category}`,
+        }
+    };
+}
 
 export default async function CategoryPage({
     params,
