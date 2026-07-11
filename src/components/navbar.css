@@ -344,3 +344,46 @@
     padding: 0 4px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
+
+/* ── Highlighted Shop Link ── */
+.navbar-links a.navbar-shop-link {
+    color: #d97706 !important; /* Amber-600 for contrast in light mode */
+    font-weight: 800 !important;
+    background: rgba(245, 158, 11, 0.07);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    padding: 5px 14px !important;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.08);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    text-shadow: none !important;
+}
+
+.navbar-links a.navbar-shop-link:hover,
+.navbar-links a.navbar-shop-link.active {
+    color: #b45309 !important; /* Deeper amber on hover in light mode */
+    background: rgba(245, 158, 11, 0.14) !important;
+    border-color: rgba(245, 158, 11, 0.7) !important;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+    transform: translateY(-1px) scale(1.02) !important;
+}
+
+/* Remove hover underline animation specifically for the pill button */
+.navbar-links a.navbar-shop-link::after {
+    display: none !important;
+}
+
+/* Dark Mode Overrides for Shop Link */
+[data-theme='dark'] .navbar-links a.navbar-shop-link {
+    color: #f59e0b !important; /* Bright Amber-500 for dark mode */
+    background: rgba(245, 158, 11, 0.1) !important;
+    border-color: rgba(245, 158, 11, 0.3) !important;
+    box-shadow: 0 2px 10px rgba(245, 158, 11, 0.15);
+}
+
+[data-theme='dark'] .navbar-links a.navbar-shop-link:hover,
+[data-theme='dark'] .navbar-links a.navbar-shop-link.active {
+    color: #fbbf24 !important; /* Even brighter gold on hover */
+    background: rgba(245, 158, 11, 0.2) !important;
+    border-color: rgba(245, 158, 11, 0.6) !important;
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35);
+}
