@@ -12,7 +12,7 @@ interface SearchResult {
     title: string;
     category: string;
     image_url?: string;
-    type: 'news' | 'event' | 'rapper';
+    type: 'news' | 'event' | 'rapper' | 'product';
 }
 
 export function GlobalSearch({ onClose }: { onClose?: () => void }) {
@@ -74,7 +74,32 @@ export function GlobalSearch({ onClose }: { onClose?: () => void }) {
                 .order('event_date', { ascending: false })
                 .limit(3);
 
+            // Przeszukujemy bazę produktów w sklepie
+            const { data: productsData } = await supabase
+                .from('products')
+                .select('id, slug, title, price, category, image_url')
+                .eq('is_active', true)
+                .gt('stock', 0)
+                .ilike('title', `%${query}%`)
+                .order('created_at', { ascending: false })
+                .limit(4);
+
             const combinedResults: SearchResult[] = [];
+
+            if (productsData) {
+                combinedResults.push(...productsData.map(p => ({
+                    id: p.id,
+                    slug: p.slug,
+                    title: p.title,
+                    category: p.category === 'muzyka' 
+                        ? `Sklep - Muzyka (£${Number(p.price).toFixed(2)})` 
+                        : p.category === 'ubrania' 
+                        ? `Sklep - Ubrania (£${Number(p.price).toFixed(2)})` 
+                        : `Sklep - Bilety (£${Number(p.price).toFixed(2)})`,
+                    image_url: p.image_url,
+                    type: 'product' as const
+                })));
+            }
 
             if (newsData) {
                 combinedResults.push(...newsData.map(n => ({
@@ -144,6 +169,8 @@ export function GlobalSearch({ onClose }: { onClose?: () => void }) {
                                     ? `/news/${res.slug || res.id}`
                                     : res.type === 'event'
                                     ? `/events/${res.slug || res.id}`
+                                    : res.type === 'product'
+                                    ? `/shop/product/${res.slug || res.id}`
                                     : `/rappers/${res.slug || res.id}`;
 
                                 return (
