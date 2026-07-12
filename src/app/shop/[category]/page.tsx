@@ -184,7 +184,6 @@ export default async function CategoryPage({
                 <div className="shop-empty">
                     <div className="shop-empty-icon">📦</div>
                     <h2 className="shop-empty-title">Brak produktów</h2>
-                    <p>Brak dostępnych produktów w wybranej kategorii.</p>
                 </div>
             )}
         </div>

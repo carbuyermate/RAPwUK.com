@@ -48,10 +48,10 @@ export function ProductSort() {
                     }}
                 >
                     <option value="artist_asc" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
-                        Artysta: A-Z
+                        A-Z
                     </option>
                     <option value="artist_desc" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
-                        Artysta: Z-A
+                        Z-A
                     </option>
                     <option value="newest" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
                         Najnowsze
