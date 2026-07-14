@@ -88,7 +88,7 @@ export default function ReturnsPage() {
                     </p>
                     <ul style={{ paddingLeft: '1.5rem', marginBottom: '1rem' }}>
                         <li style={{ marginBottom: '0.5rem' }}>
-                            Masz prawo do **pełnego zwrotu pieniędzy** w terminie <strong>30 dni</strong> od dnia otrzymania wadliwego towaru.
+                            Masz prawo do <strong>pełnego zwrotu pieniędzy</strong> w terminie <strong>30 dni</strong> od dnia otrzymania wadliwego towaru.
                         </li>
                         <li style={{ marginBottom: '0.5rem' }}>
                             Po upływie 30 dni, ale przed upływem 6 miesięcy, masz prawo żądać w pierwszej kolejności bezpłatnej naprawy lub wymiany produktu na nowy.
@@ -107,7 +107,7 @@ export default function ReturnsPage() {
                         Zwrotu środków dokonujemy przy użyciu tego samego sposobu płatności, którego użyłeś podczas pierwotnej transakcji (zwrot na kartę płatniczą przez Stripe).
                     </p>
                     <p style={{ marginBottom: '1rem' }}>
-                        Środki zostaną zwrócone niezwłocznie, nie później niż w ciągu **14 dni** od dnia, w którym otrzymaliśmy zwracany towar z powrotem.
+                        Środki zostaną zwrócone niezwłocznie, nie później niż w ciągu <strong>14 dni</strong> od dnia, w którym otrzymaliśmy zwracany towar z powrotem.
                     </p>
                 </section>
 
@@ -118,7 +118,7 @@ export default function ReturnsPage() {
                     <div className="shipping-modal-notice" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                         <Truck size={20} style={{ color: '#f59e0b', flexShrink: 0 }} />
                         <p style={{ fontSize: '0.9rem', margin: 0, color: 'var(--text-secondary)' }}>
-                            Przed odesłaniem paczki prosimy o **obowiązkowy kontakt e-mail**, abyśmy mogli przesłać instrukcję oraz właściwy adres magazynu do wysyłki (adres zwrotów zależy od kategorii towaru: płyty, ubrania itp.). 
+                            Przed odesłaniem paczki prosimy o <strong>obowiązkowy kontakt e-mail</strong>, abyśmy mogli przesłać instrukcję oraz właściwy adres magazynu do wysyłki (adres zwrotów zależy od kategorii towaru: płyty, ubrania itp.). 
                             Nie przyjmujemy paczek odesłanych za pobraniem bez wcześniejszej konsultacji.
                         </p>
                     </div>

@@ -104,7 +104,7 @@ export default function ShippingPage() {
                         Płatności w naszym sklepie realizowane są za pośrednictwem bramki <strong>Stripe</strong>. Stripe to jeden z największych i najbardziej zaufanych operatorów płatności na świecie, zapewniający najwyższy poziom bezpieczeństwa (zgodność z PCI-DSS).
                     </p>
                     <p style={{ marginBottom: '1rem' }}>
-                        Twoje dane płatnicze (numery kart kredytowych/debetowych) są wprowadzane na w pełni zabezpieczonej i szyfrowanej stronie Stripe. Nasz sklep **nie ma dostępu** do tych danych. Akceptujemy płatności kartami Visa, Mastercard oraz Apple Pay.
+                        Twoje dane płatnicze (numery kart kredytowych/debetowych) są wprowadzane na w pełni zabezpieczonej i szyfrowanej stronie Stripe. Nasz sklep <strong>nie ma dostępu</strong> do tych danych. Akceptujemy płatności kartami Visa, Mastercard oraz Apple Pay.
                     </p>
                 </section>
             </div>

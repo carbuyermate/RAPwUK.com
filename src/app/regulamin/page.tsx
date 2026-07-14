@@ -88,7 +88,7 @@ export default function TermsPage() {
                         4. Dostawa i Realizacja
                     </h2>
                     <p style={{ marginBottom: '1rem' }}>
-                        Dostawa zamówionych produktów fizycznych realizowana jest wyłącznie na terenie **Wielkiej Brytanii (UK)** za pośrednictwem firmy kurierskiej <strong>InPost UK</strong>.
+                        Dostawa zamówionych produktów fizycznych realizowana jest wyłącznie na terenie <strong>Wielkiej Brytanii (UK)</strong> za pośrednictwem firmy kurierskiej <strong>InPost UK</strong>.
                     </p>
                     <p style={{ marginBottom: '1rem' }}>
                         Standardowy czas nadania przesyłki wynosi do 3 dni roboczych od zaksięgowania płatności. Dostarczenie przesyłki przez kuriera trwa zazwyczaj 4-5 dni roboczych. Dokładne informacje i cennik znajdują się na stronie <Link href="/dostawa" style={{ color: '#f59e0b', textDecoration: 'underline' }}>Dostawa i Płatności</Link>.

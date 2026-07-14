@@ -76,8 +76,8 @@ export default function PrivacyPage() {
                         <div>
                             <h4 style={{ margin: '0 0 0.5rem', fontWeight: 700, color: 'var(--text-primary)' }}>Bezpieczne przetwarzanie płatności</h4>
                             <p style={{ fontSize: '0.9rem', margin: 0, color: 'var(--text-secondary)' }}>
-                                Wszystkie płatności w naszym sklepie obsługiwane są bezpośrednio przez licencjonowanego operatora **Stripe**. 
-                                Nasz sklep **nie ma dostępu, nie rejestruje ani nie przechowuje** danych Twoich kart płatniczych ani informacji autoryzacyjnych. 
+                                Wszystkie płatności w naszym sklepie obsługiwane są bezpośrednio przez licencjonowanego operatora <strong>Stripe</strong>. 
+                                Nasz sklep <strong>nie ma dostępu, nie rejestruje ani nie przechowuje</strong> danych Twoich kart płatniczych ani informacji autoryzacyjnych. 
                                 Połączenie ze Stripe jest w pełni zaszyfrowane certyfikatem SSL.
                             </p>
                         </div>
