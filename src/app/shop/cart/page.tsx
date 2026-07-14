@@ -8,34 +8,35 @@ import { ShippingInfoButton } from '@/components/shop/ShippingInfoButton';
 import '../shop.css';
 
 const VisaIcon = () => (
-    <svg width="34" height="21" viewBox="0 0 38 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.9 }}>
-        <rect width="38" height="24" rx="4" fill="#1A1F71"/>
-        <path d="M14.5 16.5l1.8-8.5h2.9l-1.8 8.5h-2.9zm8.5-8.3c-.6-.2-1.5-.4-2.4-.4-2.6 0-4.4 1.3-4.4 3.2 0 1.4 1.3 2.2 2.3 2.7 1 .5 1.4.8 1.4 1.2 0 .6-.8.9-1.5.9-1 0-1.6-.2-2.4-.6l-.3 1.9c.6.3 1.7.5 2.8.5 2.8 0 4.6-1.3 4.6-3.3 0-1.1-.7-1.9-2.2-2.6-.9-.5-1.5-.8-1.5-1.3 0-.4.5-.9 1.5-.9.8 0 1.4.2 1.9.4l.3-1.8zm6.5 2.2c-.2-.5-.9-2.4-.9-2.4L28.3 14h2.1l.4-1.2h2.5l.2 1.2h1.9L33.7 8.2h-2.2L29.5 16.5h2.1zm-1.8-3.4l.8 2.2h-1.5l.7-2.2zM10.8 8.2L8.2 13.9 7.5 10.3l-.6-3.2L4.5 7.1l-.1-.1 3.5 9.5h3.1L15.3 8.2h-4.5z" fill="#FFF"/>
-    </svg>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/visa.svg" alt="Visa" style={{ width: '36px', height: '24px', flexShrink: 0, borderRadius: '4px' }} />
 );
 
-const MastercardIcon = ({ stroke }: { stroke?: string }) => (
-    <svg width="34" height="21" viewBox="0 0 38 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.9 }}>
-        <rect width="38" height="24" rx="4" fill="#0A0A0C" stroke={stroke || "rgba(255,255,255,0.12)"}/>
-        <circle cx="15.5" cy="12" r="6.5" fill="#EB001B"/>
-        <circle cx="22.5" cy="12" r="6.5" fill="#F79E1B" fillOpacity="0.8"/>
-    </svg>
+const MastercardIcon = () => (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/mastercard.svg" alt="Mastercard" style={{ width: '36px', height: '24px', flexShrink: 0, borderRadius: '4px' }} />
 );
 
-const ApplePayIcon = ({ stroke }: { stroke?: string }) => (
-    <svg width="34" height="21" viewBox="0 0 38 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.9 }}>
-        <rect width="38" height="24" rx="4" fill="#FFFFFF" stroke={stroke || "rgba(0,0,0,0.08)"}/>
-        <path d="M12.2 12.1c0-1 .7-1.5.7-1.5s-.4-.6-1.1-.6c-.7 0-1.1.4-1.4.4s-.8-.4-1.4-.4c-.8 0-1.6.5-2 1.2-.8 1.4-.2 3.5.6 4.6.4.5.8 1.1 1.4 1.1.5 0 .7-.3 1.3-.3.6 0 .8.3 1.3.3.6 0 1-.5 1.4-1.1.5-.7.7-1.3.7-1.3s-1.1-.4-1.1-1.6z" fill="#000"/>
-        <path d="M11.3 8.8c.3-.4.5-.9.4-1.4-.5 0-1 .3-1.3.7-.3.3-.5.8-.4 1.3.5.1 1-.2 1.3-.6z" fill="#000"/>
-        <path d="M16 10h1.8c.8 0 1.4.4 1.4 1.2 0 .8-.6 1.2-1.4 1.2H16v2.6h-1.1V10h1.1zm0 1.6h.6c.4 0 .6-.2.6-.6s-.2-.6-.6-.6h-.6v1.2zm6.2-.2v3.6h-1v-.4c-.3.3-.7.5-1.2.5-.8 0-1.4-.6-1.4-1.5 0-1 .7-1.5 1.8-1.5h.8v-.2c0-.5-.3-.7-.8-.7-.4 0-.8.1-1.1.3l-.3-.7c.4-.3.9-.4 1.5-.4 1.2 0 1.7.6 1.7 1.6zm-1 1.4v-.4h-.7c-.6 0-.9.2-.9.7 0 .4.2.6.6.6.6.1 1-.3 1-1zM28.1 10l-1.9 4.3h-.1L24.2 10h1.2l1.3 3.1 1.2-3.1h1.2z" fill="#000"/>
-    </svg>
+const ApplePayIcon = () => (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/apple-pay.svg" alt="Apple Pay" style={{ width: '36px', height: '24px', flexShrink: 0, borderRadius: '4px' }} />
 );
 
 const StripeIcon = () => (
-    <svg width="34" height="21" viewBox="0 0 38 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.9 }}>
-        <rect width="38" height="24" rx="4" fill="#635BFF"/>
-        <path d="M16.5 14.4c0-1.1 1-1.6 2.5-1.6 1.1 0 2.1.3 2.7.5l.7-2.5c-.9-.4-2.1-.6-3.5-.6-3.3 0-5.4 1.7-5.4 4.6 0 4.5 6.1 3.7 6.1 5.7 0 1.3-1.1 1.8-2.7 1.8-1.4 0-2.5-.4-3.3-.8l-.7 2.6c1 .5 2.5.8 4.1.8 3.5 0 5.7-1.6 5.7-4.6 0-4.8-6.2-3.9-6.2-5.9z" fill="white"/>
-    </svg>
+    <div style={{
+        width: '36px',
+        height: '24px',
+        background: '#635BFF',
+        borderRadius: '4px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0,
+    }}>
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="#FFFFFF" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z"/>
+        </svg>
+    </div>
 );
 
 export default function CartPage() {
