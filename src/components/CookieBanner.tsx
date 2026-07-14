@@ -32,28 +32,36 @@ export function CookieBanner() {
     if (!isVisible) return null;
 
     return (
-        <div 
-            className="glass-panel animate-fade-in"
-            style={{
-                position: 'fixed',
-                bottom: '20px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: '90%',
-                maxWidth: '600px',
-                zIndex: 9999,
-                padding: '1.25rem',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '12px',
-                border: '1px solid var(--glass-border)',
-                background: 'var(--glass-bg)',
-                boxShadow: 'var(--glass-shadow)',
-                backdropFilter: 'blur(16px)',
-                WebkitBackdropFilter: 'blur(16px)',
-                borderRadius: '16px',
-            }}
-        >
+        <>
+            <style>{`
+                .cookie-banner-wrap {
+                    position: fixed;
+                    bottom: 20px;
+                    left: 16px;
+                    right: 16px;
+                    z-index: 9999;
+                    padding: 1.25rem;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 12px;
+                    border: 1px solid var(--glass-border);
+                    background: var(--glass-bg);
+                    box-shadow: var(--glass-shadow);
+                    backdrop-filter: blur(16px);
+                    -webkit-backdrop-filter: blur(16px);
+                    border-radius: 16px;
+                }
+                @media (min-width: 640px) {
+                    .cookie-banner-wrap {
+                        left: 50%;
+                        right: auto;
+                        transform: translateX(-50%);
+                        width: 90%;
+                        max-width: 600px;
+                    }
+                }
+            `}</style>
+            <div className="cookie-banner-wrap glass-panel animate-fade-in">
             <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
                 <ShieldAlert size={20} style={{ color: '#f59e0b', flexShrink: 0, marginTop: '2px' }} />
                 <div style={{ fontSize: '0.85rem', lineHeight: '1.5', color: 'var(--text-primary)' }}>
@@ -116,5 +124,6 @@ export function CookieBanner() {
                 </button>
             </div>
         </div>
+        </>
     );
 }
