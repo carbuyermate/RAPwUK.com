@@ -99,7 +99,7 @@ export function Footer() {
                 {/* Bottom line: Copyright & Payment Security */}
                 <div className="footer-bottom-bar">
                     <div className="footer-copyright-admin">
-                        <p>&copy; {new Date().getFullYear()} RAPwUK. Wszelkie prawa zastrzeżone.</p>
+                        <p>℗ & © 2012-{new Date().getFullYear()} RAPwUK. Wszelkie prawa zastrzeżone.</p>
                         <Link href="/login" className="admin-login-link">
                             Panel Administratora
                         </Link>
