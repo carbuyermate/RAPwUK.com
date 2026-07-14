@@ -3,43 +3,60 @@
     padding: 4rem 0 2rem;
     border-top: 1px dashed var(--glass-border);
     background: var(--bg-primary);
+    color: var(--text-primary);
 }
 
-.adsense-placeholder {
-    width: 100%;
-    max-width: 900px;
-    min-height: 120px;
-    margin: 0 auto 3rem;
-    border: 2px dashed var(--border-color);
-    background: var(--bg-secondary);
+/* Footer Grid */
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 3rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 900px) {
+    .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+    
+    .brand-col {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 600px) {
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .brand-col {
+        grid-column: span 1;
+    }
+}
+
+.footer-col {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-secondary);
-    border-radius: 8px;
-}
-
-.ads-text {
-    font-weight: 700;
-    letter-spacing: 2px;
-    font-size: 0.9rem;
-    margin-bottom: 4px;
-}
-
-.ads-dims {
-    font-size: 0.8rem;
-    opacity: 0.5;
-}
-
-.footer-bottom {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     gap: 12px;
-    text-align: center;
+}
+
+.footer-col-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.footer-brand-text {
+    font-size: 0.88rem;
+    line-height: 1.6;
     color: var(--text-secondary);
-    font-size: 0.9rem;
 }
 
 .footer-social-link {
@@ -50,8 +67,124 @@
     color: var(--text-primary);
     opacity: 0.8;
     transition: opacity 0.2s;
+    text-decoration: none;
+    width: fit-content;
 }
 
 .footer-social-link:hover {
     opacity: 1;
+}
+
+/* Links list */
+.footer-links-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.footer-links-list a {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    transition: color 0.2s ease, padding-left 0.2s ease;
+    text-decoration: none;
+}
+
+.footer-links-list a:hover {
+    color: var(--text-primary);
+    padding-left: 4px;
+}
+
+/* Company details */
+.footer-company-details {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+}
+
+.footer-company-details a {
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.footer-company-details a:hover {
+    text-decoration: underline;
+}
+
+/* Bottom Bar */
+.footer-bottom-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+    .footer-bottom-bar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+.footer-copyright-admin {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.footer-copyright-admin p {
+    margin: 0;
+}
+
+.admin-login-link {
+    color: var(--text-secondary);
+    opacity: 0.6;
+    text-decoration: none;
+    transition: opacity 0.2s;
+    font-size: 0.8rem;
+    width: fit-content;
+}
+
+.admin-login-link:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+/* Payments info */
+.footer-payments-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+@media (max-width: 768px) {
+    .footer-payments-wrapper {
+        align-items: flex-start;
+        width: 100%;
+    }
+}
+
+.payment-icons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ssl-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
 }
