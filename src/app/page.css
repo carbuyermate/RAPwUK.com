@@ -7,14 +7,31 @@
 .hero {
   padding: 0.5rem 0 2rem;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
 }
 
 .hero-content-left {
   flex: 1;
   min-width: 0;
+}
+
+.hero-ad-right {
+  flex-shrink: 0;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  .hero-ad-right {
+    display: none;
+  }
 }
 
 .hero-fb-cta {

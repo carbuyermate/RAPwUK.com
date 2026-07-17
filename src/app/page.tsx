@@ -86,6 +86,9 @@ export default async function Home() {
             Scena, newsy, imprezy. Wszystko w jednym miejscu.
           </p>
         </div>
+        <div className="hero-ad-right">
+          <PromoWidget position="homepage_top" />
+        </div>
       </section>
 
       {/* Main Layout: [News+Events] | [Sidebar Ad] */}
@@ -251,9 +254,6 @@ export default async function Home() {
         {/* Far-right: vertical sidebar */}
         <div className="promo-zone-side">
           <SocialBox />
-          <div className="promo-zone-side__ad">
-            <PromoWidget position="homepage_sidebar" />
-          </div>
         </div>
 
       </div>{/* /.homepage-outer */}

@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface PromoWidgetProps {
-    position?: 'homepage_bottom' | 'homepage_sidebar';
+    position?: 'homepage_bottom' | 'homepage_sidebar' | 'homepage_top';
 }
 
 const PLACEHOLDER_BOTTOM = {
@@ -16,6 +16,7 @@ const PLACEHOLDER_SIDEBAR = {
 
 export async function PromoWidget({ position = 'homepage_bottom' }: PromoWidgetProps) {
     const isSidebar = position === 'homepage_sidebar';
+    const isTop = position === 'homepage_top';
     let adData = null;
 
     try {
@@ -93,17 +94,19 @@ export async function PromoWidget({ position = 'homepage_bottom' }: PromoWidgetP
         );
     }
 
-    // Horizontal bottom banner
+    // Horizontal bottom / top banner
     return (
         <div style={{
             width: '100%',
-            margin: '2rem 0',
+            maxWidth: isTop ? '468px' : 'none',
+            margin: isTop ? '0' : '2rem 0',
             borderRadius: '10px',
             overflow: 'hidden',
             border: '1px solid rgba(255,255,255,0.07)',
             background: 'rgba(255,255,255,0.02)',
             position: 'relative',
             minHeight: '90px',
+            height: isTop ? '90px' : 'auto',
         }}>
             <div style={{
                 position: 'absolute',
@@ -133,7 +136,7 @@ export async function PromoWidget({ position = 'homepage_bottom' }: PromoWidgetP
                         width: '100%',
                         height: '100%',
                         minHeight: '90px',
-                        maxHeight: '120px',
+                        maxHeight: isTop ? '90px' : '120px',
                         objectFit: 'cover',
                         display: 'block',
                     }}
