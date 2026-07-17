@@ -98,15 +98,15 @@ export async function PromoWidget({ position = 'homepage_bottom' }: PromoWidgetP
     return (
         <div style={{
             width: '100%',
-            maxWidth: isTop ? '468px' : 'none',
+            maxWidth: isTop ? '360px' : 'none',
             margin: isTop ? '0' : '2rem 0',
             borderRadius: '10px',
             overflow: 'hidden',
             border: '1px solid rgba(255,255,255,0.07)',
             background: 'rgba(255,255,255,0.02)',
             position: 'relative',
-            minHeight: isTop ? '120px' : '90px',
-            height: isTop ? '120px' : 'auto',
+            minHeight: isTop ? '180px' : '90px',
+            height: isTop ? '180px' : 'auto',
         }}>
             <div style={{
                 position: 'absolute',
@@ -135,8 +135,8 @@ export async function PromoWidget({ position = 'homepage_bottom' }: PromoWidgetP
                     style={{
                         width: '100%',
                         height: '100%',
-                        minHeight: isTop ? '120px' : '90px',
-                        maxHeight: isTop ? '120px' : '120px',
+                        minHeight: isTop ? '180px' : '90px',
+                        maxHeight: isTop ? '180px' : '120px',
                         objectFit: 'cover',
                         display: 'block',
                     }}

@@ -21,7 +21,7 @@
 .hero-ad-right {
   flex-shrink: 0;
   display: block;
-  width: 468px;
+  width: 360px;
 }
 
 @media (max-width: 900px) {
@@ -57,6 +57,12 @@
   margin-bottom: 1.2rem;
   font-family: 'Outfit', sans-serif;
   font-weight: 800;
+}
+
+@media (min-width: 900px) {
+  .hero-title {
+    white-space: nowrap;
+  }
 }
 
 .mobile-break {
