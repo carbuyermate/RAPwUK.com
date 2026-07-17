@@ -9,10 +9,11 @@ import { Metadata } from 'next';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-    title: 'Polski Sklep Muzyczny w UK | Płyty CD, Winyle, Hip-Hop | RAPwUK',
-    description: 'Jedyny i oficjalny polski sklep muzyczny w UK (Wielkiej Brytanii). Kupuj polskie płyty rapowe, hip-hopowe, CD, kasety, ubrania i bilety na koncerty. Szybka wysyłka paczkomatem InPost w UK.',
+    title: 'Polski Sklep Muzyczny w UK | RAPwUK Shop | Płyty CD i Hip-Hop',
+    description: 'Jedyny i oficjalny polski sklep muzyczny w UK (Wielkiej Brytanii) - RAPwUK Shop. Kupuj polskie płyty rapowe, hip-hopowe, CD, kasety, ubrania i bilety na koncerty. Szybka wysyłka paczkomatem InPost w UK.',
     keywords: [
         'polski sklep muzyczny w uk',
+        'rapwuk shop',
         'sklep muzyczny w uk',
         'polski sklep z płytami w uk',
         'polski hip hop w uk',
@@ -23,8 +24,8 @@ export const metadata: Metadata = {
         'kup płyty w uk'
     ],
     openGraph: {
-        title: 'Polski Sklep Muzyczny w UK | Płyty CD, Winyle, Hip-Hop | RAPwUK',
-        description: 'Jedyny i oficjalny polski sklep muzyczny w UK (Wielkiej Brytanii). Kupuj polskie płyty rapowe, hip-hopowe, CD, kasety, ubrania i bilety na koncerty. Szybka wysyłka paczkomatem InPost w UK.',
+        title: 'Polski Sklep Muzyczny w UK | RAPwUK Shop | Płyty CD i Hip-Hop',
+        description: 'Jedyny i oficjalny polski sklep muzyczny w UK (Wielkiej Brytanii) - RAPwUK Shop. Kupuj polskie płyty rapowe, hip-hopowe, CD, kasety, ubrania i bilety na koncerty. Szybka wysyłka paczkomatem InPost w UK.',
         type: 'website',
         url: 'https://rapwuk.com/shop',
     }

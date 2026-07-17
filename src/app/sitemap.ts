@@ -44,6 +44,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
+  // ── Pobierz produkty ze sklepu ─────────────────────────────────
+  const { data: products } = await supabase
+    .from('products')
+    .select('slug, created_at')
+    .order('created_at', { ascending: false });
+
+  const productUrls: MetadataRoute.Sitemap = (products || []).map((product) => ({
+    url: `${baseUrl}/shop/product/${product.slug}`,
+    lastModified: product.created_at ? new Date(product.created_at) : new Date(),
+    changeFrequency: 'weekly',
+    priority: 0.8,
+  }));
+
   // ── Strony statyczne ──────────────────────────────────────────
   const staticPages: MetadataRoute.Sitemap = [
     {
@@ -76,7 +89,37 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'yearly',
       priority: 0.3,
     },
+    {
+      url: `${baseUrl}/shop`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/shop/muzyka`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/shop/ubrania`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/shop/bilety`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/shop/gielda`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
   ];
 
-  return [...staticPages, ...newsUrls, ...eventUrls, ...rapperUrls];
+  return [...staticPages, ...newsUrls, ...eventUrls, ...rapperUrls, ...productUrls];
 }

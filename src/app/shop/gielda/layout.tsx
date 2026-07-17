@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
     title: 'Giełda Płytowa i Rap w UK | Ogłoszenia Darmowe | RAPwUK',
-    description: 'Darmowa giełda płytowa w Wielkiej Brytanii. Kupuj, sprzedawaj i wymieniaj polskie płyty rapowe, hip-hopowe, CD, winyle i ubrania streetwear w UK bez prowizji.',
+    description: 'Darmowa giełda płytowa w Wielkiej Brytanii. Kupuj, sprzedawaj i wymieniaj polskie płyty rapowe, hip-hopowe, CD, kasety i ubrania streetwear w UK bez prowizji.',
     keywords: [
         'gielda plytowa uk',
         'polski rap w uk gielda',
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     ],
     openGraph: {
         title: 'Giełda Płytowa i Rap w UK | Ogłoszenia Darmowe | RAPwUK',
-        description: 'Darmowa giełda płytowa w Wielkiej Brytanii. Kupuj, sprzedawaj i wymieniaj polskie płyty rapowe, hip-hopowe, CD, winyle i ubrania streetwear w UK bez prowizji.',
+        description: 'Darmowa giełda płytowa w Wielkiej Brytanii. Kupuj, sprzedawaj i wymieniaj polskie płyty rapowe, hip-hopowe, CD, kasety i ubrania streetwear w UK bez prowizji.',
         type: 'website',
         url: 'https://rapwuk.com/shop/gielda',
     }

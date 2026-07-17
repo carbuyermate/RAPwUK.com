@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
     let description = `Kupuj ${meta.title.toLowerCase()} w jedynym polskim sklepie muzycznym w Wielkiej Brytanii. Oferujemy ${meta.desc.toLowerCase()} Szybka wysyłka paczkomatem InPost w UK.`;
     
     if (category === 'muzyka') {
-        title = `Polskie Płyty CD, Winyle i Rap w UK | Polski Sklep Muzyczny | RAPwUK`;
+        title = `Polskie Płyty CD i Rap w UK | RAPwUK Shop | Polski Sklep Muzyczny`;
         description = `Polskie płyty rapowe w UK. Największy wybór polskich płyt CD, kaset i albumów hip-hop w Wielkiej Brytanii. Bezpieczna i szybka wysyłka InPost w UK.`;
     } else if (category === 'bilety') {
         title = `Bilety na Koncerty Hip-Hop w UK | Polski Sklep Muzyczny | RAPwUK`;
