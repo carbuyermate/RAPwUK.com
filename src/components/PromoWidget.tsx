@@ -14,6 +14,11 @@ const PLACEHOLDER_SIDEBAR = {
     link_url: 'https://fb.com/RAPwUK',
 };
 
+const PLACEHOLDER_TOP = {
+    image_url: '/banner-shop.png',
+    link_url: '/shop',
+};
+
 export async function PromoWidget({ position = 'homepage_bottom' }: PromoWidgetProps) {
     const isSidebar = position === 'homepage_sidebar';
     const isTop = position === 'homepage_top';
@@ -43,7 +48,7 @@ export async function PromoWidget({ position = 'homepage_bottom' }: PromoWidgetP
         console.error('Błąd pobierania baneru', e);
     }
 
-    const ad = adData || (isSidebar ? PLACEHOLDER_SIDEBAR : PLACEHOLDER_BOTTOM);
+    const ad = adData || (isSidebar ? PLACEHOLDER_SIDEBAR : isTop ? PLACEHOLDER_TOP : PLACEHOLDER_BOTTOM);
 
     if (isSidebar) {
         return (
