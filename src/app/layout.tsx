@@ -15,9 +15,9 @@ export const metadata: Metadata = {
   title: "RAPwUK.com | Najlepiej o rapie na Wyspach",
   description: "Kalendarz imprez, światowy i polski hip-hop, newsy i premiery. Wszystkie rapowe wibracje w UK w jednym miejscu.",
   icons: {
-    icon: "/logo.svg",
-    apple: "/logo.svg",
-    shortcut: "/logo.svg",
+    icon: "/favicon.png",
+    apple: "/favicon.png",
+    shortcut: "/favicon.png",
   },
   openGraph: {
     title: "RAPwUK.com | Najlepiej o rapie na Wyspach",
