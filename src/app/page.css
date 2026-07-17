@@ -21,6 +21,7 @@
 .hero-ad-right {
   flex-shrink: 0;
   display: block;
+  width: 468px;
 }
 
 @media (max-width: 900px) {

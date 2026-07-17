@@ -105,8 +105,8 @@ export async function PromoWidget({ position = 'homepage_bottom' }: PromoWidgetP
             border: '1px solid rgba(255,255,255,0.07)',
             background: 'rgba(255,255,255,0.02)',
             position: 'relative',
-            minHeight: '90px',
-            height: isTop ? '90px' : 'auto',
+            minHeight: isTop ? '120px' : '90px',
+            height: isTop ? '120px' : 'auto',
         }}>
             <div style={{
                 position: 'absolute',
@@ -135,8 +135,8 @@ export async function PromoWidget({ position = 'homepage_bottom' }: PromoWidgetP
                     style={{
                         width: '100%',
                         height: '100%',
-                        minHeight: '90px',
-                        maxHeight: isTop ? '90px' : '120px',
+                        minHeight: isTop ? '120px' : '90px',
+                        maxHeight: isTop ? '120px' : '120px',
                         objectFit: 'cover',
                         display: 'block',
                     }}
