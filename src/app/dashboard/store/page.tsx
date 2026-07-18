@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import {
-    ChevronLeft, Plus, Trash2, Edit, Package,
+    ChevronLeft, ChevronRight, Search, Plus, Trash2, Edit, Package,
     ClipboardList, BarChart3, TrendingUp, DollarSign, Percent,
     ShoppingBasket, UserCheck, Calendar, AlertTriangle, Users
 } from 'lucide-react';
@@ -665,6 +665,12 @@ function StoreDashboardContent() {
     const [orders, setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
     const [parentDemo, setParentDemo] = useState(false);
+
+    // Search, Sort and Pagination states
+    const [searchQuery, setSearchQuery] = useState('');
+    const [sortBy, setSortBy] = useState('stock_status');
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
     
     // Update active tab when query param changes
     useEffect(() => {
@@ -737,7 +743,36 @@ function StoreDashboardContent() {
         }
     };
 
-    // (Stats calculations moved to StatsTabContent component)
+    // Filter and Sort Products
+    const filteredProducts = products.filter(product => {
+        if (!searchQuery) return true;
+        return product.title.toLowerCase().includes(searchQuery.toLowerCase());
+    });
+
+    const sortedProducts = [...filteredProducts].sort((a, b) => {
+        if (sortBy === 'alphabetical') {
+            return a.title.localeCompare(b.title, 'pl');
+        }
+        if (sortBy === 'date_newest') {
+            return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        }
+        if (sortBy === 'date_oldest') {
+            return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        }
+        if (sortBy === 'stock_status') {
+            const aInStock = a.stock > 0;
+            const bInStock = b.stock > 0;
+            if (aInStock && !bInStock) return -1;
+            if (!aInStock && bInStock) return 1;
+            return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        }
+        return 0;
+    });
+
+    const indexOfLastProduct = currentPage * itemsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
+    const currentProducts = sortedProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+    const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
 
     return (
         <div className="dashboard-container container animate-fade-in" style={{ paddingBottom: '4rem' }}>
@@ -813,61 +848,204 @@ function StoreDashboardContent() {
                                     <p className="text-secondary">Brak produktów. Dodaj pierwszy!</p>
                                 </div>
                             ) : (
-                                <div className="glass-panel mt-2" style={{ overflowX: 'auto' }}>
-                                    <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '700px' }}>
-                                        <thead>
-                                            <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
-                                                <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-secondary)' }}>Produkt</th>
-                                                <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-secondary)' }}>Kategoria</th>
-                                                <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-secondary)' }}>Cena sprzedaży</th>
-                                                <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-secondary)' }}>Koszt zakupu</th>
-                                                <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-secondary)' }}>Stan magazynowy</th>
-                                                <th style={{ padding: '1rem', textAlign: 'center', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-secondary)' }}>Akcje</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {products.map((p, i) => (
-                                                <tr key={p.id} style={{ borderBottom: i < products.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
-                                                    <td style={{ padding: '1rem 1.5rem' }}>
-                                                        <div style={{ fontWeight: 700 }}>{p.title}</div>
-                                                        <div style={{ fontSize: '0.72rem', display: 'flex', gap: '8px', alignItems: 'center', marginTop: '4px' }}>
-                                                            <span style={{ color: p.is_active ? '#10b981' : '#ef4444', fontWeight: 600 }}>
-                                                                {p.is_active ? '● Aktywny' : '● Nieaktywny'}
-                                                            </span>
-                                                            {p.is_active && (
-                                                                <span style={{ 
-                                                                    color: p.stock > 0 ? '#34d399' : '#fbbf24', 
-                                                                    background: p.stock > 0 ? '#10b98115' : '#f59e0b15',
-                                                                    border: p.stock > 0 ? '1px solid #10b98130' : '1px solid #f59e0b30',
-                                                                    padding: '1px 6px',
-                                                                    borderRadius: '4px',
-                                                                    fontSize: '0.68rem',
-                                                                    fontWeight: 600
-                                                                }}>
-                                                                    {p.stock > 0 ? 'w sprzedaży' : 'brak na magazynie'}
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                    </td>
-                                                    <td style={{ padding: '1rem' }}>{CATEGORY_LABELS[p.category] || p.category}</td>
-                                                    <td style={{ padding: '1rem', fontWeight: 700 }}>£{p.price.toFixed(2)}</td>
-                                                    <td style={{ padding: '1rem', color: '#a1a1aa' }}>£{(p.purchase_price || 0).toFixed(2)}</td>
-                                                    <td style={{ padding: '1rem' }}>{p.stock} szt.</td>
-                                                    <td style={{ padding: '1rem', textAlign: 'center' }}>
-                                                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                                                            <Link href={`/dashboard/edit-product/${p.id}`} className="action-btn" title="Edytuj">
-                                                                <Edit size={16} />
-                                                            </Link>
-                                                            <button onClick={() => deleteProduct(p.id)} className="action-btn danger-btn" title="Usuń">
-                                                                <Trash2 size={16} />
+                                <>
+                                    {/* Products Toolbar */}
+                                    <div style={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        gap: '1rem',
+                                        marginBottom: '1rem',
+                                        flexWrap: 'wrap'
+                                    }}>
+                                        {/* Search */}
+                                        <div style={{ position: 'relative', flex: 1, minWidth: '240px' }}>
+                                            <input
+                                                type="text"
+                                                placeholder="Szukaj produktu po nazwie..."
+                                                value={searchQuery}
+                                                onChange={(e) => {
+                                                    setSearchQuery(e.target.value);
+                                                    setCurrentPage(1);
+                                                }}
+                                                className="input-premium"
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '8px 12px 8px 36px',
+                                                    fontSize: '0.85rem',
+                                                    background: 'rgba(255,255,255,0.02)',
+                                                    borderRadius: '8px',
+                                                    border: '1px solid var(--border-color)',
+                                                    color: 'var(--text-primary)'
+                                                }}
+                                            />
+                                            <Search size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.4 }} />
+                                        </div>
+
+                                        {/* Sorting selector */}
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Sortowanie:</span>
+                                            <select
+                                                value={sortBy}
+                                                onChange={(e) => {
+                                                    setSortBy(e.target.value);
+                                                    setCurrentPage(1);
+                                                }}
+                                                style={{
+                                                    padding: '8px 12px',
+                                                    borderRadius: '8px',
+                                                    fontSize: '0.85rem',
+                                                    background: 'var(--bg-secondary)',
+                                                    border: '1px solid var(--border-color)',
+                                                    color: 'var(--text-primary)',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                <option value="stock_status">Dostępność (Najpierw w sprzedaży)</option>
+                                                <option value="alphabetical">Alfabetycznie (A-Z)</option>
+                                                <option value="date_newest">Data dodania (Od najnowszych)</option>
+                                                <option value="date_oldest">Data dodania (Od najstarszych)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    {sortedProducts.length === 0 ? (
+                                        <div className="glass-panel p-12 text-center mt-2">
+                                            <Package size={48} strokeWidth={1} style={{ margin: '0 auto 1rem', opacity: 0.4 }} />
+                                            <p className="text-secondary">Brak produktów spełniających kryteria wyszukiwania.</p>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <div className="glass-panel mt-2" style={{ overflowX: 'auto' }}>
+                                                <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '700px' }}>
+                                                    <thead>
+                                                        <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
+                                                            <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-secondary)' }}>Produkt ({sortedProducts.length})</th>
+                                                            <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-secondary)' }}>Kategoria</th>
+                                                            <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-secondary)' }}>Cena sprzedaży</th>
+                                                            <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-secondary)' }}>Koszt zakupu</th>
+                                                            <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-secondary)' }}>Stan magazynowy</th>
+                                                            <th style={{ padding: '1rem', textAlign: 'center', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-secondary)' }}>Akcje</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {currentProducts.map((p, i) => (
+                                                            <tr key={p.id} style={{ borderBottom: i < currentProducts.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
+                                                                <td style={{ padding: '1rem 1.5rem' }}>
+                                                                    <div style={{ fontWeight: 700 }}>{p.title}</div>
+                                                                    <div style={{ fontSize: '0.72rem', display: 'flex', gap: '8px', alignItems: 'center', marginTop: '4px' }}>
+                                                                        <span style={{ color: p.is_active ? '#10b981' : '#ef4444', fontWeight: 600 }}>
+                                                                            {p.is_active ? '● Aktywny' : '● Nieaktywny'}
+                                                                        </span>
+                                                                        {p.is_active && (
+                                                                            <span style={{ 
+                                                                                color: p.stock > 0 ? '#34d399' : '#fbbf24', 
+                                                                                background: p.stock > 0 ? '#10b98115' : '#f59e0b15',
+                                                                                border: p.stock > 0 ? '1px solid #10b98130' : '1px solid #f59e0b30',
+                                                                                padding: '1px 6px',
+                                                                                borderRadius: '4px',
+                                                                                fontSize: '0.68rem',
+                                                                                fontWeight: 600
+                                                                            }}>
+                                                                                {p.stock > 0 ? 'w sprzedaży' : 'brak na magazynie'}
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
+                                                                </td>
+                                                                <td style={{ padding: '1rem' }}>{CATEGORY_LABELS[p.category] || p.category}</td>
+                                                                <td style={{ padding: '1rem', fontWeight: 700 }}>£{p.price.toFixed(2)}</td>
+                                                                <td style={{ padding: '1rem', color: '#a1a1aa' }}>£{(p.purchase_price || 0).toFixed(2)}</td>
+                                                                <td style={{ padding: '1rem' }}>{p.stock} szt.</td>
+                                                                <td style={{ padding: '1rem', textAlign: 'center' }}>
+                                                                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                                                                        <Link href={`/dashboard/edit-product/${p.id}`} className="action-btn" title="Edytuj">
+                                                                            <Edit size={16} />
+                                                                        </Link>
+                                                                        <button onClick={() => deleteProduct(p.id)} className="action-btn danger-btn" title="Usuń">
+                                                                            <Trash2 size={16} />
+                                                                        </button>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            {/* Pagination Controls */}
+                                            {totalPages > 1 && (
+                                                <div style={{
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    gap: '0.5rem',
+                                                    marginTop: '1.5rem',
+                                                    flexWrap: 'wrap'
+                                                }}>
+                                                    <button
+                                                        disabled={currentPage === 1}
+                                                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                                        className="action-btn"
+                                                        style={{
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            padding: '8px 12px',
+                                                            borderRadius: '8px',
+                                                            opacity: currentPage === 1 ? 0.3 : 1,
+                                                            cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
+                                                        }}
+                                                    >
+                                                        <ChevronLeft size={16} /> Poprzednia
+                                                    </button>
+                                                    
+                                                    <div style={{ display: 'flex', gap: '4px' }}>
+                                                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNum => (
+                                                            <button
+                                                                key={pageNum}
+                                                                onClick={() => setCurrentPage(pageNum)}
+                                                                style={{
+                                                                    minWidth: '32px',
+                                                                    height: '32px',
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    justifyContent: 'center',
+                                                                    borderRadius: '8px',
+                                                                    fontSize: '0.85rem',
+                                                                    fontWeight: 700,
+                                                                    cursor: 'pointer',
+                                                                    background: currentPage === pageNum ? 'var(--text-primary)' : 'rgba(255,255,255,0.02)',
+                                                                    color: currentPage === pageNum ? 'var(--bg-primary)' : 'var(--text-secondary)',
+                                                                    border: '1px solid var(--border-color)',
+                                                                    transition: 'all 0.2s'
+                                                                }}
+                                                            >
+                                                                {pageNum}
                                                             </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                                        ))}
+                                                    </div>
+
+                                                    <button
+                                                        disabled={currentPage === totalPages}
+                                                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                                        className="action-btn"
+                                                        style={{
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            padding: '8px 12px',
+                                                            borderRadius: '8px',
+                                                            opacity: currentPage === totalPages ? 0.3 : 1,
+                                                            cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
+                                                        }}
+                                                    >
+                                                        Następna <ChevronRight size={16} />
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+                                </>
                             )}
                         </div>
                     )}
