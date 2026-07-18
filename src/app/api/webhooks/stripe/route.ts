@@ -113,7 +113,30 @@ export async function POST(req: NextRequest) {
                     console.log(`[Webhook] Order ${dbOrder.id} updated to PAID via RPC`);
                 }
 
-                // Note: Stock decrement is handled automatically via public.handle_order_stock_change database trigger
+                // Note: Stock decrement is handled automatically via public.handle_order_stock_change database trigger.
+                // Fail-safe / fallback: Decrement stock directly in Node code in case the database trigger is not installed or failed.
+                try {
+                    const items = dbOrder.items || [];
+                    for (const item of items) {
+                        if (item.id && item.quantity > 0) {
+                            const { data: prod } = await supabaseAdmin
+                                .from('products')
+                                .select('stock')
+                                .eq('id', item.id)
+                                .maybeSingle();
+                            if (prod && prod.stock !== null) {
+                                const newStock = Math.max(0, prod.stock - item.quantity);
+                                await supabaseAdmin
+                                    .from('products')
+                                    .update({ stock: newStock })
+                                    .eq('id', item.id);
+                                console.log(`[Webhook Failsafe] Decremented stock for product ${item.id} from ${prod.stock} to ${newStock}`);
+                            }
+                        }
+                    }
+                } catch (stockErr: any) {
+                    console.error('[Webhook Stock Decrement Error]', stockErr.message);
+                }
             } else {
                 // Fallback/Safety: If for some reason the order doesn't exist, we create a new one on the fly
                 // Fetch line items from Stripe to store in our orders DB
@@ -140,13 +163,13 @@ export async function POST(req: NextRequest) {
                 if (insertErr) throw insertErr;
                 console.log(`[Webhook] Order ${session.id} created on-the-fly as PAID`);
 
-                // Insert into order_items
+                // Insert into order_items and decrement stock
                 if (newOrder) {
                     const orderItemsToInsert = [];
                     for (const item of items) {
                         const { data: prod } = await supabaseAdmin
                             .from('products')
-                            .select('id, purchase_price')
+                            .select('id, purchase_price, stock')
                             .eq('title', item.title)
                             .maybeSingle();
 
@@ -158,6 +181,16 @@ export async function POST(req: NextRequest) {
                             purchase_price: prod?.purchase_price || 0.00,
                             quantity: item.quantity
                         });
+
+                        // Decrement stock in Node code
+                        if (prod && prod.stock !== null && item.quantity > 0) {
+                            const newStock = Math.max(0, prod.stock - item.quantity);
+                            await supabaseAdmin
+                                .from('products')
+                                .update({ stock: newStock })
+                                .eq('id', prod.id);
+                            console.log(`[Webhook Fallback] Decremented stock for product ${prod.id} from ${prod.stock} to ${newStock}`);
+                        }
                     }
                     const { error: itemsErr } = await supabaseAdmin
                         .from('order_items')
