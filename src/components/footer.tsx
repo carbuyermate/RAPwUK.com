@@ -52,7 +52,7 @@ export function Footer() {
                     <div className="footer-col brand-col">
                         <h3 className="footer-col-title">RAPwUK.com</h3>
                         <p className="footer-brand-text">
-                            Centrum polskiego i światowego hip-hopu w Wielkiej Brytanii. Kalendarz imprez, aktualności, wywiady oraz oficjalny sklep muzyczny. Działamy nieprzerwanie od 2012 roku.
+                            Centrum polskiego i światowego hip-hopu w Wielkiej Brytanii. Kalendarz imprez, aktualności, wywiady oraz oficjalny sklep muzyczny. Działamy od 2012 roku.
                         </p>
                         <a href="https://www.facebook.com/RAPwUK" target="_blank" rel="noreferrer" className="footer-social-link" style={{ marginTop: '1rem' }}>
                             <Facebook size={20} /> <span>/RAPwUK</span>
