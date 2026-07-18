@@ -7,8 +7,56 @@ import { ConditionGuideButton } from '@/components/shop/ConditionGuideButton';
 import { ProductInquiryButton } from '@/components/shop/ProductInquiryButton';
 import type { Product } from '@/app/shop/page';
 import '../../shop.css';
+import { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const { slug } = await params;
+
+    const { data: product } = await supabase
+        .from('products')
+        .select('title, description, image_url, slug')
+        .eq('slug', slug)
+        .eq('is_active', true)
+        .maybeSingle();
+
+    if (!product) {
+        return {
+            title: 'Produkt nieznaleziony | RAPwUK Shop',
+        };
+    }
+
+    const title = `${product.title} | RAPwUK Shop | Polski Sklep Muzyczny w UK`;
+    const description = product.description 
+        ? product.description.substring(0, 155) + '...' 
+        : `Kup teraz ${product.title} w RAPwUK Shop - jedynym polskim sklepie muzycznym w Wielkiej Brytanii. Szybka dostawa InPost UK.`;
+
+    return {
+        title,
+        description,
+        openGraph: {
+            title: product.title,
+            description,
+            type: 'website',
+            url: `https://rapwuk.com/shop/product/${product.slug}`,
+            images: [
+                {
+                    url: product.image_url || 'https://rapwuk.com/logo.jpg',
+                    width: 600,
+                    height: 600,
+                    alt: product.title,
+                },
+            ],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: product.title,
+            description,
+            images: [product.image_url || 'https://rapwuk.com/logo.jpg'],
+        },
+    };
+}
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
