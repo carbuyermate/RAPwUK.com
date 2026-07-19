@@ -291,7 +291,11 @@ export function CategoryPageClient({
                         <div className="shop-empty" style={{ padding: '4rem 1rem' }}>
                             <div className="shop-empty-icon" style={{ fontSize: '3rem', marginBottom: '1rem' }}>📦</div>
                             <h2 className="shop-empty-title" style={{ fontSize: '1.25rem', fontWeight: 700 }}>Brak pasujących produktów</h2>
-                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.5rem' }}>Zmień zaznaczone opcje filtrowania, aby zobaczyć asortyment.</p>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.5rem' }}>
+                                {isMuzyka && (selectedSubcategories.length > 0 || selectedConditions.length > 0 || selectedPriceRanges.length > 0)
+                                    ? "Zmień zaznaczone opcje filtrowania, aby zobaczyć asortyment."
+                                    : "Obecnie brak produktów w tej kategorii."}
+                            </p>
                         </div>
                     )}
                 </main>
