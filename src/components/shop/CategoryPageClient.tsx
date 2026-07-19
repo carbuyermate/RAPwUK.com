@@ -25,6 +25,7 @@ export function CategoryPageClient({
 
     // Filters state
     const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
+    const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>([]);
     const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
     const [selectedPriceRanges, setSelectedPriceRanges] = useState<string[]>([]);
     const [activeSort, setActiveSort] = useState(initialSort);
@@ -42,6 +43,27 @@ export function CategoryPageClient({
         return Object.keys(counts)
             .map(sub => ({ name: sub, count: counts[sub] }))
             .sort((a, b) => b.count - a.count);
+    }, [products]);
+
+    // Media types and counts (dynamic)
+    const mediaTypeData = useMemo(() => {
+        const counts: Record<string, number> = {};
+        products.forEach(p => {
+            if (p.media_type) {
+                counts[p.media_type] = (counts[p.media_type] || 0) + 1;
+            }
+        });
+        const order = ['CD', 'DVD', 'Kaseta'];
+        return Object.keys(counts)
+            .map(m => ({ name: m, count: counts[m] }))
+            .sort((a, b) => {
+                const idxA = order.indexOf(a.name);
+                const idxB = order.indexOf(b.name);
+                if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+                if (idxA !== -1) return -1;
+                if (idxB !== -1) return 1;
+                return a.name.localeCompare(b.name, 'pl');
+            });
     }, [products]);
 
     // Product conditions and counts
@@ -82,6 +104,12 @@ export function CategoryPageClient({
         );
     };
 
+    const toggleMediaType = (media: string) => {
+        setSelectedMediaTypes(prev =>
+            prev.includes(media) ? prev.filter(x => x !== media) : [...prev, media]
+        );
+    };
+
     const toggleCondition = (cond: string) => {
         setSelectedConditions(prev =>
             prev.includes(cond) ? prev.filter(x => x !== cond) : [...prev, cond]
@@ -97,6 +125,7 @@ export function CategoryPageClient({
     // Reset all filters
     const resetFilters = () => {
         setSelectedSubcategories([]);
+        setSelectedMediaTypes([]);
         setSelectedConditions([]);
         setSelectedPriceRanges([]);
     };
@@ -107,6 +136,13 @@ export function CategoryPageClient({
             // Subcategory check (only applies if isMuzyka and some checkboxes checked)
             if (isMuzyka && selectedSubcategories.length > 0) {
                 if (!product.music_category || !selectedSubcategories.includes(product.music_category)) {
+                    return false;
+                }
+            }
+
+            // Media type check (only applies if isMuzyka and some checkboxes checked)
+            if (isMuzyka && selectedMediaTypes.length > 0) {
+                if (!product.media_type || !selectedMediaTypes.includes(product.media_type)) {
                     return false;
                 }
             }
@@ -134,7 +170,7 @@ export function CategoryPageClient({
 
             return true;
         });
-    }, [products, isMuzyka, selectedSubcategories, selectedConditions, selectedPriceRanges]);
+    }, [products, isMuzyka, selectedSubcategories, selectedMediaTypes, selectedConditions, selectedPriceRanges]);
 
     const sortedProducts = useMemo(() => {
         const result = [...filteredProducts];
@@ -217,6 +253,29 @@ export function CategoryPageClient({
                             </div>
                         </div>
 
+                        {/* 1.5. Nośnik */}
+                        {mediaTypeData.length > 0 && (
+                            <div className="filter-group">
+                                <h4 className="filter-group-title">Nośnik</h4>
+                                <div className="filter-list">
+                                    {mediaTypeData.map(media => (
+                                        <label key={media.name} className="filter-item">
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedMediaTypes.includes(media.name)}
+                                                onChange={() => toggleMediaType(media.name)}
+                                                className="filter-checkbox"
+                                            />
+                                            <span>
+                                                {media.name === 'CD' ? '💿 CD' : media.name === 'DVD' ? '📀 DVD' : media.name === 'Kaseta' ? '📼 Kaseta' : media.name}
+                                            </span>
+                                            <span className="filter-count">({media.count})</span>
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         {/* 2. Condition */}
                         <div className="filter-group">
                             <h4 className="filter-group-title">Stan płyty</h4>
@@ -256,7 +315,7 @@ export function CategoryPageClient({
                         </div>
 
                         {/* Reset button */}
-                        {(selectedSubcategories.length > 0 || selectedConditions.length > 0 || selectedPriceRanges.length > 0) && (
+                        {(selectedSubcategories.length > 0 || selectedMediaTypes.length > 0 || selectedConditions.length > 0 || selectedPriceRanges.length > 0) && (
                             <button
                                 onClick={resetFilters}
                                 style={{
@@ -292,7 +351,7 @@ export function CategoryPageClient({
                             <div className="shop-empty-icon" style={{ fontSize: '3rem', marginBottom: '1rem' }}>📦</div>
                             <h2 className="shop-empty-title" style={{ fontSize: '1.25rem', fontWeight: 700 }}>Brak pasujących produktów</h2>
                             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.5rem' }}>
-                                {isMuzyka && (selectedSubcategories.length > 0 || selectedConditions.length > 0 || selectedPriceRanges.length > 0)
+                                {isMuzyka && (selectedSubcategories.length > 0 || selectedMediaTypes.length > 0 || selectedConditions.length > 0 || selectedPriceRanges.length > 0)
                                     ? "Zmień zaznaczone opcje filtrowania, aby zobaczyć asortyment."
                                     : "Obecnie brak produktów w tej kategorii."}
                             </p>
