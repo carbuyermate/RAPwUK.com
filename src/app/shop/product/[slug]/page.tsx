@@ -36,6 +36,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         title,
         description,
         robots: { index: true, follow: true },
+        alternates: {
+            canonical: `https://rapwuk.com/shop/product/${product.slug}`,
+        },
         openGraph: {
             title: product.title,
             description,
