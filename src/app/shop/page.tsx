@@ -88,8 +88,54 @@ export default async function ShopPage() {
 
     const products = (newProducts || []) as Product[];
 
+    // Schema.org Store + ItemList
+    const storeSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'Store',
+        name: 'RAPwUK Shop',
+        description: 'Jedyny i oficjalny polski sklep muzyczny w Wielkiej Brytanii. Polskie płyty rapowe, CD, kasety, ubrania i bilety na koncerty. Szybka wysyłka InPost w UK.',
+        url: 'https://rapwuk.com/shop',
+        image: 'https://rapwuk.com/logo.jpg',
+        telephone: '',
+        address: {
+            '@type': 'PostalAddress',
+            addressLocality: 'Peterborough',
+            addressCountry: 'GB',
+        },
+        currenciesAccepted: 'GBP',
+        paymentAccepted: 'Credit Card, Debit Card, Apple Pay',
+        priceRange: '£1 - £200',
+        hasMap: 'https://rapwuk.com/shop',
+        openingHours: 'Mo-Su 00:00-23:59',
+    };
+
+    const itemListSchema = products.length > 0 ? {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: 'Nowości w RAPwUK Shop',
+        url: 'https://rapwuk.com/shop',
+        numberOfItems: products.length,
+        itemListElement: products.map((p, i) => ({
+            '@type': 'ListItem',
+            position: i + 1,
+            url: `https://rapwuk.com/shop/product/${p.slug}`,
+            name: p.title,
+        })),
+    } : null;
+
     return (
         <div className="container shop-page animate-fade-in">
+            {/* Schema.org structured data */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(storeSchema) }}
+            />
+            {itemListSchema && (
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+                />
+            )}
 
             {/* Standard page header — identical to Newsy, Eventy, Scena */}
             <header className="page-header animate-fade-in">

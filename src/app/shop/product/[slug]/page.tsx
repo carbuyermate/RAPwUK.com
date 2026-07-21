@@ -35,6 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     return {
         title,
         description,
+        robots: { index: true, follow: true },
         openGraph: {
             title: product.title,
             description,
@@ -74,8 +75,48 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     const categoryLabels: Record<string, string> = { muzyka: 'Muzyka', bilety: 'Bilety', ubrania: 'Ubrania' };
     const categoryEmoji: Record<string, string> = { muzyka: '🎵', bilety: '🎟️', ubrania: '👕' };
 
+    // Schema.org structured data
+    const itemConditionSchema = product.item_condition === 'Nowa w folii'
+        ? 'https://schema.org/NewCondition'
+        : product.item_condition === 'Nowa'
+            ? 'https://schema.org/NewCondition'
+            : 'https://schema.org/UsedCondition';
+
+    const productSchema = {
+        '@context': 'https://schema.org/',
+        '@type': 'Product',
+        name: product.title,
+        image: product.image_url ? [product.image_url] : ['https://rapwuk.com/logo.jpg'],
+        description: product.description || `${product.title} dostępny w RAPwUK Shop - jedyny polski sklep muzyczny w Wielkiej Brytanii.`,
+        sku: product.id,
+        brand: {
+            '@type': 'Brand',
+            name: 'RAPwUK Shop',
+        },
+        offers: {
+            '@type': 'Offer',
+            url: `https://rapwuk.com/shop/product/${product.slug}`,
+            priceCurrency: 'GBP',
+            price: product.price.toFixed(2),
+            priceValidUntil: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
+            itemCondition: itemConditionSchema,
+            availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+            seller: {
+                '@type': 'Organization',
+                name: 'RAPwUK Shop',
+                url: 'https://rapwuk.com/shop',
+            },
+        },
+    };
+
     return (
         <div className="container animate-fade-in" style={{ paddingBottom: '5rem' }}>
+            {/* Schema.org Product JSON-LD */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+            />
+
             <BackButton 
                 fallbackUrl={`/shop/${product.category}`} 
                 label={categoryLabels[product.category]} 
