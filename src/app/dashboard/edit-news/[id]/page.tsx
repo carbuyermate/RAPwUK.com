@@ -54,6 +54,8 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
     const [soundcloudUrl, setSoundcloudUrl] = useState('');
     const [instagramUrl, setInstagramUrl] = useState('');
     const [facebookUrl, setFacebookUrl] = useState('');
+    const [facebookUrl2, setFacebookUrl2] = useState('');
+    const [facebookUrl3, setFacebookUrl3] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [oldImageUrl, setOldImageUrl] = useState<string | null>(null);
@@ -104,6 +106,8 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
                 setSoundcloudUrl(data.soundcloud_url || '');
                 setInstagramUrl(data.instagram_url || '');
                 setFacebookUrl(data.facebook_url || '');
+                setFacebookUrl2(data.facebook_url_2 || '');
+                setFacebookUrl3(data.facebook_url_3 || '');
                 if (data.image_url) {
                     setImagePreview(data.image_url);
                     setOldImageUrl(data.image_url);
@@ -216,6 +220,8 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
                 soundcloud_url: soundcloudUrl || null,
                 instagram_url: instagramUrl || null,
                 facebook_url: facebookUrl || null,
+                facebook_url_2: facebookUrl2 || null,
+                facebook_url_3: facebookUrl3 || null,
                 author: author || 'Redakcja',
             })
             .eq('id', id);
@@ -459,6 +465,22 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
                             <Facebook size={16} /> LINK DO FACEBOOKA (OPCJONALNIE)
                         </label>
                         <input type="url" className="form-input" placeholder="https://www.facebook.com/watch/?v=... lub https://www.facebook.com/reel/..." value={facebookUrl} onChange={(e) => setFacebookUrl(e.target.value)} />
+                    </div>
+
+                    {/* Facebook URL 2 */}
+                    <div className="form-group">
+                        <label className="form-label flex items-center gap-2">
+                            <Facebook size={16} /> LINK DO FACEBOOKA 2 (OPCJONALNIE)
+                        </label>
+                        <input type="url" className="form-input" placeholder="https://www.facebook.com/watch/?v=... lub https://www.facebook.com/reel/..." value={facebookUrl2} onChange={(e) => setFacebookUrl2(e.target.value)} />
+                    </div>
+
+                    {/* Facebook URL 3 */}
+                    <div className="form-group">
+                        <label className="form-label flex items-center gap-2">
+                            <Facebook size={16} /> LINK DO FACEBOOKA 3 (OPCJONALNIE)
+                        </label>
+                        <input type="url" className="form-input" placeholder="https://www.facebook.com/watch/?v=... lub https://www.facebook.com/reel/..." value={facebookUrl3} onChange={(e) => setFacebookUrl3(e.target.value)} />
                     </div>
 
                     {/* Zdjęcie */}

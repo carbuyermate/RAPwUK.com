@@ -54,6 +54,8 @@ export default function AddNewsPage() {
     const [soundcloudUrl, setSoundcloudUrl] = useState('');
     const [instagramUrl, setInstagramUrl] = useState('');
     const [facebookUrl, setFacebookUrl] = useState('');
+    const [facebookUrl2, setFacebookUrl2] = useState('');
+    const [facebookUrl3, setFacebookUrl3] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [showCropper, setShowCropper] = useState(false);
@@ -180,6 +182,8 @@ export default function AddNewsPage() {
                 soundcloud_url: soundcloudUrl || null,
                 instagram_url: instagramUrl || null,
                 facebook_url: facebookUrl || null,
+                facebook_url_2: facebookUrl2 || null,
+                facebook_url_3: facebookUrl3 || null,
                 author: author || 'Redakcja',
                 is_auto_generated: false,
             }]);
@@ -422,6 +426,22 @@ export default function AddNewsPage() {
                             <Facebook size={16} /> LINK DO FACEBOOKA (OPCJONALNIE)
                         </label>
                         <input type="url" className="form-input" placeholder="https://www.facebook.com/watch/?v=... lub https://www.facebook.com/reel/..." value={facebookUrl} onChange={(e) => setFacebookUrl(e.target.value)} />
+                    </div>
+
+                    {/* Facebook URL 2 */}
+                    <div className="form-group">
+                        <label className="form-label flex items-center gap-2">
+                            <Facebook size={16} /> LINK DO FACEBOOKA 2 (OPCJONALNIE)
+                        </label>
+                        <input type="url" className="form-input" placeholder="https://www.facebook.com/watch/?v=... lub https://www.facebook.com/reel/..." value={facebookUrl2} onChange={(e) => setFacebookUrl2(e.target.value)} />
+                    </div>
+
+                    {/* Facebook URL 3 */}
+                    <div className="form-group">
+                        <label className="form-label flex items-center gap-2">
+                            <Facebook size={16} /> LINK DO FACEBOOKA 3 (OPCJONALNIE)
+                        </label>
+                        <input type="url" className="form-input" placeholder="https://www.facebook.com/watch/?v=... lub https://www.facebook.com/reel/..." value={facebookUrl3} onChange={(e) => setFacebookUrl3(e.target.value)} />
                     </div>
 
                     {/* Zdjęcie */}

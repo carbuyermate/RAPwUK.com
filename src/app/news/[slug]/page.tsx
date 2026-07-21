@@ -22,6 +22,8 @@ interface NewsDetail {
   soundcloud_url?: string;
   instagram_url?: string;
   facebook_url?: string;
+  facebook_url_2?: string;
+  facebook_url_3?: string;
   created_at: string;
   likes?: number;
   dislikes?: number;
@@ -272,6 +274,50 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
           >
               <iframe 
                   src={getFacebookEmbedUrl(article.facebook_url)!} 
+                  width="100%" 
+                  height="100%" 
+                  style={{ border: 'none', overflow: 'hidden', display: 'block', background: '#000' }} 
+                  scrolling="no" 
+                  frameBorder="0" 
+                  allowFullScreen={true}
+                  allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+              ></iframe>
+          </div>
+        )}
+
+        {article.facebook_url_2 && getFacebookEmbedUrl(article.facebook_url_2) && (
+          <div 
+            className="mt-8 rounded-xl overflow-hidden border border-white/10 shadow-2xl" 
+            style={{ 
+              aspectRatio: article.facebook_url_2.includes('/reel/') || article.facebook_url_2.includes('/share/r/') ? '9/16' : '16/9',
+              maxWidth: article.facebook_url_2.includes('/reel/') || article.facebook_url_2.includes('/share/r/') ? '360px' : '100%',
+              margin: '2rem auto'
+            }}
+          >
+              <iframe 
+                  src={getFacebookEmbedUrl(article.facebook_url_2)!} 
+                  width="100%" 
+                  height="100%" 
+                  style={{ border: 'none', overflow: 'hidden', display: 'block', background: '#000' }} 
+                  scrolling="no" 
+                  frameBorder="0" 
+                  allowFullScreen={true}
+                  allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+              ></iframe>
+          </div>
+        )}
+
+        {article.facebook_url_3 && getFacebookEmbedUrl(article.facebook_url_3) && (
+          <div 
+            className="mt-8 rounded-xl overflow-hidden border border-white/10 shadow-2xl" 
+            style={{ 
+              aspectRatio: article.facebook_url_3.includes('/reel/') || article.facebook_url_3.includes('/share/r/') ? '9/16' : '16/9',
+              maxWidth: article.facebook_url_3.includes('/reel/') || article.facebook_url_3.includes('/share/r/') ? '360px' : '100%',
+              margin: '2rem auto'
+            }}
+          >
+              <iframe 
+                  src={getFacebookEmbedUrl(article.facebook_url_3)!} 
                   width="100%" 
                   height="100%" 
                   style={{ border: 'none', overflow: 'hidden', display: 'block', background: '#000' }} 
