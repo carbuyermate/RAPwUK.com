@@ -9,26 +9,30 @@ import { Metadata } from 'next';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-    title: 'Polski Sklep Muzyczny w UK | RAPwUK Shop | Płyty CD i Hip-Hop',
-    description: 'Jedyny i oficjalny polski sklep muzyczny w UK (Wielkiej Brytanii) - RAPwUK Shop. Kupuj polskie płyty rapowe, hip-hopowe, CD, kasety, ubrania i bilety na koncerty. Szybka wysyłka paczkomatem InPost w UK.',
+    title: 'RAPwUK Shop | Polski Sklep Muzyczny w UK',
+    description: 'RAPwUK Shop – jedyny oficjalny polski sklep muzyczny w Wielkiej Brytanii. Płyty CD, kasety, ubrania i bilety na koncerty. Szybka wysyłka paczkomatem InPost po całym UK.',
     keywords: [
-        'polski sklep muzyczny w uk',
         'rapwuk shop',
-        'sklep muzyczny w uk',
-        'polski sklep z płytami w uk',
-        'polski hip hop w uk',
+        'RAPwUK Shop',
+        'polski sklep muzyczny w uk',
+        'sklep muzyczny uk',
+        'polskie płyty w uk',
+        'polski hip hop uk',
         'płyty cd uk',
         'rap w uk',
-        'polskie płyty w wielkiej brytanii',
         'inpost uk',
-        'kup płyty w uk'
     ],
+    alternates: {
+        canonical: 'https://rapwuk.com/shop',
+    },
     openGraph: {
-        title: 'Polski Sklep Muzyczny w UK | RAPwUK Shop | Płyty CD i Hip-Hop',
-        description: 'Jedyny i oficjalny polski sklep muzyczny w UK (Wielkiej Brytanii) - RAPwUK Shop. Kupuj polskie płyty rapowe, hip-hopowe, CD, kasety, ubrania i bilety na koncerty. Szybka wysyłka paczkomatem InPost w UK.',
+        title: 'RAPwUK Shop | Polski Sklep Muzyczny w UK',
+        description: 'RAPwUK Shop – jedyny oficjalny polski sklep muzyczny w Wielkiej Brytanii. Płyty CD, kasety, ubrania i bilety na koncerty. Szybka wysyłka paczkomatem InPost po całym UK.',
         type: 'website',
         url: 'https://rapwuk.com/shop',
-    }
+        images: [{ url: 'https://rapwuk.com/logo.jpg', width: 800, height: 600, alt: 'RAPwUK Shop' }],
+    },
+    robots: { index: true, follow: true },
 };
 
 export interface Product {

@@ -37,8 +37,8 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
     let description = `Kupuj ${meta.title.toLowerCase()} w jedynym polskim sklepie muzycznym w Wielkiej Brytanii. Oferujemy ${meta.desc.toLowerCase()} Szybka wysyłka paczkomatem InPost w UK.`;
     
     if (category === 'muzyka') {
-        title = `Polskie Płyty CD i Rap w UK | RAPwUK Shop | Polski Sklep Muzyczny`;
-        description = `Polskie płyty rapowe w UK. Największy wybór polskich płyt CD, kaset i albumów hip-hop w Wielkiej Brytanii. Bezpieczna i szybka wysyłka InPost w UK.`;
+        title = `Polski Sklep Muzyczny w UK | Płyty CD, Rap, Hip-Hop | RAPwUK`;
+        description = `Polski Sklep Muzyczny w UK – RAPwUK. Największy wybór polskich płyt CD, kaset i albumów rap i hip-hop w Wielkiej Brytanii. Bezpieczna wysyłka InPost w całym UK.`;
     } else if (category === 'bilety') {
         title = `Bilety na Koncerty Hip-Hop w UK | Polski Sklep Muzyczny | RAPwUK`;
         description = `Kup bilety na polskie koncerty i imprezy rapowe w Wielkiej Brytanii. Oficjalna dystrybucja biletów, bezpieczne płatności Stripe, natychmiastowa wysyłka.`;
@@ -50,11 +50,16 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
     return {
         title,
         description,
+        alternates: {
+            canonical: `https://rapwuk.com/shop/${category}`,
+        },
+        robots: { index: true, follow: true },
         openGraph: {
             title,
             description,
             type: 'website',
             url: `https://rapwuk.com/shop/${category}`,
+            images: [{ url: 'https://rapwuk.com/logo.jpg', width: 800, height: 600, alt: title }],
         }
     };
 }
