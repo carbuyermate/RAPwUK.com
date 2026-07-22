@@ -124,8 +124,53 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
     const event = data as EventDetail;
     const dateInfo = formatDate(event.event_date);
 
+    // Schema.org Event structured data — tells Google to show the poster image
+    const eventImage = toAbsoluteUrl(event.image_url);
+    const pageUrl = `${BASE_URL}/events/${slug}`;
+
+    const eventSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'Event',
+        name: event.title,
+        startDate: event.event_date,
+        description: event.description
+            ? event.description.replace(/\s+/g, ' ').trim().slice(0, 500)
+            : `${event.title} — ${event.venue}, ${event.city}`,
+        image: [eventImage],
+        url: pageUrl,
+        location: {
+            '@type': 'Place',
+            name: event.venue || event.city,
+            address: {
+                '@type': 'PostalAddress',
+                addressLocality: event.city,
+                addressCountry: 'GB',
+            },
+        },
+        organizer: {
+            '@type': 'Organization',
+            name: 'RAPwUK.com',
+            url: 'https://rapwuk.com',
+        },
+        eventStatus: 'https://schema.org/EventScheduled',
+        eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+        ...(event.ticket_url ? {
+            offers: {
+                '@type': 'Offer',
+                url: event.ticket_url,
+                availability: 'https://schema.org/InStock',
+                validFrom: new Date().toISOString(),
+            },
+        } : {}),
+    };
+
     return (
         <div className="event-detail-page animate-fade-in">
+            {/* Schema.org Event JSON-LD */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(eventSchema) }}
+            />
             <ViewTracker type="events" id={event.id} />
             <div className="container">
                 <div className="event-detail-back">
