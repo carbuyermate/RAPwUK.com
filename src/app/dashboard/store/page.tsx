@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import {
-    ChevronLeft, ChevronRight, Search, Plus, Trash2, Edit, Package,
+    ChevronLeft, ChevronRight, ChevronDown, Search, Plus, Trash2, Edit, Package,
     ClipboardList, BarChart3, TrendingUp, DollarSign, Percent,
     ShoppingBasket, UserCheck, Calendar, AlertTriangle, Users
 } from 'lucide-react';
@@ -652,6 +652,204 @@ const CATEGORY_LABELS: Record<string, string> = {
     ubrania: '👕 Ubrania'
 };
 
+// ─── Collapsible Order Row ───────────────────────────────────────────────────
+function OrderRow({
+    order,
+    orderNumber,
+    onStatusChange,
+    onDelete,
+}: {
+    order: Order;
+    orderNumber: number;
+    onStatusChange: (id: string, status: string) => void;
+    onDelete: (id: string) => void;
+}) {
+    const [expanded, setExpanded] = useState(false);
+
+    const itemsSummary = Array.isArray(order.items)
+        ? order.items.map(i => `${i.quantity}× ${i.title}`).join(', ')
+        : '';
+
+    return (
+        <div
+            className="glass-panel animate-fade-in"
+            style={{
+                overflow: 'hidden',
+                transition: 'all 0.2s ease',
+                border: expanded ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--border-color)',
+            }}
+        >
+            {/* ── Collapsed summary row ── */}
+            <div
+                onClick={() => setExpanded(prev => !prev)}
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.75rem',
+                    padding: '0.85rem 1.25rem',
+                    cursor: 'pointer',
+                    userSelect: 'none',
+                }}
+            >
+                {/* Order number badge */}
+                <div style={{
+                    minWidth: '36px',
+                    height: '36px',
+                    borderRadius: '8px',
+                    background: 'rgba(99,102,241,0.15)',
+                    border: '1px solid rgba(99,102,241,0.3)',
+                    color: '#818cf8',
+                    fontWeight: 800,
+                    fontSize: '0.8rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                }}>
+                    #{orderNumber}
+                </div>
+
+                {/* Email + date */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 700, fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {order.customer_email || 'Nieznany klient'}
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {new Date(order.created_at).toLocaleString('pl-PL')} &nbsp;·&nbsp; {itemsSummary}
+                    </div>
+                </div>
+
+                {/* Status badge */}
+                <span style={{
+                    display: 'inline-block',
+                    padding: '3px 10px',
+                    borderRadius: '99px',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    whiteSpace: 'nowrap',
+                    background: `${STATUS_COLORS[order.status]}20`,
+                    color: STATUS_COLORS[order.status],
+                    border: `1px solid ${STATUS_COLORS[order.status]}50`,
+                    flexShrink: 0,
+                }}>
+                    {STATUS_LABELS[order.status] || order.status}
+                </span>
+
+                {/* Total price */}
+                <div style={{ fontFamily: 'Outfit', fontSize: '1.1rem', fontWeight: 900, flexShrink: 0, minWidth: '70px', textAlign: 'right' }}>
+                    £{Number(order.total_amount).toFixed(2)}
+                </div>
+
+                {/* Expand chevron */}
+                <ChevronDown
+                    size={18}
+                    style={{
+                        flexShrink: 0,
+                        opacity: 0.5,
+                        transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.2s ease',
+                    }}
+                />
+            </div>
+
+            {/* ── Expanded details ── */}
+            {expanded && (
+                <div style={{
+                    borderTop: '1px solid rgba(255,255,255,0.06)',
+                    padding: '1.25rem 1.25rem 1rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '1rem',
+                }}>
+                    {/* Items list */}
+                    <div style={{ fontSize: '0.875rem' }}>
+                        {Array.isArray(order.items) && order.items.map((item, i) => (
+                            <div key={i} className="text-secondary" style={{ padding: '4px 0', borderBottom: i < order.items.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
+                                <strong className="text-white">{item.quantity}×</strong> {item.title} — £{(item.price * item.quantity).toFixed(2)}
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Shipping address */}
+                    {order.shipping_address && (
+                        <div style={{
+                            padding: '10px 14px',
+                            borderRadius: '8px',
+                            background: 'rgba(255,255,255,0.03)',
+                            border: '1px solid rgba(255,255,255,0.06)',
+                            fontSize: '0.85rem'
+                        }}>
+                            <div style={{ fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px', flexWrap: 'wrap' }}>
+                                <span>📦 Wysyłka:</span>
+                                <span style={{
+                                    textTransform: 'uppercase',
+                                    fontSize: '0.72rem',
+                                    padding: '2px 8px',
+                                    borderRadius: '4px',
+                                    background: order.shipping_address.method === 'locker' ? '#d9770620' : '#05966920',
+                                    color: order.shipping_address.method === 'locker' ? '#fbbf24' : '#34d399',
+                                    border: order.shipping_address.method === 'locker' ? '1px solid #d9770640' : '1px solid #05966940'
+                                }}>
+                                    {order.shipping_address.method === 'locker' ? 'Paczkomat InPost' : 'Adres Domowy'}
+                                </span>
+                                {order.shipping_address.method === 'locker' && order.shipping_address.locker_code && (
+                                    <span style={{ color: '#fbbf24', fontWeight: 700 }}>[{order.shipping_address.locker_code}]</span>
+                                )}
+                            </div>
+                            <div style={{ color: 'var(--text-secondary)', lineHeight: '1.6' }}>
+                                <strong>{order.shipping_address.name}</strong><br />
+                                {order.shipping_address.address?.line1}
+                                {order.shipping_address.address?.line2 && `, ${order.shipping_address.address.line2}`}<br />
+                                {order.shipping_address.address?.postal_code} {order.shipping_address.address?.city}<br />
+                                {order.shipping_address.address?.country}
+                                {(order.shipping_address.phone || order.shipping_address.email) && (
+                                    <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px dashed rgba(255,255,255,0.08)', fontSize: '0.8rem', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                        {order.shipping_address.phone && <div>📞 Tel: <strong>{order.shipping_address.phone}</strong></div>}
+                                        {order.shipping_address.email && <div>✉️ Email: <strong>{order.shipping_address.email}</strong></div>}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Actions row */}
+                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', alignItems: 'center' }}>
+                        <select
+                            style={{ padding: '6px 10px', borderRadius: '8px', fontSize: '0.8rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', cursor: 'pointer' }}
+                            value={order.status}
+                            onChange={(e) => onStatusChange(order.id, e.target.value)}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <option value="pending">Oczekuje</option>
+                            <option value="paid">Opłacone</option>
+                            <option value="shipped">Wysłane</option>
+                            <option value="cancelled">Anulowane</option>
+                        </select>
+                        <button
+                            onClick={(e) => { e.stopPropagation(); onDelete(order.id); }}
+                            style={{
+                                padding: '6px 10px',
+                                borderRadius: '8px',
+                                fontSize: '0.8rem',
+                                background: 'rgba(239,68,68,0.1)',
+                                border: '1px solid rgba(239,68,68,0.2)',
+                                color: '#ef4444',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                            title="Usuń zamówienie"
+                        >
+                            <Trash2 size={14} />
+                        </button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
 function StoreDashboardContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -1059,117 +1257,15 @@ function StoreDashboardContent() {
                                     <p className="text-secondary">Brak zamówień.</p>
                                 </div>
                             ) : (
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '0.5rem' }}>
-                                    {orders.map((order) => (
-                                        <div key={order.id} className="glass-panel animate-fade-in" style={{ padding: '1.5rem' }}>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
-                                                <div>
-                                                    <div style={{ fontWeight: 700, fontSize: '1.05rem' }}>{order.customer_email || 'Nieznany (Brak email)'}</div>
-                                                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                                                        {new Date(order.created_at).toLocaleString('pl-PL')}
-                                                    </div>
-                                                    <div style={{ marginTop: '0.75rem', fontSize: '0.875rem' }}>
-                                                        {Array.isArray(order.items) && order.items.map((item, i) => (
-                                                            <div key={i} className="text-secondary">
-                                                                <strong className="text-white">{item.quantity}×</strong> {item.title} — £{(item.price * item.quantity).toFixed(2)}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                    {order.shipping_address && (
-                                                        <div style={{ 
-                                                            marginTop: '1rem', 
-                                                            padding: '10px 14px', 
-                                                            borderRadius: '8px', 
-                                                            background: 'rgba(255,255,255,0.03)', 
-                                                            border: '1px solid rgba(255,255,255,0.06)',
-                                                            fontSize: '0.85rem'
-                                                        }}>
-                                                            <div style={{ fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px', flexWrap: 'wrap' }}>
-                                                                <span>📦 Wysyłka:</span>
-                                                                <span style={{ 
-                                                                    textTransform: 'uppercase', 
-                                                                    fontSize: '0.72rem', 
-                                                                    padding: '2px 8px', 
-                                                                    borderRadius: '4px', 
-                                                                    background: order.shipping_address.method === 'locker' ? '#d9770620' : '#05966920',
-                                                                    color: order.shipping_address.method === 'locker' ? '#fbbf24' : '#34d399',
-                                                                    border: order.shipping_address.method === 'locker' ? '1px solid #d9770640' : '1px solid #05966940'
-                                                                }}>
-                                                                    {order.shipping_address.method === 'locker' ? 'Paczkomat InPost' : 'Adres Domowy'}
-                                                                </span>
-                                                                {order.shipping_address.method === 'locker' && order.shipping_address.locker_code && (
-                                                                    <span style={{ color: '#fbbf24', fontWeight: 700 }}>
-                                                                        [{order.shipping_address.locker_code}]
-                                                                    </span>
-                                                                )}
-                                                            </div>
-                                                            <div style={{ color: 'var(--text-secondary)', lineHeight: '1.4' }}>
-                                                                <strong>{order.shipping_address.name}</strong><br />
-                                                                {order.shipping_address.address?.line1}
-                                                                {order.shipping_address.address?.line2 && `, ${order.shipping_address.address.line2}`}
-                                                                <br />
-                                                                {order.shipping_address.address?.postal_code} {order.shipping_address.address?.city}
-                                                                <br />
-                                                                {order.shipping_address.address?.country}
-                                                                {(order.shipping_address.phone || order.shipping_address.email) && (
-                                                                    <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px dashed rgba(255,255,255,0.08)', fontSize: '0.8rem', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                                                                        {order.shipping_address.phone && <div>📞 Tel: <strong>{order.shipping_address.phone}</strong></div>}
-                                                                        {order.shipping_address.email && <div>✉️ Email: <strong>{order.shipping_address.email}</strong></div>}
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <div style={{ textAlign: 'right' }}>
-                                                    <div style={{ fontFamily: 'Outfit', fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-primary)' }}>£{order.total_amount.toFixed(2)}</div>
-                                                    <div style={{ marginTop: '0.5rem' }}>
-                                                        <span style={{
-                                                            display: 'inline-block',
-                                                            padding: '4px 12px',
-                                                            borderRadius: '99px',
-                                                            fontSize: '0.75rem',
-                                                            fontWeight: 700,
-                                                            background: `${STATUS_COLORS[order.status]}20`,
-                                                            color: STATUS_COLORS[order.status],
-                                                            border: `1px solid ${STATUS_COLORS[order.status]}50`,
-                                                        }}>
-                                                            {STATUS_LABELS[order.status] || order.status}
-                                                        </span>
-                                                    </div>
-                                                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem', justifyContent: 'flex-end', alignItems: 'center' }}>
-                                                        <select
-                                                            style={{ padding: '6px 10px', borderRadius: '8px', fontSize: '0.8rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', cursor: 'pointer' }}
-                                                            value={order.status}
-                                                            onChange={(e) => updateOrderStatus(order.id, e.target.value as any)}
-                                                        >
-                                                            <option value="pending">Oczekuje</option>
-                                                            <option value="paid">Opłacone</option>
-                                                            <option value="shipped">Wysłane</option>
-                                                            <option value="cancelled">Anulowane</option>
-                                                        </select>
-                                                        <button
-                                                            onClick={() => deleteOrder(order.id)}
-                                                            style={{
-                                                                padding: '6px 10px',
-                                                                borderRadius: '8px',
-                                                                fontSize: '0.8rem',
-                                                                background: 'rgba(239, 68, 68, 0.1)',
-                                                                border: '1px solid rgba(239, 68, 68, 0.2)',
-                                                                color: '#ef4444',
-                                                                cursor: 'pointer',
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                justifyContent: 'center',
-                                                            }}
-                                                            title="Usuń zamówienie"
-                                                        >
-                                                            <Trash2 size={14} />
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '0.5rem' }}>
+                                    {orders.map((order, idx) => (
+                                        <OrderRow
+                                            key={order.id}
+                                            order={order}
+                                            orderNumber={orders.length - idx}
+                                            onStatusChange={updateOrderStatus}
+                                            onDelete={deleteOrder}
+                                        />
                                     ))}
                                 </div>
                             )}
