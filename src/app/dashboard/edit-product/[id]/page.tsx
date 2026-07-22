@@ -54,6 +54,10 @@ export default function EditProductPage() {
     const [musicCategory, setMusicCategory] = useState<'RAP PL' | 'RAP UK' | 'RAP USA' | 'POLSKI RAP W UK' | 'ELEKTRONIKA' | ''>('');
     const [itemCondition, setItemCondition] = useState<'Nowa w folii' | 'Nowa' | 'Używana' | ''>('');
     
+    // Parametry ubrania
+    const [clothingSize, setClothingSize] = useState('');
+    const [clothingCondition, setClothingCondition] = useState<'Nowa' | 'Używana' | ''>('');
+    
     const router = useRouter();
     const params = useParams();
     const id = params.id as string;
@@ -95,6 +99,8 @@ export default function EditProductPage() {
                 setConditionNotes(data.condition_notes || '');
                 setMusicCategory(data.music_category || '');
                 setItemCondition(data.item_condition || '');
+                setClothingSize(data.clothing_size || '');
+                setClothingCondition(data.clothing_condition || '');
             } catch (err: any) {
                 setError(err.message);
             } finally {
@@ -131,6 +137,12 @@ export default function EditProductPage() {
             if (category === 'muzyka' && !itemCondition) {
                 throw new Error('Musisz wybrać stan ogólny produktu (Nowa w folii, Nowa lub Używana).');
             }
+            if (category === 'ubrania' && !clothingSize) {
+                throw new Error('Musisz wybrać rozmiar ubrania.');
+            }
+            if (category === 'ubrania' && !clothingCondition) {
+                throw new Error('Musisz wybrać stan ubrania (Nowe lub Używane).');
+            }
 
             let image_url: string | null = imagePreview && !imageFile ? imagePreview : null;
 
@@ -164,6 +176,8 @@ export default function EditProductPage() {
                     condition_notes: category === 'muzyka' ? conditionNotes : null,
                     music_category: category === 'muzyka' ? musicCategory : null,
                     item_condition: category === 'muzyka' ? itemCondition : null,
+                    clothing_size: category === 'ubrania' ? clothingSize : null,
+                    clothing_condition: category === 'ubrania' ? clothingCondition : null,
                 })
                 .eq('id', id);
 
@@ -305,6 +319,35 @@ export default function EditProductPage() {
                             <div className="form-group" style={{ gridColumn: 'span 2' }}>
                                 <label className="form-label">Uwagi do stanu / wydania</label>
                                 <textarea className="form-input" style={{ minHeight: '60px', resize: 'vertical' }} placeholder="np. Pudełko lekko pęknięte, zawiera autograf artysty, itp." value={conditionNotes} onChange={(e) => setConditionNotes(e.target.value)} />
+                            </div>
+                        </div>
+                    )}
+                    {category === 'ubrania' && (
+                        <div style={{ gridColumn: 'span 2', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '0.5rem' }}>
+                            <h3 style={{ gridColumn: 'span 2', fontSize: '1rem', fontWeight: 'bold', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.5rem', marginBottom: '0.25rem' }}>
+                                👕 Parametry Ubrania
+                            </h3>
+                            <div className="form-group">
+                                <label className="form-label">Rozmiar</label>
+                                <select className="form-input" value={clothingSize} onChange={(e) => setClothingSize(e.target.value)} required>
+                                    <option value="">-- Wybierz rozmiar --</option>
+                                    <option value="XS">XS</option>
+                                    <option value="S">S</option>
+                                    <option value="M">M</option>
+                                    <option value="L">L</option>
+                                    <option value="XL">XL</option>
+                                    <option value="XXL">XXL</option>
+                                    <option value="XXXL">XXXL</option>
+                                    <option value="One Size">One Size (Jeden rozmiar)</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Stan produktu</label>
+                                <select className="form-input" value={clothingCondition} onChange={(e) => setClothingCondition(e.target.value as any)} required>
+                                    <option value="">-- Wybierz stan --</option>
+                                    <option value="Nowa">✨ Nowa</option>
+                                    <option value="Używana">👕 Używana</option>
+                                </select>
                             </div>
                         </div>
                     )}
