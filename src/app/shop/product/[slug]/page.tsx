@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
     const { data: product } = await supabase
         .from('products')
-        .select('title, description, image_url, slug')
+        .select('title, description, image_url, slug, price, category')
         .eq('slug', slug)
         .eq('is_active', true)
         .maybeSingle();
@@ -24,40 +24,48 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     if (!product) {
         return {
             title: 'Produkt nieznaleziony | RAPwUK Shop',
+            robots: { index: false, follow: false },
         };
     }
 
-    const title = `${product.title} | RAPwUK Shop | Polski Sklep Muzyczny w UK`;
-    const description = product.description 
-        ? product.description.substring(0, 155) + '...' 
-        : `Kup teraz ${product.title} w RAPwUK Shop - jedynym polskim sklepie muzycznym w Wielkiej Brytanii. Szybka dostawa InPost UK.`;
+    const title = `${product.title} | RAPwUK Shop`;
+    const descriptionText = product.description && product.description.trim().length > 0
+        ? (product.description.length > 155 ? product.description.substring(0, 152) + '...' : product.description)
+        : `Kup teraz "${product.title}" w RAPwUK Shop – polskim sklepie muzycznym w UK. Cena: £${Number(product.price).toFixed(2)}. Szybka dostawa InPost po całym UK.`;
+
+    // Zawsze użyj okładki produktu — logo tylko gdy brak zdjęcia
+    const productImage = product.image_url || 'https://rapwuk.com/logo.jpg';
 
     return {
         title,
-        description,
+        description: descriptionText,
         robots: { index: true, follow: true },
         alternates: {
             canonical: `https://rapwuk.com/shop/product/${product.slug}`,
         },
         openGraph: {
             title: product.title,
-            description,
+            description: descriptionText,
             type: 'website',
             url: `https://rapwuk.com/shop/product/${product.slug}`,
+            siteName: 'RAPwUK Shop',
+            locale: 'pl_PL',
             images: [
                 {
-                    url: product.image_url || 'https://rapwuk.com/logo.jpg',
-                    width: 600,
-                    height: 600,
+                    url: productImage,
+                    width: 800,
+                    height: 800,
                     alt: product.title,
                 },
             ],
         },
         twitter: {
             card: 'summary_large_image',
+            site: '@RAPwUK',
+            creator: '@RAPwUK',
             title: product.title,
-            description,
-            images: [product.image_url || 'https://rapwuk.com/logo.jpg'],
+            description: descriptionText,
+            images: [productImage],
         },
     };
 }
