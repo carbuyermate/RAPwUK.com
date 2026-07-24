@@ -868,7 +868,9 @@
     width: 250px;
     flex-shrink: 0;
     position: sticky;
-    top: 100px;
+    top: 90px;
+    max-height: calc(100vh - 110px);
+    overflow-y: auto;
     background: rgba(255, 255, 255, 0.01);
     border: 1px solid var(--border-color);
     padding: 1.5rem;
