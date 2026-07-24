@@ -3,9 +3,35 @@ import "./rappers.css";
 import RappersList from "@/components/rappers-list";
 import { Mic2 } from "lucide-react";
 import { ViewTracker } from "@/components/ViewTracker";
+import { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+
+export const metadata: Metadata = {
+    title: 'Scena | Polscy raperzy w UK – RAPwUK.com',
+    description: 'Katalog polskich artystów hip-hopowych w Wielkiej Brytanii. Raperzy, DJ-e, studia i labele działające na polskiej scenie rap w UK.',
+    alternates: {
+        canonical: 'https://rapwuk.com/rappers',
+    },
+    openGraph: {
+        title: 'Scena | Polscy raperzy w UK – RAPwUK.com',
+        description: 'Katalog polskich artystów hip-hopowych w Wielkiej Brytanii. Raperzy, DJ-e, studia i labele.',
+        url: 'https://rapwuk.com/rappers',
+        siteName: 'RAPwUK.com',
+        locale: 'pl_PL',
+        type: 'website',
+    },
+    twitter: {
+        card: 'summary_large_image',
+        site: '@RAPwUK',
+        creator: '@RAPwUK',
+        title: 'Scena | Polscy raperzy w UK – RAPwUK.com',
+        description: 'Katalog polskich artystów hip-hopowych w UK. Raperzy, DJ-e, studia i labele.',
+    },
+};
+
+
 
 export default async function RappersDirectory() {
     const { data: rappers, error } = await supabase
