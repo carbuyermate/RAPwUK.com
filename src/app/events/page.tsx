@@ -3,8 +3,43 @@ import EventsList from '@/components/events-list';
 import { CalendarDays } from 'lucide-react';
 import { ViewTracker } from "@/components/ViewTracker";
 
+import { Metadata } from 'next';
+
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+
+export const metadata: Metadata = {
+    title: 'Lista imprez w UK | Hip-hopowe koncerty i eventy',
+    description: 'Kalendarz hip-hopowych imprez w Wielkiej Brytanii. Koncerty, eventy i festiwale – polski rap w UK i światowe gwiazdy hip-hopu na jednej liście.',
+    alternates: {
+        canonical: 'https://rapwuk.com/events',
+    },
+    openGraph: {
+        title: 'Lista imprez w UK | Hip-hopowe koncerty i eventy',
+        description: 'Kalendarz hip-hopowych imprez w Wielkiej Brytanii. Koncerty, eventy i festiwale – polski rap w UK i światowe gwiazdy hip-hopu na jednej liście.',
+        url: 'https://rapwuk.com/events',
+        siteName: 'RAPwUK.com',
+        locale: 'pl_PL',
+        type: 'website',
+        images: [
+            {
+                url: 'https://rapwuk.com/og-image.jpg',
+                width: 1200,
+                height: 630,
+                alt: 'Lista imprez hip-hopowych w UK – RAPwUK.com',
+            },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        site: '@RAPwUK',
+        creator: '@RAPwUK',
+        title: 'Lista imprez w UK | Hip-hopowe koncerty i eventy',
+        description: 'Kalendarz hip-hopowych imprez w Wielkiej Brytanii. Koncerty, eventy i festiwale – polski rap w UK.',
+    },
+};
+
+
 
 // Interfejs dla wydarzenia (zgodny z schema.sql)
 interface Event {
