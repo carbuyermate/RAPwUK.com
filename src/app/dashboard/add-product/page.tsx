@@ -56,6 +56,13 @@ export default function AddProductPage() {
     const [clothingSize, setClothingSize] = useState('');
     const [clothingCondition, setClothingCondition] = useState<'Nowa' | 'Używana' | ''>('');
     
+    // Parametry biletów / eventu
+    const [ticketEventDate, setTicketEventDate] = useState('');
+    const [ticketVenue, setTicketVenue] = useState('');
+    const [ticketCity, setTicketCity] = useState('');
+    const [ticketType, setTicketType] = useState('');
+    const [ticketAgeRestriction, setTicketAgeRestriction] = useState('');
+    
     const router = useRouter();
 
     useEffect(() => {
@@ -91,6 +98,9 @@ export default function AddProductPage() {
             if (category === 'ubrania' && !clothingCondition) {
                 throw new Error('Musisz wybrać stan ubrania (Nowe lub Używane).');
             }
+            if (category === 'bilety' && (!ticketEventDate || !ticketCity || !ticketVenue)) {
+                throw new Error('Musisz podać datę, miasto i klub/miejsce wydarzenia dla biletów.');
+            }
 
             let image_url: string | null = null;
             if (imageFile) {
@@ -113,6 +123,11 @@ export default function AddProductPage() {
                 item_condition: category === 'muzyka' ? itemCondition : null,
                 clothing_size: category === 'ubrania' ? clothingSize : null,
                 clothing_condition: category === 'ubrania' ? clothingCondition : null,
+                ticket_event_date: category === 'bilety' ? ticketEventDate : null,
+                ticket_venue: category === 'bilety' ? ticketVenue : null,
+                ticket_city: category === 'bilety' ? ticketCity : null,
+                ticket_type: category === 'bilety' ? ticketType : null,
+                ticket_age_restriction: category === 'bilety' ? ticketAgeRestriction : null,
             }]);
             if (insertErr) throw insertErr;
             router.push('/dashboard/store?tab=products');
@@ -266,6 +281,47 @@ export default function AddProductPage() {
                                     <option value="">-- Wybierz stan --</option>
                                     <option value="Nowa">✨ Nowa</option>
                                     <option value="Używana">👕 Używana</option>
+                                </select>
+                            </div>
+                        </div>
+                    )}
+                    {category === 'bilety' && (
+                        <div style={{ gridColumn: 'span 2', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '0.5rem' }}>
+                            <h3 style={{ gridColumn: 'span 2', fontSize: '1rem', fontWeight: 'bold', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.5rem', marginBottom: '0.25rem' }}>
+                                🎟️ Szczegóły Wydarzenia & Biletów
+                            </h3>
+                            <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                                <label className="form-label">Data i godzina wydarzenia</label>
+                                <input type="text" className="form-input" placeholder="np. 15 Listopada 2026, godz. 20:00" value={ticketEventDate} onChange={(e) => setTicketEventDate(e.target.value)} required />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Miasto</label>
+                                <input type="text" className="form-input" placeholder="np. Londyn" value={ticketCity} onChange={(e) => setTicketCity(e.target.value)} required />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Klub / Miejsce (Venue)</label>
+                                <input type="text" className="form-input" placeholder="np. O2 Academy Islington" value={ticketVenue} onChange={(e) => setTicketVenue(e.target.value)} required />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Rodzaj / Pula biletu</label>
+                                <select className="form-input" value={ticketType} onChange={(e) => setTicketType(e.target.value)}>
+                                    <option value="">-- Wybierz rodzaj --</option>
+                                    <option value="Bilet Standardowy">🎟️ Bilet Standardowy</option>
+                                    <option value="Bilet VIP">⭐ Bilet VIP</option>
+                                    <option value="I Pula (Early Bird)">🔥 I Pula (Early Bird)</option>
+                                    <option value="II Pula">🎫 II Pula</option>
+                                    <option value="III Pula (Ostatnie bilety)">⏳ III Pula (Ostatnie bilety)</option>
+                                    <option value="Meet & Greet">🤝 Meet & Greet</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Wymóg wiekowy</label>
+                                <select className="form-input" value={ticketAgeRestriction} onChange={(e) => setTicketAgeRestriction(e.target.value)}>
+                                    <option value="">-- Wybierz wymóg wiekowy --</option>
+                                    <option value="18+">🔞 18+</option>
+                                    <option value="16+ (z opiekunem)">🔞 16+ (z opiekunem)</option>
+                                    <option value="14+ (z opiekunem)">🔞 14+ (z opiekunem)</option>
+                                    <option value="Bez ograniczeń">👨‍👩‍👧 Bez ograniczeń wiekowych</option>
                                 </select>
                             </div>
                         </div>

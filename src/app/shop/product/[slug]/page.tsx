@@ -230,6 +230,86 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                         </div>
                     )}
 
+                    {product.category === 'bilety' && (product.ticket_event_date || product.ticket_venue || product.ticket_city || product.ticket_type || product.ticket_age_restriction) && (
+                        <div style={{
+                            margin: '1.5rem 0',
+                            padding: '1.25rem',
+                            background: 'rgba(255,255,255,0.02)',
+                            borderRadius: '10px',
+                            border: '1px solid rgba(255,255,255,0.06)',
+                            fontSize: '0.9rem'
+                        }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '0.5rem' }}>
+                                <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
+                                    🎟️ Szczegóły Wydarzenia & Biletów:
+                                </h3>
+                            </div>
+                            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                {product.ticket_event_date && (
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>📅 Data i godzina:</span>
+                                        <strong style={{ color: 'var(--text-primary)' }}>{product.ticket_event_date}</strong>
+                                    </li>
+                                )}
+                                {product.ticket_venue && (
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>🏟️ Klub / Miejsce:</span>
+                                        <strong style={{ color: 'var(--text-primary)' }}>{product.ticket_venue}</strong>
+                                    </li>
+                                )}
+                                {product.ticket_city && (
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>📍 Miasto:</span>
+                                        <strong style={{ color: 'var(--text-primary)' }}>{product.ticket_city}</strong>
+                                    </li>
+                                )}
+                                {product.ticket_type && (
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>🎟️ Rodzaj / Pula:</span>
+                                        <strong style={{ color: 'var(--text-primary)' }}>{product.ticket_type}</strong>
+                                    </li>
+                                )}
+                                {product.ticket_age_restriction && (
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>🔞 Wymóg wiekowy:</span>
+                                        <strong style={{ color: 'var(--text-primary)' }}>{product.ticket_age_restriction}</strong>
+                                    </li>
+                                )}
+                            </ul>
+                        </div>
+                    )}
+
+                    {product.category === 'ubrania' && (product.clothing_size || product.clothing_condition) && (
+                        <div style={{
+                            margin: '1.5rem 0',
+                            padding: '1.25rem',
+                            background: 'rgba(255,255,255,0.02)',
+                            borderRadius: '10px',
+                            border: '1px solid rgba(255,255,255,0.06)',
+                            fontSize: '0.9rem'
+                        }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '0.5rem' }}>
+                                <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
+                                    👕 Specyfikacja Ubrania:
+                                </h3>
+                            </div>
+                            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                {product.clothing_size && (
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>Rozmiar:</span>
+                                        <strong style={{ color: 'var(--text-primary)' }}>{product.clothing_size}</strong>
+                                    </li>
+                                )}
+                                {product.clothing_condition && (
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>Stan:</span>
+                                        <strong style={{ color: 'var(--text-primary)' }}>{product.clothing_condition}</strong>
+                                    </li>
+                                )}
+                            </ul>
+                        </div>
+                    )}
+
                     {product.stock === 0 ? (
                         <div style={{
                             padding: '14px 24px',

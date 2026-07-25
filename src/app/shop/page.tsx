@@ -51,6 +51,13 @@ export interface Product {
     condition_notes?: string | null;
     music_category?: 'RAP PL' | 'RAP UK' | 'RAP USA' | 'POLSKI RAP W UK' | 'ELEKTRONIKA' | null;
     item_condition?: 'Nowa w folii' | 'Nowa' | 'Używana' | null;
+    clothing_size?: string | null;
+    clothing_condition?: string | null;
+    ticket_event_date?: string | null;
+    ticket_venue?: string | null;
+    ticket_city?: string | null;
+    ticket_type?: string | null;
+    ticket_age_restriction?: string | null;
     created_at?: string;
 }
 
