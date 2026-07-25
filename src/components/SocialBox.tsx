@@ -1,9 +1,9 @@
 import './social-box.css';
 
-export function SocialBox() {
+export function SocialBox({ showLabel = true }: { showLabel?: boolean }) {
     return (
         <div className="social-box glass-panel">
-            <p className="social-box__label">Obserwuj nas</p>
+            {showLabel && <p className="social-box__label">Obserwuj nas</p>}
             <div className="social-box__links">
                 <a
                     href="https://fb.com/rapwuk"

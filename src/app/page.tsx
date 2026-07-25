@@ -1,6 +1,6 @@
 import Link from "next/link";
 import "./page.css";
-import { CalendarDays, ExternalLink, Newspaper, Clock, MapPin, ArrowRight, Tag, ThumbsUp, ThumbsDown } from "lucide-react";
+import { CalendarDays, ExternalLink, Newspaper, Clock, MapPin, ArrowRight, Tag, ThumbsUp, ThumbsDown, Share2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { PromoWidget } from "@/components/PromoWidget";
 import { ViewTracker } from "@/components/ViewTracker";
@@ -97,9 +97,6 @@ export default async function Home() {
           <p className="hero-subtitle">
             Scena, newsy, imprezy. Wszystko w jednym miejscu.
           </p>
-        </div>
-        <div className="hero-ad-right">
-          <PromoWidget position="homepage_top" />
         </div>
       </section>
 
@@ -262,10 +259,15 @@ export default async function Home() {
         </div>{/* /.homepage-centre */}
 
         {/* Far-right: vertical sidebar */}
-        <div className="promo-zone-side">
-          <SocialBox />
+        <aside className="promo-zone-side">
+          <div className="section-header">
+            <h2 className="section-title">
+              <Share2 size={22} /> Obserwuj Nas
+            </h2>
+          </div>
+          <SocialBox showLabel={false} />
           <ShopWidget product={randomProduct} />
-        </div>
+        </aside>
 
       </div>{/* /.homepage-outer */}
     </div>
