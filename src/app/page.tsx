@@ -263,7 +263,7 @@ export default async function Home() {
 
           </div>{/* /.main-layout */}
 
-          {/* Removed bottom banner to move to footer */}
+        </div>{/* /.homepage-centre */}
 
         {/* Far-right: vertical sidebar */}
         <div className="promo-zone-side">
