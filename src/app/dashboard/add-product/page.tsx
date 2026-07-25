@@ -36,7 +36,7 @@ export default function AddProductPage() {
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
     const [purchasePrice, setPurchasePrice] = useState('0');
-    const [category, setCategory] = useState<'muzyka' | 'bilety' | 'ubrania'>('muzyka');
+    const [category, setCategory] = useState<'muzyka' | 'bilety' | 'ubrania' | 'filmy'>('muzyka');
     const [stock, setStock] = useState('1');
     const [isActive, setIsActive] = useState(true);
     const [imageFile, setImageFile] = useState<File | null>(null);
@@ -62,6 +62,11 @@ export default function AddProductPage() {
     const [ticketCity, setTicketCity] = useState('');
     const [ticketType, setTicketType] = useState('');
     const [ticketAgeRestriction, setTicketAgeRestriction] = useState('');
+    
+    // Parametry filmu (DVD / Blu-ray)
+    const [movieFormat, setMovieFormat] = useState<'DVD' | 'Blu-ray' | 'VHS' | '4K UHD' | ''>('');
+    const [movieLanguage, setMovieLanguage] = useState('');
+    const [movieSubtitles, setMovieSubtitles] = useState('');
     
     const router = useRouter();
 
@@ -101,6 +106,12 @@ export default function AddProductPage() {
             if (category === 'bilety' && (!ticketEventDate || !ticketCity || !ticketVenue)) {
                 throw new Error('Musisz podać datę, miasto i klub/miejsce wydarzenia dla biletów.');
             }
+            if (category === 'filmy' && !movieFormat) {
+                throw new Error('Musisz wybrać format filmu (DVD, Blu-ray, VHS lub 4K UHD).');
+            }
+            if (category === 'filmy' && !itemCondition) {
+                throw new Error('Musisz wybrać stan ogólny filmu.');
+            }
 
             let image_url: string | null = null;
             if (imageFile) {
@@ -116,11 +127,11 @@ export default function AddProductPage() {
                 purchase_price: parseFloat(purchasePrice) || 0.00,
                 category, stock: parseInt(stock), is_active: isActive, image_url,
                 media_type: category === 'muzyka' && mediaType ? mediaType : null,
-                condition_media: category === 'muzyka' ? conditionMedia : null,
-                condition_cover: category === 'muzyka' ? conditionCover : null,
-                condition_notes: category === 'muzyka' ? conditionNotes : null,
+                condition_media: (category === 'muzyka' || category === 'filmy') && conditionMedia ? conditionMedia : null,
+                condition_cover: category === 'muzyka' && conditionCover ? conditionCover : null,
+                condition_notes: (category === 'muzyka' || category === 'filmy') && conditionNotes ? conditionNotes : null,
                 music_category: category === 'muzyka' ? musicCategory : null,
-                item_condition: category === 'muzyka' ? itemCondition : null,
+                item_condition: (category === 'muzyka' || category === 'filmy') && itemCondition ? itemCondition : null,
                 clothing_size: category === 'ubrania' ? clothingSize : null,
                 clothing_condition: category === 'ubrania' ? clothingCondition : null,
                 ticket_event_date: category === 'bilety' ? ticketEventDate : null,
@@ -128,6 +139,9 @@ export default function AddProductPage() {
                 ticket_city: category === 'bilety' ? ticketCity : null,
                 ticket_type: category === 'bilety' ? ticketType : null,
                 ticket_age_restriction: category === 'bilety' ? ticketAgeRestriction : null,
+                movie_format: category === 'filmy' ? movieFormat : null,
+                movie_language: category === 'filmy' ? movieLanguage : null,
+                movie_subtitles: category === 'filmy' ? movieSubtitles : null,
             }]);
             if (insertErr) throw insertErr;
             router.push('/dashboard/store?tab=products');
@@ -190,6 +204,7 @@ export default function AddProductPage() {
                             <option value="muzyka">🎵 Muzyka</option>
                             <option value="bilety">🎟️ Bilety</option>
                             <option value="ubrania">👕 Ubrania</option>
+                            <option value="filmy">🎬 Filmy</option>
                         </select>
                     </div>
                     {category === 'muzyka' && (
@@ -323,6 +338,71 @@ export default function AddProductPage() {
                                     <option value="14+ (z opiekunem)">🔞 14+ (z opiekunem)</option>
                                     <option value="Bez ograniczeń">👨‍👩‍👧 Bez ograniczeń wiekowych</option>
                                 </select>
+                            </div>
+                        </div>
+                    )}
+                    {category === 'filmy' && (
+                        <div style={{ gridColumn: 'span 2', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '0.5rem' }}>
+                            <h3 style={{ gridColumn: 'span 2', fontSize: '1rem', fontWeight: 'bold', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.5rem', marginBottom: '0.25rem' }}>
+                                🎬 Parametry Wydania Filmowego & Stanu
+                            </h3>
+                            <div className="form-group">
+                                <label className="form-label">Format / Nośnik</label>
+                                <select className="form-input" value={movieFormat} onChange={(e) => setMovieFormat(e.target.value as any)} required>
+                                    <option value="">-- Wybierz format --</option>
+                                    <option value="DVD">💿 DVD</option>
+                                    <option value="Blu-ray">📀 Blu-ray</option>
+                                    <option value="VHS">📼 VHS</option>
+                                    <option value="4K UHD">✨ 4K UHD</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Stan ogólny filmu</label>
+                                <select className="form-input" value={itemCondition} onChange={(e) => setItemCondition(e.target.value as any)} required>
+                                    <option value="">-- Wybierz stan ogólny --</option>
+                                    <option value="Nowa w folii">🆕 Nowy w folii</option>
+                                    <option value="Nowa">✨ Nowy</option>
+                                    <option value="Używana">💿 Używany</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Język audio (Lektor / Dubbing)</label>
+                                <select className="form-input" value={movieLanguage} onChange={(e) => setMovieLanguage(e.target.value)}>
+                                    <option value="">-- Wybierz język audio --</option>
+                                    <option value="Polski (Lektor)">🇵🇱 Polski (Lektor)</option>
+                                    <option value="Polski (Dubbing)">🇵🇱 Polski (Dubbing)</option>
+                                    <option value="Polski (Oryginał)">🇵🇱 Polski (Oryginał)</option>
+                                    <option value="Angielski">🇬🇧 Angielski</option>
+                                    <option value="Polski + Angielski">🇵🇱🇬🇧 Polski + Angielski</option>
+                                    <option value="Inny (Więcej w opisie)">🌐 Inny / Więcej w opisie</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Napisy</label>
+                                <select className="form-input" value={movieSubtitles} onChange={(e) => setMovieSubtitles(e.target.value)}>
+                                    <option value="">-- Wybierz napisy --</option>
+                                    <option value="Polskie">🇵🇱 Polskie</option>
+                                    <option value="Angielskie">🇬🇧 Angielskie</option>
+                                    <option value="Polskie i Angielskie">🇵🇱🇬🇧 Polskie i Angielskie</option>
+                                    <option value="Brak napisów">❌ Brak napisów</option>
+                                    <option value="Inne">🌐 Inne</option>
+                                </select>
+                            </div>
+                            <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                                <label className="form-label">Stan nośnika / płyty</label>
+                                <select className="form-input" value={conditionMedia} onChange={(e) => setConditionMedia(e.target.value)}>
+                                    <option value="">-- Wybierz stan płyty --</option>
+                                    <option value="Mint (M)">Mint (M) – Idealny</option>
+                                    <option value="Near Mint (NM)">Near Mint (NM) – Prawie idealny</option>
+                                    <option value="Very Good Plus (VG+)">Very Good Plus (VG+) – Bardzo dobry plus</option>
+                                    <option value="Very Good (VG)">Very Good (VG) – Bardzo dobry</option>
+                                    <option value="Good (G)">Good (G) – Dobry</option>
+                                    <option value="Poor (P)">Poor (P) – Słaby</option>
+                                </select>
+                            </div>
+                            <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                                <label className="form-label">Uwagi do stanu / wydania</label>
+                                <textarea className="form-input" style={{ minHeight: '60px', resize: 'vertical' }} placeholder="np. Wydanie 2-płytowe, ryski bez wpływu na odtwarzanie, książeczka w zestawie" value={conditionNotes} onChange={(e) => setConditionNotes(e.target.value)} />
                             </div>
                         </div>
                     )}

@@ -29,6 +29,7 @@ export function ProductCard({ product }: { product: Product }) {
         muzyka: 'Muzyka',
         bilety: 'Bilety',
         ubrania: 'Ubrania',
+        filmy: 'Filmy',
     };
 
     return (
@@ -39,14 +40,14 @@ export function ProductCard({ product }: { product: Product }) {
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={product.image_url} alt={product.title} />
                     ) : (
-                        <span>{product.category === 'muzyka' ? '🎵' : product.category === 'bilety' ? '🎟️' : '👕'}</span>
+                        <span>{product.category === 'muzyka' ? '🎵' : product.category === 'bilety' ? '🎟️' : product.category === 'ubrania' ? '👕' : product.category === 'filmy' ? '🎬' : '📦'}</span>
                     )}
                 </div>
                 <div className="product-card-body">
                     <span className="product-card-category">
                         {product.category === 'muzyka' && product.music_category
                             ? `Muzyka / ${product.music_category}`
-                            : categoryLabel[product.category]}
+                            : categoryLabel[product.category] || product.category}
                     </span>
                     <h3 className="product-card-title">{product.title}</h3>
                     <div className="product-card-price">£{product.price.toFixed(2)}</div>

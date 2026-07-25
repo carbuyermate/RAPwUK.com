@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
-import { ArrowRight, Music, Ticket, Shirt, ShoppingBag, Tag } from 'lucide-react';
+import { ArrowRight, Music, Ticket, Shirt, ShoppingBag, Tag, Film } from 'lucide-react';
 import { ProductCard } from '@/components/shop/ProductCard';
 import { ShippingInfoButton } from '@/components/shop/ShippingInfoButton';
 import './shop.css';
@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
     title: 'RAPwUK Shop | Polski Sklep Muzyczny w UK',
-    description: 'RAPwUK Shop – jedyny oficjalny polski sklep muzyczny w Wielkiej Brytanii. Płyty CD, kasety, ubrania i bilety na koncerty. Szybka wysyłka paczkomatem InPost po całym UK.',
+    description: 'RAPwUK Shop – jedyny oficjalny polski sklep muzyczny w Wielkiej Brytanii. Płyty CD, kasety, ubrania, bilety i filmy. Szybka wysyłka paczkomatem InPost po całym UK.',
     keywords: [
         'rapwuk shop',
         'RAPwUK Shop',
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     },
     openGraph: {
         title: 'RAPwUK Shop | Polski Sklep Muzyczny w UK',
-        description: 'RAPwUK Shop – jedyny oficjalny polski sklep muzyczny w Wielkiej Brytanii. Płyty CD, kasety, ubrania i bilety na koncerty. Szybka wysyłka paczkomatem InPost po całym UK.',
+        description: 'RAPwUK Shop – jedyny oficjalny polski sklep muzyczny w Wielkiej Brytanii. Płyty CD, kasety, ubrania, bilety i filmy. Szybka wysyłka paczkomatem InPost po całym UK.',
         type: 'website',
         url: 'https://rapwuk.com/shop',
         images: [{ url: 'https://rapwuk.com/logo.jpg', width: 800, height: 600, alt: 'RAPwUK Shop' }],
@@ -41,7 +41,7 @@ export interface Product {
     title: string;
     description: string;
     price: number;
-    category: 'muzyka' | 'bilety' | 'ubrania';
+    category: 'muzyka' | 'bilety' | 'ubrania' | 'filmy';
     image_url?: string;
     stripe_price_id?: string;
     stock: number;
@@ -58,6 +58,9 @@ export interface Product {
     ticket_city?: string | null;
     ticket_type?: string | null;
     ticket_age_restriction?: string | null;
+    movie_format?: string | null;
+    movie_language?: string | null;
+    movie_subtitles?: string | null;
     created_at?: string;
 }
 
@@ -79,6 +82,12 @@ const CATEGORIES = [
         title: 'Ubrania',
         icon: <Shirt size={20} strokeWidth={1.5} />,
         href: '/shop/ubrania',
+    },
+    {
+        id: 'filmy',
+        title: 'Filmy',
+        icon: <Film size={20} strokeWidth={1.5} />,
+        href: '/shop/filmy',
     },
     {
         id: 'gielda',

@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 import type { Product } from '@/app/shop/page';
 import { Metadata } from 'next';
-import { Music, Ticket, Shirt } from 'lucide-react';
+import { Music, Ticket, Shirt, Film } from 'lucide-react';
 import { CategoryPageClient } from '@/components/shop/CategoryPageClient';
 import '../shop.css';
 
@@ -23,6 +23,11 @@ const CATEGORY_META: Record<string, { title: string; desc: string; icon: React.R
         title: 'Ubrania',
         desc: 'Streetwear, kolekcje limitowane, hoodki i tshirty.',
         icon: <Shirt size={28} />,
+    },
+    filmy: {
+        title: 'Filmy',
+        desc: 'Filmy DVD, Blu-ray, dokumenty i kino hip-hopowe.',
+        icon: <Film size={28} />,
     },
 };
 
@@ -45,6 +50,9 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
     } else if (category === 'ubrania') {
         title = `Polski Streetwear i Odzież w UK | Polski Sklep Muzyczny | RAPwUK`;
         description = `Oryginalna odzież streetwearowa, koszulki i bluzy hip-hopowe w UK. Kupuj polskie marki odzieżowe z szybką dostawą paczkomatem InPost w UK.`;
+    } else if (category === 'filmy') {
+        title = `Filmy DVD i Dokumenty Hip-Hop w UK | RAPwUK Shop`;
+        description = `Filmy na DVD, Blu-ray oraz dokumenty hip-hopowe w UK. Oficjalne wydania filmowe, koncerty na wideo, szybka wysyłka paczkomatem InPost.`;
     }
 
     return {

@@ -83,8 +83,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     if (!data) return notFound();
     const product = data as Product;
 
-    const categoryLabels: Record<string, string> = { muzyka: 'Muzyka', bilety: 'Bilety', ubrania: 'Ubrania' };
-    const categoryEmoji: Record<string, string> = { muzyka: '🎵', bilety: '🎟️', ubrania: '👕' };
+    const categoryLabels: Record<string, string> = { muzyka: 'Muzyka', bilety: 'Bilety', ubrania: 'Ubrania', filmy: 'Filmy' };
+    const categoryEmoji: Record<string, string> = { muzyka: '🎵', bilety: '🎟️', ubrania: '👕', filmy: '🎬' };
 
     // Schema.org structured data
     const itemConditionSchema = product.item_condition === 'Nowa w folii'
@@ -304,6 +304,71 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                                     <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>Stan:</span>
                                         <strong style={{ color: 'var(--text-primary)' }}>{product.clothing_condition}</strong>
+                                    </li>
+                                )}
+                            </ul>
+                        </div>
+                    )}
+
+                    {product.category === 'filmy' && (product.movie_format || product.movie_language || product.movie_subtitles || product.item_condition || product.condition_media || product.condition_notes) && (
+                        <div style={{
+                            margin: '1.5rem 0',
+                            padding: '1.25rem',
+                            background: 'rgba(255,255,255,0.02)',
+                            borderRadius: '10px',
+                            border: '1px solid rgba(255,255,255,0.06)',
+                            fontSize: '0.9rem'
+                        }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '0.5rem' }}>
+                                <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
+                                    🎬 Szczegóły Wydania Filmowego & Stan:
+                                </h3>
+                            </div>
+                            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                {product.item_condition && (
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>Stan ogólny:</span>
+                                        <strong style={{ color: 'var(--text-primary)' }}>{product.item_condition}</strong>
+                                    </li>
+                                )}
+                                {product.movie_format && (
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>Format / Nośnik:</span>
+                                        <strong style={{ color: 'var(--text-primary)' }}>💿 {product.movie_format}</strong>
+                                    </li>
+                                )}
+                                {product.movie_language && (
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>🗣️ Język audio:</span>
+                                        <strong style={{ color: 'var(--text-primary)' }}>{product.movie_language}</strong>
+                                    </li>
+                                )}
+                                {product.movie_subtitles && (
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>💬 Napisy:</span>
+                                        <strong style={{ color: 'var(--text-primary)' }}>{product.movie_subtitles}</strong>
+                                    </li>
+                                )}
+                                {product.condition_media && (
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>Stan nośnika (Płyty):</span>
+                                        <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{product.condition_media}</span>
+                                    </li>
+                                )}
+                                {product.condition_notes && (
+                                    <li style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingTop: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>Uwagi:</span>
+                                        <div style={{
+                                            padding: '8px 12px',
+                                            background: 'rgba(245,158,11,0.05)',
+                                            border: '1px solid rgba(245,158,11,0.15)',
+                                            borderRadius: '6px',
+                                            fontSize: '0.85rem',
+                                            color: '#f59e0b',
+                                            lineHeight: '1.4'
+                                        }}>
+                                            {product.condition_notes}
+                                        </div>
                                     </li>
                                 )}
                             </ul>
