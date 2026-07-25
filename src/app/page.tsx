@@ -64,31 +64,16 @@ export default async function Home() {
 
   const [
     { data: newsData },
-    { data: initialEventsData },
+    { data: eventsData },
     { data: shopProductsData }
   ] = await Promise.all([
     supabase.from('news').select('*').order('created_at', { ascending: false }).limit(7),
-    supabase.from('events').select('*').gte('event_date', todayStart.toISOString()).order('event_date', { ascending: true }).limit(50),
+    supabase.from('events').select('*').gte('event_date', todayStart.toISOString()).order('event_date', { ascending: true }),
     supabase.from('products').select('id, slug, title, price, image_url, category').eq('is_active', true).gt('stock', 0),
   ]);
 
-  let eventsData = initialEventsData;
-  if (!eventsData || eventsData.length < 15) {
-    const { data: fallbackEvents } = await supabase
-      .from('events')
-      .select('*')
-      .order('event_date', { ascending: false })
-      .limit(40);
-    if (fallbackEvents && fallbackEvents.length > 0) {
-      const futureEvents = eventsData || [];
-      const futureIds = new Set(futureEvents.map(e => e.id));
-      const pastEvents = fallbackEvents.filter(e => !futureIds.has(e.id));
-      eventsData = [...futureEvents, ...pastEvents];
-    }
-  }
-
   const news = (newsData || []) as NewsItem[];
-  const events = ((eventsData || []) as EventItem[]).slice(0, 15);
+  const events = (eventsData || []) as EventItem[];
   const shopProducts = shopProductsData || [];
 
   // Pick one random product for the Shop Widget
