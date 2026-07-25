@@ -310,7 +310,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                         </div>
                     )}
 
-                    {product.category === 'filmy' && (product.movie_format || product.movie_language || product.movie_subtitles || product.movie_cast || product.item_condition || product.condition_media || product.condition_cover || product.condition_notes) && (
+                    {product.category === 'filmy' && (product.movie_format || product.movie_language || product.movie_subtitles || product.movie_genre || product.movie_cast || product.item_condition || product.condition_media || product.condition_cover || product.condition_notes) && (
                         <div style={{
                             margin: '1.5rem 0',
                             padding: '1.25rem',
@@ -330,6 +330,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                                     <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>Stan ogólny:</span>
                                         <strong style={{ color: 'var(--text-primary)' }}>{product.item_condition}</strong>
+                                    </li>
+                                )}
+                                {product.movie_genre && (
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>📽️ Gatunek:</span>
+                                        <strong style={{ color: 'var(--text-primary)' }}>{product.movie_genre}</strong>
                                     </li>
                                 )}
                                 {product.movie_format && (

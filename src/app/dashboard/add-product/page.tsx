@@ -82,6 +82,14 @@ export default function AddProductPage() {
     const [selectedSubtitles, setSelectedSubtitles] = useState<string[]>(['Polskie']);
     const [customSubInput, setCustomSubInput] = useState('');
 
+    // Movie Genres (Multi-select + Custom)
+    const [genreOptions, setGenreOptions] = useState<string[]>([
+        'Dokument', 'Kryminał', 'Dramat', 'Sensacja', 'Gangsterski',
+        'Biograficzny', 'Muzyczny', 'Akcja', 'Komedia', 'Horror', 'Sci-Fi'
+    ]);
+    const [selectedGenres, setSelectedGenres] = useState<string[]>(['Dokument']);
+    const [customGenreInput, setCustomGenreInput] = useState('');
+
     useEffect(() => {
         try {
             const savedAudio = JSON.parse(localStorage.getItem('rapwuk_custom_audio_languages') || '[]');
@@ -91,6 +99,10 @@ export default function AddProductPage() {
             const savedSubs = JSON.parse(localStorage.getItem('rapwuk_custom_subtitles') || '[]');
             if (Array.isArray(savedSubs) && savedSubs.length > 0) {
                 setSubOptions(prev => Array.from(new Set([...prev, ...savedSubs])));
+            }
+            const savedGenres = JSON.parse(localStorage.getItem('rapwuk_custom_movie_genres') || '[]');
+            if (Array.isArray(savedGenres) && savedGenres.length > 0) {
+                setGenreOptions(prev => Array.from(new Set([...prev, ...savedGenres])));
             }
         } catch (e) {}
     }, []);
@@ -143,6 +155,31 @@ export default function AddProductPage() {
             setSelectedSubtitles(prev => [...prev, trimmed]);
         }
         setCustomSubInput('');
+    };
+
+    const toggleGenre = (genre: string) => {
+        setSelectedGenres(prev => 
+            prev.includes(genre) ? prev.filter(g => g !== genre) : [...prev, genre]
+        );
+    };
+
+    const handleAddCustomGenre = () => {
+        const trimmed = customGenreInput.trim();
+        if (!trimmed) return;
+        if (!genreOptions.includes(trimmed)) {
+            const updated = [...genreOptions, trimmed];
+            setGenreOptions(updated);
+            try {
+                const saved = JSON.parse(localStorage.getItem('rapwuk_custom_movie_genres') || '[]');
+                if (!saved.includes(trimmed)) {
+                    localStorage.setItem('rapwuk_custom_movie_genres', JSON.stringify([...saved, trimmed]));
+                }
+            } catch (e) {}
+        }
+        if (!selectedGenres.includes(trimmed)) {
+            setSelectedGenres(prev => [...prev, trimmed]);
+        }
+        setCustomGenreInput('');
     };
     
     const router = useRouter();
@@ -220,6 +257,7 @@ export default function AddProductPage() {
                 movie_language: category === 'filmy' && selectedAudioLangs.length > 0 ? selectedAudioLangs.join(', ') : null,
                 movie_subtitles: category === 'filmy' && selectedSubtitles.length > 0 ? selectedSubtitles.join(', ') : null,
                 movie_cast: category === 'filmy' && movieCast ? movieCast : null,
+                movie_genre: category === 'filmy' && selectedGenres.length > 0 ? selectedGenres.join(', ') : null,
             }]);
             if (insertErr) throw insertErr;
             router.push('/dashboard/store?tab=products');
@@ -577,6 +615,55 @@ export default function AddProductPage() {
                                         onClick={handleAddCustomSub}
                                     >
                                         + Dodaj napisy
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Gatunek filmu (Multi-select) */}
+                            <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                                <label className="form-label">Gatunek filmu (Wybierz jeden lub kilka)</label>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.75rem' }}>
+                                    {genreOptions.map((genre) => {
+                                        const isSelected = selectedGenres.includes(genre);
+                                        return (
+                                            <button
+                                                key={genre}
+                                                type="button"
+                                                onClick={() => toggleGenre(genre)}
+                                                style={{
+                                                    padding: '5px 12px',
+                                                    borderRadius: '20px',
+                                                    fontSize: '0.82rem',
+                                                    fontWeight: 600,
+                                                    border: isSelected ? '1px solid #f59e0b' : '1px solid rgba(255,255,255,0.1)',
+                                                    background: isSelected ? 'rgba(245,158,11,0.18)' : 'rgba(255,255,255,0.03)',
+                                                    color: isSelected ? '#f59e0b' : 'var(--text-secondary)',
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.15s ease',
+                                                }}
+                                            >
+                                                {isSelected ? '✓ ' : '+ '}{genre}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                    <input
+                                        type="text"
+                                        className="form-input"
+                                        style={{ fontSize: '0.85rem' }}
+                                        placeholder="Wpisz własny gatunek (np. Thriller) i kliknij Dodaj"
+                                        value={customGenreInput}
+                                        onChange={(e) => setCustomGenreInput(e.target.value)}
+                                        onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddCustomGenre(); } }}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="btn-secondary"
+                                        style={{ whiteSpace: 'nowrap', fontSize: '0.85rem', padding: '0 1rem' }}
+                                        onClick={handleAddCustomGenre}
+                                    >
+                                        + Dodaj gatunek
                                     </button>
                                 </div>
                             </div>
