@@ -64,13 +64,23 @@ export default async function Home() {
 
   const [
     { data: newsData },
-    { data: eventsData },
+    { data: initialEventsData },
     { data: shopProductsData }
   ] = await Promise.all([
     supabase.from('news').select('*').order('created_at', { ascending: false }).limit(7),
-    supabase.from('events').select('*').gte('event_date', todayStart.toISOString()).order('event_date', { ascending: true }).limit(30),
+    supabase.from('events').select('*').gte('event_date', todayStart.toISOString()).order('event_date', { ascending: true }).limit(50),
     supabase.from('products').select('id, slug, title, price, image_url, category').eq('is_active', true).gt('stock', 0),
   ]);
+
+  let eventsData = initialEventsData;
+  if (!eventsData || eventsData.length < 15) {
+    const { data: fallbackEvents } = await supabase
+      .from('events')
+      .select('*')
+      .order('event_date', { ascending: false })
+      .limit(30);
+    eventsData = fallbackEvents || eventsData;
+  }
 
   const news = (newsData || []) as NewsItem[];
   const events = (eventsData || []) as EventItem[];
