@@ -31,10 +31,10 @@ BEGIN
     END LOOP;
 END $$;
 
--- 3. Dodanie nowego ograniczenia check dla kategorii (przywrócenie oryginalnych 3 kategorii)
+-- 3. Dodanie nowego ograniczenia check dla kategorii (Muzyka, Bilety, Ubrania, Filmy)
 ALTER TABLE public.products
 ADD CONSTRAINT check_product_category 
-CHECK (category IN ('muzyka', 'bilety', 'ubrania'));
+CHECK (category IN ('muzyka', 'bilety', 'ubrania', 'filmy'));
 
 -- 4. Dodanie nowego ograniczenia check dla podkategorii muzycznych (w tym 'ELEKTRONIKA')
 ALTER TABLE public.products
