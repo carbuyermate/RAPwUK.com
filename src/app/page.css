@@ -112,19 +112,17 @@
   margin-top: 2rem;
 }
 
-/* Promo side zone – hidden on mobile */
+/* Promo side zone – sticky sidebar with Socials, Shop and Top 5 */
 .promo-zone-side {
   flex-shrink: 0;
-  width: 160px;
+  width: 270px;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  margin-top: 4.5rem;
-}
-
-.promo-zone-side__ad {
+  gap: 1.25rem;
+  margin-top: 0;
   position: sticky;
-  top: 100px;
+  top: 90px;
+  align-self: flex-start;
 }
 
 @media (max-width: 1100px) {
@@ -134,7 +132,8 @@
   .promo-zone-side {
     width: 100%;
     order: 3; /* Move to the end */
-    margin-top: 0;
+    margin-top: 2rem;
+    position: static;
   }
 }
 
@@ -323,11 +322,7 @@
   flex-direction: column;
   padding: 12px 0;
   overflow: hidden;
-  max-height: 840px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border-color) transparent;
+  max-height: none;
 }
 
 .events-list::-webkit-scrollbar {

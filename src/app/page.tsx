@@ -5,6 +5,8 @@ import { supabase } from "@/lib/supabase";
 import { PromoWidget } from "@/components/PromoWidget";
 import { ViewTracker } from "@/components/ViewTracker";
 import { SocialBox } from "@/components/SocialBox";
+import { ShopWidget } from "@/components/ShopWidget";
+import { TopNewsWidget } from "@/components/TopNewsWidget";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -61,13 +63,27 @@ export default async function Home() {
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
 
-  const [{ data: newsData }, { data: eventsData }] = await Promise.all([
+  const [
+    { data: newsData },
+    { data: eventsData },
+    { data: shopProductsData },
+    { data: topNewsData }
+  ] = await Promise.all([
     supabase.from('news').select('*').order('created_at', { ascending: false }).limit(7),
     supabase.from('events').select('*').gte('event_date', todayStart.toISOString()).order('event_date', { ascending: true }).limit(30),
+    supabase.from('products').select('id, slug, title, price, image_url, category').eq('is_active', true).gt('stock', 0),
+    supabase.from('news').select('id, slug, title, image_url, views, created_at').order('views', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false }).limit(5),
   ]);
 
   const news = (newsData || []) as NewsItem[];
   const events = (eventsData || []) as EventItem[];
+  const shopProducts = shopProductsData || [];
+  const topNews = (topNewsData || []) as any[];
+
+  // Pick one random product for the Shop Widget
+  const randomProduct = shopProducts.length > 0
+    ? shopProducts[Math.floor(Math.random() * shopProducts.length)]
+    : null;
 
   const featuredNews = news[0] || null;
   const restNews = news.slice(1);
@@ -249,11 +265,11 @@ export default async function Home() {
 
           {/* Removed bottom banner to move to footer */}
 
-        </div>{/* /.homepage-centre */}
-
         {/* Far-right: vertical sidebar */}
         <div className="promo-zone-side">
           <SocialBox />
+          <ShopWidget product={randomProduct} />
+          <TopNewsWidget news={topNews} />
         </div>
 
       </div>{/* /.homepage-outer */}
