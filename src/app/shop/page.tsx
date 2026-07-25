@@ -171,14 +171,12 @@ export default async function ShopPage() {
             <div className="shop-categories">
                 {CATEGORIES.map((cat) => (
                     <Link key={cat.id} href={cat.href} className="category-card">
-                        <div className="category-card-icon" style={{ color: 'var(--text-secondary)' }}>
+                        <div className="category-card-icon">
                             {cat.icon}
                         </div>
-                        <div className="category-card-body">
-                            <h2 className="category-card-title">{cat.title}</h2>
-                        </div>
+                        <h2 className="category-card-title">{cat.title}</h2>
                         <span className="category-card-arrow">
-                            Przeglądaj <ArrowRight size={13} />
+                            Przeglądaj <ArrowRight size={11} />
                         </span>
                     </Link>
                 ))}
