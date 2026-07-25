@@ -337,7 +337,7 @@
   padding: 12px 0;
   overflow: hidden;
   max-height: none;
-  margin-bottom: 1.5rem;
+  flex: 1;
 }
 
 .events-list::-webkit-scrollbar {
@@ -515,7 +515,6 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin-top: auto;
   padding: 0 20px;
   height: 48px;
   border: 1px solid var(--border-color);
@@ -529,6 +528,14 @@
   transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease;
   background: transparent;
   box-sizing: border-box;
+}
+
+.news-feed > .btn-block {
+  margin-top: auto;
+}
+
+.events-cta-btn {
+  margin-top: 1.5rem;
 }
 
 .news-feed > .btn-block:hover,
