@@ -68,7 +68,7 @@ export default async function Home() {
     { data: shopProductsData }
   ] = await Promise.all([
     supabase.from('news').select('*').order('created_at', { ascending: false }).limit(7),
-    supabase.from('events').select('*').gte('event_date', todayStart.toISOString()).order('event_date', { ascending: true }),
+    supabase.from('events').select('*').gte('event_date', todayStart.toISOString()).order('event_date', { ascending: true }).limit(35),
     supabase.from('products').select('id, slug, title, price, image_url, category').eq('is_active', true).gt('stock', 0),
   ]);
 
