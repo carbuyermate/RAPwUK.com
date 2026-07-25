@@ -49,19 +49,19 @@ export default function ShippingPage() {
 
                 <section style={{ marginBottom: '2.5rem' }}>
                     <h2 style={{ fontSize: '1.4rem', marginBottom: '1.2rem', color: 'var(--text-primary)', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <CreditCard size={22} style={{ color: '#f59e0b' }} /> Cennik Przesyłek (Płyty CD)
+                        <CreditCard size={22} style={{ color: '#f59e0b' }} /> Cennik Przesyłek (Płyty CD/DVD)
                     </h2>
                     <p style={{ marginBottom: '1rem' }}>
-                        Koszt przesyłki jest automatycznie obliczany w koszyku w zależności od liczby zamawianych płyt CD:
+                        Koszt przesyłki jest automatycznie obliczany w koszyku w zależności od liczby zamawianych płyt CD/DVD:
                     </p>
                     
                     <div className="pricing-table" style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '12px', marginBottom: '1rem' }}>
                         <div className="pricing-row" style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 0', borderBottom: '1px solid var(--border-color)' }}>
-                            <span>1 płyta CD</span>
+                            <span>1 płyta CD/DVD</span>
                             <strong style={{ fontSize: '1.1rem' }}>£3.00</strong>
                         </div>
                         <div className="pricing-row" style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 0' }}>
-                            <span>Każda kolejna płyta CD</span>
+                            <span>Każda kolejna płyta CD/DVD</span>
                             <strong style={{ fontSize: '1.1rem' }}>+ £1.00</strong>
                         </div>
                     </div>

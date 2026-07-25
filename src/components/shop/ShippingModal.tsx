@@ -70,15 +70,15 @@ export function ShippingModal({ isOpen, onClose }: ShippingModalProps) {
                             <Coins size={18} />
                         </div>
                         <div className="section-details">
-                            <h3>Cennik Dostawy (Płyty CD)</h3>
+                            <h3>Cennik Dostawy (Płyty CD/DVD)</h3>
                             <p>Koszt przesyłki zależy od liczby zamówionych płyt:</p>
                             <div className="pricing-table">
                                 <div className="pricing-row">
-                                    <span>1 płyta CD</span>
+                                    <span>1 płyta CD/DVD</span>
                                     <strong>£3.00</strong>
                                 </div>
                                 <div className="pricing-row">
-                                    <span>Każda kolejna płyta CD</span>
+                                    <span>Każda kolejna płyta CD/DVD</span>
                                     <strong>+ £1.00</strong>
                                 </div>
                             </div>
