@@ -63,7 +63,8 @@ export default function AddProductPage() {
     const [ticketType, setTicketType] = useState('');
     const [ticketAgeRestriction, setTicketAgeRestriction] = useState('');
     
-    // Parametry filmu (DVD / Blu-ray)
+    // Parametry filmu & muzyki
+    const [releaseYear, setReleaseYear] = useState('');
     const [movieFormat, setMovieFormat] = useState<'DVD' | 'Blu-ray' | 'VHS' | '4K UHD' | ''>('');
     const [movieCast, setMovieCast] = useState('');
     
@@ -258,6 +259,7 @@ export default function AddProductPage() {
                 movie_subtitles: category === 'filmy' && selectedSubtitles.length > 0 ? selectedSubtitles.join(', ') : null,
                 movie_cast: category === 'filmy' && movieCast ? movieCast : null,
                 movie_genre: category === 'filmy' && selectedGenres.length > 0 ? selectedGenres.join(', ') : null,
+                release_year: (category === 'muzyka' || category === 'filmy') && releaseYear ? releaseYear : null,
             }]);
             if (insertErr) throw insertErr;
             router.push('/dashboard/store?tab=products');
@@ -347,6 +349,16 @@ export default function AddProductPage() {
                                     <option value="POLSKI RAP W UK">POLSKI RAP W UK</option>
                                     <option value="ELEKTRONIKA">ELEKTRONIKA</option>
                                 </select>
+                            </div>
+                            <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                                <label className="form-label">Rok wydania / produkcji</label>
+                                <input
+                                    type="text"
+                                    className="form-input"
+                                    placeholder="np. 1994 lub 2023"
+                                    value={releaseYear}
+                                    onChange={(e) => setReleaseYear(e.target.value)}
+                                />
                             </div>
                             <div className="form-group" style={{ gridColumn: 'span 2' }}>
                                 <label className="form-label">Stan ogólny produktu</label>
@@ -472,6 +484,17 @@ export default function AddProductPage() {
                                     <option value="VHS">📼 VHS</option>
                                     <option value="4K UHD">✨ 4K UHD</option>
                                 </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label className="form-label">Rok wydania / produkcji</label>
+                                <input
+                                    type="text"
+                                    className="form-input"
+                                    placeholder="np. 1994 lub 2023"
+                                    value={releaseYear}
+                                    onChange={(e) => setReleaseYear(e.target.value)}
+                                />
                             </div>
 
                             <div className="form-group">

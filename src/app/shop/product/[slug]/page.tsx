@@ -198,6 +198,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                                         </strong>
                                     </li>
                                 )}
+                                {product.release_year && (
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>📅 Rok wydania:</span>
+                                        <strong style={{ color: 'var(--text-primary)' }}>{product.release_year}</strong>
+                                    </li>
+                                )}
                                 {product.condition_media && (
                                     <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>Stan nośnika:</span>
@@ -336,6 +342,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                                     <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>📽️ Gatunek:</span>
                                         <strong style={{ color: 'var(--text-primary)' }}>{product.movie_genre}</strong>
+                                    </li>
+                                )}
+                                {product.release_year && (
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>📅 Rok produkcji / premiery:</span>
+                                        <strong style={{ color: 'var(--text-primary)' }}>{product.release_year}</strong>
                                     </li>
                                 )}
                                 {product.movie_format && (
