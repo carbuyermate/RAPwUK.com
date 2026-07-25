@@ -61,6 +61,7 @@ export interface Product {
     movie_format?: string | null;
     movie_language?: string | null;
     movie_subtitles?: string | null;
+    movie_cast?: string | null;
     created_at?: string;
 }
 

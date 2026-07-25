@@ -310,7 +310,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                         </div>
                     )}
 
-                    {product.category === 'filmy' && (product.movie_format || product.movie_language || product.movie_subtitles || product.item_condition || product.condition_media || product.condition_notes) && (
+                    {product.category === 'filmy' && (product.movie_format || product.movie_language || product.movie_subtitles || product.movie_cast || product.item_condition || product.condition_media || product.condition_cover || product.condition_notes) && (
                         <div style={{
                             margin: '1.5rem 0',
                             padding: '1.25rem',
@@ -323,6 +323,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                                 <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
                                     🎬 Szczegóły Wydania Filmowego & Stan:
                                 </h3>
+                                <ConditionGuideButton />
                             </div>
                             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                 {product.item_condition && (
@@ -349,10 +350,22 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                                         <strong style={{ color: 'var(--text-primary)' }}>{product.movie_subtitles}</strong>
                                     </li>
                                 )}
+                                {product.movie_cast && (
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>🎭 Obsada / Aktorzy:</span>
+                                        <strong style={{ color: 'var(--text-primary)' }}>{product.movie_cast}</strong>
+                                    </li>
+                                )}
                                 {product.condition_media && (
                                     <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>Stan nośnika (Płyty):</span>
                                         <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{product.condition_media}</span>
+                                    </li>
+                                )}
+                                {product.condition_cover && (
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>Stan okładki / poligrafii:</span>
+                                        <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{product.condition_cover}</span>
                                     </li>
                                 )}
                                 {product.condition_notes && (

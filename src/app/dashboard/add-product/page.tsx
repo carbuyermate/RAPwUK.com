@@ -65,8 +65,85 @@ export default function AddProductPage() {
     
     // Parametry filmu (DVD / Blu-ray)
     const [movieFormat, setMovieFormat] = useState<'DVD' | 'Blu-ray' | 'VHS' | '4K UHD' | ''>('');
-    const [movieLanguage, setMovieLanguage] = useState('');
-    const [movieSubtitles, setMovieSubtitles] = useState('');
+    const [movieCast, setMovieCast] = useState('');
+    
+    // Audio Languages (Multi-select + Custom)
+    const [audioOptions, setAudioOptions] = useState<string[]>([
+        'Polski (Lektor)', 'Polski (Dubbing)', 'Polski (Oryginał)',
+        'Angielski', 'Francuski', 'Niemiecki', 'Włoski', 'Hiszpański', 'Japoński'
+    ]);
+    const [selectedAudioLangs, setSelectedAudioLangs] = useState<string[]>(['Angielski']);
+    const [customAudioInput, setCustomAudioInput] = useState('');
+
+    // Subtitles (Multi-select + Custom)
+    const [subOptions, setSubOptions] = useState<string[]>([
+        'Polskie', 'Angielskie', 'Francuskie', 'Niemieckie', 'Włoskie', 'Hiszpańskie', 'Brak napisów'
+    ]);
+    const [selectedSubtitles, setSelectedSubtitles] = useState<string[]>(['Polskie']);
+    const [customSubInput, setCustomSubInput] = useState('');
+
+    useEffect(() => {
+        try {
+            const savedAudio = JSON.parse(localStorage.getItem('rapwuk_custom_audio_languages') || '[]');
+            if (Array.isArray(savedAudio) && savedAudio.length > 0) {
+                setAudioOptions(prev => Array.from(new Set([...prev, ...savedAudio])));
+            }
+            const savedSubs = JSON.parse(localStorage.getItem('rapwuk_custom_subtitles') || '[]');
+            if (Array.isArray(savedSubs) && savedSubs.length > 0) {
+                setSubOptions(prev => Array.from(new Set([...prev, ...savedSubs])));
+            }
+        } catch (e) {}
+    }, []);
+
+    const toggleAudioLang = (lang: string) => {
+        setSelectedAudioLangs(prev => 
+            prev.includes(lang) ? prev.filter(l => l !== lang) : [...prev, lang]
+        );
+    };
+
+    const handleAddCustomAudio = () => {
+        const trimmed = customAudioInput.trim();
+        if (!trimmed) return;
+        if (!audioOptions.includes(trimmed)) {
+            const updated = [...audioOptions, trimmed];
+            setAudioOptions(updated);
+            try {
+                const saved = JSON.parse(localStorage.getItem('rapwuk_custom_audio_languages') || '[]');
+                if (!saved.includes(trimmed)) {
+                    localStorage.setItem('rapwuk_custom_audio_languages', JSON.stringify([...saved, trimmed]));
+                }
+            } catch (e) {}
+        }
+        if (!selectedAudioLangs.includes(trimmed)) {
+            setSelectedAudioLangs(prev => [...prev, trimmed]);
+        }
+        setCustomAudioInput('');
+    };
+
+    const toggleSubtitle = (sub: string) => {
+        setSelectedSubtitles(prev => 
+            prev.includes(sub) ? prev.filter(s => s !== sub) : [...prev, sub]
+        );
+    };
+
+    const handleAddCustomSub = () => {
+        const trimmed = customSubInput.trim();
+        if (!trimmed) return;
+        if (!subOptions.includes(trimmed)) {
+            const updated = [...subOptions, trimmed];
+            setSubOptions(updated);
+            try {
+                const saved = JSON.parse(localStorage.getItem('rapwuk_custom_subtitles') || '[]');
+                if (!saved.includes(trimmed)) {
+                    localStorage.setItem('rapwuk_custom_subtitles', JSON.stringify([...saved, trimmed]));
+                }
+            } catch (e) {}
+        }
+        if (!selectedSubtitles.includes(trimmed)) {
+            setSelectedSubtitles(prev => [...prev, trimmed]);
+        }
+        setCustomSubInput('');
+    };
     
     const router = useRouter();
 
@@ -128,7 +205,7 @@ export default function AddProductPage() {
                 category, stock: parseInt(stock), is_active: isActive, image_url,
                 media_type: category === 'muzyka' && mediaType ? mediaType : null,
                 condition_media: (category === 'muzyka' || category === 'filmy') && conditionMedia ? conditionMedia : null,
-                condition_cover: category === 'muzyka' && conditionCover ? conditionCover : null,
+                condition_cover: (category === 'muzyka' || category === 'filmy') && conditionCover ? conditionCover : null,
                 condition_notes: (category === 'muzyka' || category === 'filmy') && conditionNotes ? conditionNotes : null,
                 music_category: category === 'muzyka' ? musicCategory : null,
                 item_condition: (category === 'muzyka' || category === 'filmy') && itemCondition ? itemCondition : null,
@@ -140,8 +217,9 @@ export default function AddProductPage() {
                 ticket_type: category === 'bilety' ? ticketType : null,
                 ticket_age_restriction: category === 'bilety' ? ticketAgeRestriction : null,
                 movie_format: category === 'filmy' ? movieFormat : null,
-                movie_language: category === 'filmy' ? movieLanguage : null,
-                movie_subtitles: category === 'filmy' ? movieSubtitles : null,
+                movie_language: category === 'filmy' && selectedAudioLangs.length > 0 ? selectedAudioLangs.join(', ') : null,
+                movie_subtitles: category === 'filmy' && selectedSubtitles.length > 0 ? selectedSubtitles.join(', ') : null,
+                movie_cast: category === 'filmy' && movieCast ? movieCast : null,
             }]);
             if (insertErr) throw insertErr;
             router.push('/dashboard/store?tab=products');
@@ -346,6 +424,7 @@ export default function AddProductPage() {
                             <h3 style={{ gridColumn: 'span 2', fontSize: '1rem', fontWeight: 'bold', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.5rem', marginBottom: '0.25rem' }}>
                                 🎬 Parametry Wydania Filmowego & Stanu
                             </h3>
+
                             <div className="form-group">
                                 <label className="form-label">Format / Nośnik</label>
                                 <select className="form-input" value={movieFormat} onChange={(e) => setMovieFormat(e.target.value as any)} required>
@@ -356,6 +435,7 @@ export default function AddProductPage() {
                                     <option value="4K UHD">✨ 4K UHD</option>
                                 </select>
                             </div>
+
                             <div className="form-group">
                                 <label className="form-label">Stan ogólny filmu</label>
                                 <select className="form-input" value={itemCondition} onChange={(e) => setItemCondition(e.target.value as any)} required>
@@ -365,31 +445,9 @@ export default function AddProductPage() {
                                     <option value="Używana">💿 Używany</option>
                                 </select>
                             </div>
+
                             <div className="form-group">
-                                <label className="form-label">Język audio (Lektor / Dubbing)</label>
-                                <select className="form-input" value={movieLanguage} onChange={(e) => setMovieLanguage(e.target.value)}>
-                                    <option value="">-- Wybierz język audio --</option>
-                                    <option value="Polski (Lektor)">🇵🇱 Polski (Lektor)</option>
-                                    <option value="Polski (Dubbing)">🇵🇱 Polski (Dubbing)</option>
-                                    <option value="Polski (Oryginał)">🇵🇱 Polski (Oryginał)</option>
-                                    <option value="Angielski">🇬🇧 Angielski</option>
-                                    <option value="Polski + Angielski">🇵🇱🇬🇧 Polski + Angielski</option>
-                                    <option value="Inny (Więcej w opisie)">🌐 Inny / Więcej w opisie</option>
-                                </select>
-                            </div>
-                            <div className="form-group">
-                                <label className="form-label">Napisy</label>
-                                <select className="form-input" value={movieSubtitles} onChange={(e) => setMovieSubtitles(e.target.value)}>
-                                    <option value="">-- Wybierz napisy --</option>
-                                    <option value="Polskie">🇵🇱 Polskie</option>
-                                    <option value="Angielskie">🇬🇧 Angielskie</option>
-                                    <option value="Polskie i Angielskie">🇵🇱🇬🇧 Polskie i Angielskie</option>
-                                    <option value="Brak napisów">❌ Brak napisów</option>
-                                    <option value="Inne">🌐 Inne</option>
-                                </select>
-                            </div>
-                            <div className="form-group" style={{ gridColumn: 'span 2' }}>
-                                <label className="form-label">Stan nośnika / płyty</label>
+                                <label className="form-label">Stan nośnika / płyty (Media)</label>
                                 <select className="form-input" value={conditionMedia} onChange={(e) => setConditionMedia(e.target.value)}>
                                     <option value="">-- Wybierz stan płyty --</option>
                                     <option value="Mint (M)">Mint (M) – Idealny</option>
@@ -400,6 +458,129 @@ export default function AddProductPage() {
                                     <option value="Poor (P)">Poor (P) – Słaby</option>
                                 </select>
                             </div>
+
+                            <div className="form-group">
+                                <label className="form-label">Stan okładki / poligrafii (Sleeve)</label>
+                                <select className="form-input" value={conditionCover} onChange={(e) => setConditionCover(e.target.value)}>
+                                    <option value="">-- Wybierz stan okładki --</option>
+                                    <option value="Mint (M)">Mint (M) – Idealny</option>
+                                    <option value="Near Mint (NM)">Near Mint (NM) – Prawie idealny</option>
+                                    <option value="Very Good Plus (VG+)">Very Good Plus (VG+) – Bardzo dobry plus</option>
+                                    <option value="Very Good (VG)">Very Good (VG) – Bardzo dobry</option>
+                                    <option value="Good (G)">Good (G) – Dobry</option>
+                                    <option value="Poor (P)">Poor (P) – Słaby</option>
+                                </select>
+                            </div>
+
+                            <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                                <label className="form-label">Obsada (Występujący aktorzy)</label>
+                                <input
+                                    type="text"
+                                    className="form-input"
+                                    placeholder="np. Robert De Niro, Al Pacino, Val Kilmer"
+                                    value={movieCast}
+                                    onChange={(e) => setMovieCast(e.target.value)}
+                                />
+                            </div>
+
+                            {/* Języki audio (Multi-select) */}
+                            <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                                <label className="form-label">Język audio (Wybierz jeden lub kilka)</label>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.75rem' }}>
+                                    {audioOptions.map((lang) => {
+                                        const isSelected = selectedAudioLangs.includes(lang);
+                                        return (
+                                            <button
+                                                key={lang}
+                                                type="button"
+                                                onClick={() => toggleAudioLang(lang)}
+                                                style={{
+                                                    padding: '5px 12px',
+                                                    borderRadius: '20px',
+                                                    fontSize: '0.82rem',
+                                                    fontWeight: 600,
+                                                    border: isSelected ? '1px solid #f59e0b' : '1px solid rgba(255,255,255,0.1)',
+                                                    background: isSelected ? 'rgba(245,158,11,0.18)' : 'rgba(255,255,255,0.03)',
+                                                    color: isSelected ? '#f59e0b' : 'var(--text-secondary)',
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.15s ease',
+                                                }}
+                                            >
+                                                {isSelected ? '✓ ' : '+ '}{lang}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                    <input
+                                        type="text"
+                                        className="form-input"
+                                        style={{ fontSize: '0.85rem' }}
+                                        placeholder="Wpisz własny język audio (np. Szwedzki) i kliknij Dodaj"
+                                        value={customAudioInput}
+                                        onChange={(e) => setCustomAudioInput(e.target.value)}
+                                        onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddCustomAudio(); } }}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="btn-secondary"
+                                        style={{ whiteSpace: 'nowrap', fontSize: '0.85rem', padding: '0 1rem' }}
+                                        onClick={handleAddCustomAudio}
+                                    >
+                                        + Dodaj język
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Napisy (Multi-select) */}
+                            <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                                <label className="form-label">Napisy (Wybierz jedne lub kilka)</label>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.75rem' }}>
+                                    {subOptions.map((sub) => {
+                                        const isSelected = selectedSubtitles.includes(sub);
+                                        return (
+                                            <button
+                                                key={sub}
+                                                type="button"
+                                                onClick={() => toggleSubtitle(sub)}
+                                                style={{
+                                                    padding: '5px 12px',
+                                                    borderRadius: '20px',
+                                                    fontSize: '0.82rem',
+                                                    fontWeight: 600,
+                                                    border: isSelected ? '1px solid #f59e0b' : '1px solid rgba(255,255,255,0.1)',
+                                                    background: isSelected ? 'rgba(245,158,11,0.18)' : 'rgba(255,255,255,0.03)',
+                                                    color: isSelected ? '#f59e0b' : 'var(--text-secondary)',
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.15s ease',
+                                                }}
+                                            >
+                                                {isSelected ? '✓ ' : '+ '}{sub}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                    <input
+                                        type="text"
+                                        className="form-input"
+                                        style={{ fontSize: '0.85rem' }}
+                                        placeholder="Wpisz własne napisy (np. Japońskie) i kliknij Dodaj"
+                                        value={customSubInput}
+                                        onChange={(e) => setCustomSubInput(e.target.value)}
+                                        onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddCustomSub(); } }}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="btn-secondary"
+                                        style={{ whiteSpace: 'nowrap', fontSize: '0.85rem', padding: '0 1rem' }}
+                                        onClick={handleAddCustomSub}
+                                    >
+                                        + Dodaj napisy
+                                    </button>
+                                </div>
+                            </div>
+
                             <div className="form-group" style={{ gridColumn: 'span 2' }}>
                                 <label className="form-label">Uwagi do stanu / wydania</label>
                                 <textarea className="form-input" style={{ minHeight: '60px', resize: 'vertical' }} placeholder="np. Wydanie 2-płytowe, ryski bez wpływu na odtwarzanie, książeczka w zestawie" value={conditionNotes} onChange={(e) => setConditionNotes(e.target.value)} />
