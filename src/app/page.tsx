@@ -78,12 +78,17 @@ export default async function Home() {
       .from('events')
       .select('*')
       .order('event_date', { ascending: false })
-      .limit(30);
-    eventsData = fallbackEvents || eventsData;
+      .limit(40);
+    if (fallbackEvents && fallbackEvents.length > 0) {
+      const futureEvents = eventsData || [];
+      const futureIds = new Set(futureEvents.map(e => e.id));
+      const pastEvents = fallbackEvents.filter(e => !futureIds.has(e.id));
+      eventsData = [...futureEvents, ...pastEvents];
+    }
   }
 
   const news = (newsData || []) as NewsItem[];
-  const events = ((eventsData || []) as EventItem[]).slice(0, 14);
+  const events = ((eventsData || []) as EventItem[]).slice(0, 15);
   const shopProducts = shopProductsData || [];
 
   // Pick one random product for the Shop Widget
