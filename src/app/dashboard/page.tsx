@@ -240,6 +240,23 @@ export default function DashboardPage() {
                     </div>
                 </Link>
 
+                {/* Tickets Module */}
+                <Link href="/dashboard/tickets" className="stat-card glass-panel" style={{ cursor: 'pointer', textDecoration: 'none', transition: 'all 0.2s', display: 'flex', flexDirection: 'column', gap: '1rem', borderColor: 'rgba(236,72,153,0.15)', background: 'rgba(236,72,153,0.02)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <div style={{ padding: '12px', background: 'rgba(236,72,153,0.08)', borderRadius: '12px' }}>
+                            <span style={{ fontSize: '28px', lineHeight: 1 }}>🎟️</span>
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-lg mb-1">Bilety & Wejściówki</h3>
+                            <p className="text-secondary text-sm">Zarządzaj biletami i listami gości (PDF)</p>
+                        </div>
+                    </div>
+                    <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between' }}>
+                        <span className="text-secondary">Zarządzaj biletami</span>
+                        <span style={{ color: '#ec4899', fontWeight: 700 }}>→</span>
+                    </div>
+                </Link>
+
             </div>
         </div>
     );

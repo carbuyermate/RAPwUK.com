@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { BackButton } from '@/components/shop/BackButton';
 import { AddToCartButton } from '@/components/shop/AddToCartButton';
 import { ShippingInfoButton } from '@/components/shop/ShippingInfoButton';
+import { TicketRulesButton } from '@/components/shop/TicketRulesButton';
 import { ConditionGuideButton } from '@/components/shop/ConditionGuideButton';
 import { ProductInquiryButton } from '@/components/shop/ProductInquiryButton';
 import type { Product } from '@/app/shop/page';
@@ -251,12 +252,27 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                                 </h3>
                             </div>
                             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                {product.ticket_event_date && (
-                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
-                                        <span style={{ color: 'var(--text-secondary)' }}>📅 Data i godzina:</span>
-                                        <strong style={{ color: 'var(--text-primary)' }}>{product.ticket_event_date}</strong>
-                                    </li>
-                                )}
+                                {product.ticket_event_date && (() => {
+                                    const dateStr = product.ticket_event_date;
+                                    const isNewFormat = dateStr.includes('-') && dateStr.includes(':');
+                                    const parts = dateStr.split(' ');
+                                    const datePart = isNewFormat ? parts[0] : dateStr;
+                                    const timePart = isNewFormat && parts.length > 1 ? parts[1] : null;
+                                    return (
+                                        <>
+                                            <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                                <span style={{ color: 'var(--text-secondary)' }}>📅 Data wydarzenia:</span>
+                                                <strong style={{ color: 'var(--text-primary)' }}>{datePart}</strong>
+                                            </li>
+                                            {timePart && (
+                                                <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                                    <span style={{ color: 'var(--text-secondary)' }}>⏰ Godzina:</span>
+                                                    <strong style={{ color: 'var(--text-primary)' }}>{timePart}</strong>
+                                                </li>
+                                            )}
+                                        </>
+                                    );
+                                })()}
                                 {product.ticket_venue && (
                                     <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>🏟️ Klub / Miejsce:</span>
@@ -427,6 +443,9 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                     </p>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        {product.category === 'bilety' && (
+                            <TicketRulesButton />
+                        )}
                         <ShippingInfoButton />
                         <ProductInquiryButton product={product} />
                     </div>

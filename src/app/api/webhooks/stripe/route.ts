@@ -45,6 +45,10 @@ export async function POST(req: NextRequest) {
             const shippingMethod = shippingMethodField?.dropdown?.value || null;
             const lockerCodeField = customFields.find((f: any) => f.key === 'locker_code');
             const lockerCode = lockerCodeField?.text?.value || null;
+            const ticketPasswordField = customFields.find((f: any) => f.key === 'ticket_password');
+            const ticketPassword = ticketPasswordField?.text?.value || null;
+            const ticketBuyerNameField = customFields.find((f: any) => f.key === 'ticket_buyer_name');
+            const ticketBuyerName = ticketBuyerNameField?.text?.value || null;
 
             const shippingDetails = session.shipping_details || session.collected_information?.shipping_details;
             const customerDetails = session.customer_details || session.collected_information?.customer_details;
@@ -112,6 +116,18 @@ export async function POST(req: NextRequest) {
                 } else {
                     console.log(`[Webhook] Order ${dbOrder.id} updated to PAID via RPC`);
                 }
+                
+                // Update ticket info
+                if (ticketPassword || ticketBuyerName) {
+                    const { error: ticketUpdateErr } = await supabaseAdmin
+                        .from('orders')
+                        .update({
+                            ticket_password: ticketPassword,
+                            ticket_buyer_name: ticketBuyerName
+                        })
+                        .eq('id', dbOrder.id);
+                    if (ticketUpdateErr) console.error('[Webhook] Failed to update ticket info:', ticketUpdateErr.message);
+                }
 
                 // Note: Stock decrement is handled automatically via public.handle_order_stock_change database trigger.
                 // Fail-safe / fallback: Decrement stock directly in Node code in case the database trigger is not installed or failed.
@@ -156,7 +172,9 @@ export async function POST(req: NextRequest) {
                         status: 'paid',
                         stripe_session_id: session.id,
                         items: items,
-                        shipping_address: shippingAddressObj
+                        shipping_address: shippingAddressObj,
+                        ticket_password: ticketPassword,
+                        ticket_buyer_name: ticketBuyerName
                     })
                     .select('id')
                     .single();

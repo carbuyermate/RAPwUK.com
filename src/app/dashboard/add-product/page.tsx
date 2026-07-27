@@ -58,6 +58,7 @@ export default function AddProductPage() {
     
     // Parametry biletów / eventu
     const [ticketEventDate, setTicketEventDate] = useState('');
+    const [ticketEventTime, setTicketEventTime] = useState('');
     const [ticketVenue, setTicketVenue] = useState('');
     const [ticketCity, setTicketCity] = useState('');
     const [ticketType, setTicketType] = useState('');
@@ -218,8 +219,8 @@ export default function AddProductPage() {
             if (category === 'ubrania' && !clothingCondition) {
                 throw new Error('Musisz wybrać stan ubrania (Nowe lub Używane).');
             }
-            if (category === 'bilety' && (!ticketEventDate || !ticketCity || !ticketVenue)) {
-                throw new Error('Musisz podać datę, miasto i klub/miejsce wydarzenia dla biletów.');
+            if (category === 'bilety' && (!ticketEventDate || !ticketEventTime || !ticketCity || !ticketVenue)) {
+                throw new Error('Musisz podać datę, godzinę, miasto i klub/miejsce wydarzenia dla biletów.');
             }
             if (category === 'filmy' && !movieFormat) {
                 throw new Error('Musisz wybrać format filmu (DVD, Blu-ray, VHS lub 4K UHD).');
@@ -237,6 +238,8 @@ export default function AddProductPage() {
                 image_url = publicUrl;
             }
 
+            const finalTicketEventDate = ticketEventDate && ticketEventTime ? `${ticketEventDate} ${ticketEventTime}` : null;
+
             const { error: insertErr } = await supabase.from('products').insert([{
                 title, slug: slug || createSlug(title), description, price: parseFloat(price),
                 purchase_price: parseFloat(purchasePrice) || 0.00,
@@ -249,7 +252,7 @@ export default function AddProductPage() {
                 item_condition: (category === 'muzyka' || category === 'filmy') && itemCondition ? itemCondition : null,
                 clothing_size: category === 'ubrania' ? clothingSize : null,
                 clothing_condition: category === 'ubrania' ? clothingCondition : null,
-                ticket_event_date: category === 'bilety' ? ticketEventDate : null,
+                ticket_event_date: category === 'bilety' ? finalTicketEventDate : null,
                 ticket_venue: category === 'bilety' ? ticketVenue : null,
                 ticket_city: category === 'bilety' ? ticketCity : null,
                 ticket_type: category === 'bilety' ? ticketType : null,
@@ -433,9 +436,13 @@ export default function AddProductPage() {
                             <h3 style={{ gridColumn: 'span 2', fontSize: '1rem', fontWeight: 'bold', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.5rem', marginBottom: '0.25rem' }}>
                                 🎟️ Szczegóły Wydarzenia & Biletów
                             </h3>
-                            <div className="form-group" style={{ gridColumn: 'span 2' }}>
-                                <label className="form-label">Data i godzina wydarzenia</label>
-                                <input type="text" className="form-input" placeholder="np. 15 Listopada 2026, godz. 20:00" value={ticketEventDate} onChange={(e) => setTicketEventDate(e.target.value)} required />
+                            <div className="form-group">
+                                <label className="form-label">Data wydarzenia (Kalendarz)</label>
+                                <input type="date" className="form-input" value={ticketEventDate} onChange={(e) => setTicketEventDate(e.target.value)} required />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Godzina wydarzenia</label>
+                                <input type="time" className="form-input" value={ticketEventTime} onChange={(e) => setTicketEventTime(e.target.value)} required />
                             </div>
                             <div className="form-group">
                                 <label className="form-label">Miasto</label>

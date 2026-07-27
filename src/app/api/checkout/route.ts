@@ -151,6 +151,10 @@ export async function POST(req: NextRequest) {
             },
         };
 
+        // Calculate ticket quantity to see if we need ticket custom fields
+        const ticketItems = verifiedItems.filter((item: { category: string; quantity: number }) => item.category === 'bilety');
+        const ticketQty = ticketItems.reduce((sum: number, item: { quantity: number }) => sum + item.quantity, 0);
+
         if (physicalQty > 0) {
             sessionOptions.shipping_address_collection = {
                 allowed_countries: ['GB'],
@@ -159,6 +163,7 @@ export async function POST(req: NextRequest) {
                 enabled: true,
             };
             sessionOptions.custom_fields = [
+                ...(sessionOptions.custom_fields || []),
                 {
                     key: 'shipping_method',
                     label: {
@@ -182,6 +187,30 @@ export async function POST(req: NextRequest) {
                     type: 'text',
                     optional: true,
                 },
+            ];
+        }
+
+        if (ticketQty > 0) {
+            sessionOptions.custom_fields = [
+                ...(sessionOptions.custom_fields || []),
+                {
+                    key: 'ticket_buyer_name',
+                    label: {
+                        type: 'custom',
+                        custom: 'Imię i nazwisko osoby na bramce (odpowiedzialnej)',
+                    },
+                    type: 'text',
+                    optional: false,
+                },
+                {
+                    key: 'ticket_password',
+                    label: {
+                        type: 'custom',
+                        custom: 'Hasło (słowo, które podasz na bramce)',
+                    },
+                    type: 'text',
+                    optional: false,
+                }
             ];
         }
 
