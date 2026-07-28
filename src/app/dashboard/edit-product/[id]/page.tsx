@@ -594,6 +594,7 @@ export default function EditProductPage() {
                                 <select className="form-input" value={ticketAgeRestriction} onChange={(e) => setTicketAgeRestriction(e.target.value)}>
                                     <option value="">-- Wybierz wymóg wiekowy --</option>
                                     <option value="18+">🔞 18+</option>
+                                    <option value="16+">🔞 16+</option>
                                     <option value="16+ (z opiekunem)">🔞 16+ (z opiekunem)</option>
                                     <option value="14+ (z opiekunem)">🔞 14+ (z opiekunem)</option>
                                     <option value="Bez ograniczeń">👨‍👩‍👧 Bez ograniczeń wiekowych</option>
