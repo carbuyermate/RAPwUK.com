@@ -62,6 +62,7 @@ export default function EditProductPage() {
     const [ticketEventDate, setTicketEventDate] = useState('');
     const [ticketEventTime, setTicketEventTime] = useState('');
     const [ticketVenue, setTicketVenue] = useState('');
+    const [ticketVenueAddress, setTicketVenueAddress] = useState('');
     const [ticketCity, setTicketCity] = useState('');
     const [ticketType, setTicketType] = useState('');
     const [ticketAgeRestriction, setTicketAgeRestriction] = useState('');
@@ -244,6 +245,7 @@ export default function EditProductPage() {
                     setTicketEventTime('');
                 }
                 setTicketVenue(data.ticket_venue || '');
+                setTicketVenueAddress(data.ticket_venue_address || '');
                 setTicketCity(data.ticket_city || '');
                 setTicketType(data.ticket_type || '');
                 setTicketAgeRestriction(data.ticket_age_restriction || '');
@@ -354,6 +356,7 @@ export default function EditProductPage() {
                     clothing_condition: category === 'ubrania' ? clothingCondition : null,
                     ticket_event_date: category === 'bilety' ? finalTicketEventDate : null,
                     ticket_venue: category === 'bilety' ? ticketVenue : null,
+                    ticket_venue_address: category === 'bilety' ? ticketVenueAddress : null,
                     ticket_city: category === 'bilety' ? ticketCity : null,
                     ticket_type: category === 'bilety' ? ticketType : null,
                     ticket_age_restriction: category === 'bilety' ? ticketAgeRestriction : null,
@@ -568,6 +571,12 @@ export default function EditProductPage() {
                                 <label className="form-label">Klub / Miejsce (Venue)</label>
                                 <input type="text" className="form-input" placeholder="np. O2 Academy Islington" value={ticketVenue} onChange={(e) => setTicketVenue(e.target.value)} required />
                             </div>
+
+                            <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                                <label className="form-label">Adres Klubu / Miejsca (Opcjonalnie)</label>
+                                <input type="text" className="form-input" placeholder="np. 16 Parkfield St, London N1 0PS" value={ticketVenueAddress} onChange={(e) => setTicketVenueAddress(e.target.value)} />
+                            </div>
+
                             <div className="form-group">
                                 <label className="form-label">Rodzaj / Pula biletu</label>
                                 <select className="form-input" value={ticketType} onChange={(e) => setTicketType(e.target.value)}>

@@ -255,9 +255,26 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                                 {product.ticket_event_date && (() => {
                                     const dateStr = product.ticket_event_date;
                                     const isNewFormat = dateStr.includes('-') && dateStr.includes(':');
-                                    const parts = dateStr.split(' ');
-                                    const datePart = isNewFormat ? parts[0] : dateStr;
-                                    const timePart = isNewFormat && parts.length > 1 ? parts[1] : null;
+                                    let datePart = dateStr;
+                                    let timePart = null;
+                                    
+                                    if (isNewFormat) {
+                                        const parts = dateStr.split(' ');
+                                        datePart = parts[0];
+                                        if (parts.length > 1) timePart = parts.slice(1).join(' ');
+                                    } else {
+                                        // Handle older formats if they contain a space, e.g. "29.8.2026 19:00"
+                                        const spaceIndex = dateStr.lastIndexOf(' ');
+                                        if (spaceIndex !== -1 && dateStr.length - spaceIndex <= 6 && dateStr.includes(':')) {
+                                            datePart = dateStr.substring(0, spaceIndex).trim();
+                                            timePart = dateStr.substring(spaceIndex + 1).trim();
+                                        } else if (dateStr.includes(',')) {
+                                            const parts = dateStr.split(',');
+                                            datePart = parts[0];
+                                            if (parts.length > 1) timePart = parts.slice(1).join(',').trim();
+                                        }
+                                    }
+
                                     return (
                                         <>
                                             <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
@@ -277,6 +294,19 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                                     <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>🏟️ Klub / Miejsce:</span>
                                         <strong style={{ color: 'var(--text-primary)' }}>{product.ticket_venue}</strong>
+                                    </li>
+                                )}
+                                {(product as any).ticket_venue_address && (
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>📍 Adres:</span>
+                                        <a 
+                                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((product as any).ticket_venue_address)}`} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            style={{ color: '#3b82f6', fontWeight: 600, textDecoration: 'underline' }}
+                                        >
+                                            {(product as any).ticket_venue_address}
+                                        </a>
                                     </li>
                                 )}
                                 {product.ticket_city && (
