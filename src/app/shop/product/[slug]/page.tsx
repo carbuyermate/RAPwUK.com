@@ -171,12 +171,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                         <div style={{
                             margin: '1.5rem 0',
                             padding: '1.25rem',
-                            background: 'rgba(255,255,255,0.02)',
+                            background: 'var(--bg-secondary)',
                             borderRadius: '10px',
-                            border: '1px solid rgba(255,255,255,0.06)',
+                            border: '1px solid var(--border-color)',
                             fontSize: '0.9rem'
                         }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '0.5rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>
                                 <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
                                     Szczegóły wydania & stan przedmiotu:
                                 </h3>
@@ -184,7 +184,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                             </div>
                             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                 {product.item_condition && (
-                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>Stan ogólny:</span>
                                         <strong style={{ color: 'var(--text-primary)' }}>
                                             {product.item_condition}
@@ -192,7 +192,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                                     </li>
                                 )}
                                 {product.media_type && (
-                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>Nośnik:</span>
                                         <strong style={{ color: 'var(--text-primary)' }}>
                                             {product.media_type === 'CD' ? '💿 CD' : product.media_type === 'DVD' ? '📀 DVD' : '📼 Kaseta'}
@@ -200,19 +200,19 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                                     </li>
                                 )}
                                 {product.release_year && (
-                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>📅 Rok wydania:</span>
                                         <strong style={{ color: 'var(--text-primary)' }}>{product.release_year}</strong>
                                     </li>
                                 )}
                                 {product.condition_media && (
-                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>Stan nośnika:</span>
                                         <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{product.condition_media}</span>
                                     </li>
                                 )}
                                 {product.condition_cover && (
-                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>Stan okładki:</span>
                                         <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{product.condition_cover}</span>
                                     </li>
@@ -241,12 +241,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                         <div style={{
                             margin: '1.5rem 0',
                             padding: '1.25rem',
-                            background: 'rgba(255,255,255,0.02)',
+                            background: 'var(--bg-secondary)',
                             borderRadius: '10px',
-                            border: '1px solid rgba(255,255,255,0.06)',
+                            border: '1px solid var(--border-color)',
                             fontSize: '0.9rem'
                         }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '0.5rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>
                                 <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
                                     🎟️ Szczegóły Wydarzenia & Biletów:
                                 </h3>
@@ -277,12 +277,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
                                     return (
                                         <>
-                                            <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                            <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.25rem' }}>
                                                 <span style={{ color: 'var(--text-secondary)' }}>📅 Data wydarzenia:</span>
                                                 <strong style={{ color: 'var(--text-primary)' }}>{datePart}</strong>
                                             </li>
                                             {timePart && (
-                                                <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                                <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.25rem' }}>
                                                     <span style={{ color: 'var(--text-secondary)' }}>⏰ Godzina:</span>
                                                     <strong style={{ color: 'var(--text-primary)' }}>{timePart}</strong>
                                                 </li>
@@ -291,13 +291,13 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                                     );
                                 })()}
                                 {product.ticket_venue && (
-                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>🏟️ Klub / Miejsce:</span>
                                         <strong style={{ color: 'var(--text-primary)' }}>{product.ticket_venue}</strong>
                                     </li>
                                 )}
                                 {(product as any).ticket_venue_address && (
-                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>📍 Adres:</span>
                                         <a 
                                             href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((product as any).ticket_venue_address)}`} 
@@ -310,19 +310,19 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                                     </li>
                                 )}
                                 {product.ticket_city && (
-                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>📍 Miasto:</span>
                                         <strong style={{ color: 'var(--text-primary)' }}>{product.ticket_city}</strong>
                                     </li>
                                 )}
                                 {product.ticket_type && (
-                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>🎟️ Rodzaj / Pula:</span>
                                         <strong style={{ color: 'var(--text-primary)' }}>{product.ticket_type}</strong>
                                     </li>
                                 )}
                                 {product.ticket_age_restriction && (
-                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>🔞 Wymóg wiekowy:</span>
                                         <strong style={{ color: 'var(--text-primary)' }}>{product.ticket_age_restriction}</strong>
                                     </li>
@@ -335,25 +335,25 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                         <div style={{
                             margin: '1.5rem 0',
                             padding: '1.25rem',
-                            background: 'rgba(255,255,255,0.02)',
+                            background: 'var(--bg-secondary)',
                             borderRadius: '10px',
-                            border: '1px solid rgba(255,255,255,0.06)',
+                            border: '1px solid var(--border-color)',
                             fontSize: '0.9rem'
                         }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '0.5rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>
                                 <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
                                     👕 Specyfikacja Ubrania:
                                 </h3>
                             </div>
                             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                 {product.clothing_size && (
-                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>Rozmiar:</span>
                                         <strong style={{ color: 'var(--text-primary)' }}>{product.clothing_size}</strong>
                                     </li>
                                 )}
                                 {product.clothing_condition && (
-                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>Stan:</span>
                                         <strong style={{ color: 'var(--text-primary)' }}>{product.clothing_condition}</strong>
                                     </li>
@@ -366,12 +366,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                         <div style={{
                             margin: '1.5rem 0',
                             padding: '1.25rem',
-                            background: 'rgba(255,255,255,0.02)',
+                            background: 'var(--bg-secondary)',
                             borderRadius: '10px',
-                            border: '1px solid rgba(255,255,255,0.06)',
+                            border: '1px solid var(--border-color)',
                             fontSize: '0.9rem'
                         }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '0.5rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>
                                 <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
                                     🎬 Szczegóły Wydania Filmowego & Stan:
                                 </h3>
@@ -379,55 +379,55 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                             </div>
                             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                 {product.item_condition && (
-                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>Stan ogólny:</span>
                                         <strong style={{ color: 'var(--text-primary)' }}>{product.item_condition}</strong>
                                     </li>
                                 )}
                                 {product.movie_genre && (
-                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>📽️ Gatunek:</span>
                                         <strong style={{ color: 'var(--text-primary)' }}>{product.movie_genre}</strong>
                                     </li>
                                 )}
                                 {product.release_year && (
-                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>📅 Rok produkcji / premiery:</span>
                                         <strong style={{ color: 'var(--text-primary)' }}>{product.release_year}</strong>
                                     </li>
                                 )}
                                 {product.movie_format && (
-                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>Format / Nośnik:</span>
                                         <strong style={{ color: 'var(--text-primary)' }}>💿 {product.movie_format}</strong>
                                     </li>
                                 )}
                                 {product.movie_language && (
-                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>🗣️ Język audio:</span>
                                         <strong style={{ color: 'var(--text-primary)' }}>{product.movie_language}</strong>
                                     </li>
                                 )}
                                 {product.movie_subtitles && (
-                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>💬 Napisy:</span>
                                         <strong style={{ color: 'var(--text-primary)' }}>{product.movie_subtitles}</strong>
                                     </li>
                                 )}
                                 {product.movie_cast && (
-                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>🎭 Obsada / Aktorzy:</span>
                                         <strong style={{ color: 'var(--text-primary)' }}>{product.movie_cast}</strong>
                                     </li>
                                 )}
                                 {product.condition_media && (
-                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>Stan nośnika (Płyty):</span>
                                         <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{product.condition_media}</span>
                                     </li>
                                 )}
                                 {product.condition_cover && (
-                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.25rem' }}>
+                                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.25rem' }}>
                                         <span style={{ color: 'var(--text-secondary)' }}>Stan okładki / poligrafii:</span>
                                         <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{product.condition_cover}</span>
                                     </li>
