@@ -649,7 +649,8 @@ const STATUS_LABELS: Record<string, string> = {
 const CATEGORY_LABELS: Record<string, string> = {
     muzyka: '🎵 Muzyka',
     bilety: '🎟️ Bilety',
-    ubrania: '👕 Ubrania'
+    ubrania: '👕 Ubrania',
+    filmy: '🎬 Filmy'
 };
 
 // ─── Collapsible Order Row ───────────────────────────────────────────────────
@@ -866,6 +867,7 @@ function StoreDashboardContent() {
 
     // Search, Sort and Pagination states
     const [searchQuery, setSearchQuery] = useState('');
+    const [categoryFilter, setCategoryFilter] = useState('all');
     const [sortBy, setSortBy] = useState('stock_status');
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
@@ -943,6 +945,7 @@ function StoreDashboardContent() {
 
     // Filter and Sort Products
     const filteredProducts = products.filter(product => {
+        if (categoryFilter !== 'all' && product.category !== categoryFilter) return false;
         if (!searchQuery) return true;
         return product.title.toLowerCase().includes(searchQuery.toLowerCase());
     });
@@ -1048,14 +1051,37 @@ function StoreDashboardContent() {
                             ) : (
                                 <>
                                     {/* Products Toolbar */}
-                                    <div style={{
-                                        display: 'flex',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center',
-                                        gap: '1rem',
-                                        marginBottom: '1rem',
-                                        flexWrap: 'wrap'
-                                    }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
+                                        {/* Filters */}
+                                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                            {['all', 'bilety', 'muzyka', 'filmy', 'ubrania'].map(cat => (
+                                                <button
+                                                    key={cat}
+                                                    onClick={() => { setCategoryFilter(cat); setCurrentPage(1); }}
+                                                    style={{
+                                                        padding: '6px 14px',
+                                                        borderRadius: '20px',
+                                                        fontSize: '0.8rem',
+                                                        fontWeight: 600,
+                                                        border: categoryFilter === cat ? '1px solid #10b981' : '1px solid rgba(255,255,255,0.1)',
+                                                        background: categoryFilter === cat ? 'rgba(16,185,129,0.1)' : 'var(--bg-secondary)',
+                                                        color: categoryFilter === cat ? '#10b981' : 'var(--text-secondary)',
+                                                        cursor: 'pointer',
+                                                        transition: 'all 0.2s ease'
+                                                    }}
+                                                >
+                                                    {cat === 'all' ? 'Wszystkie' : CATEGORY_LABELS[cat] || cat}
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                        <div style={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            gap: '1rem',
+                                            flexWrap: 'wrap'
+                                        }}>
                                         {/* Search */}
                                         <div style={{ position: 'relative', flex: 1, minWidth: '240px' }}>
                                             <input
@@ -1105,6 +1131,7 @@ function StoreDashboardContent() {
                                                 <option value="date_oldest">Data dodania (Od najstarszych)</option>
                                             </select>
                                         </div>
+                                    </div>
                                     </div>
 
                                     {sortedProducts.length === 0 ? (
