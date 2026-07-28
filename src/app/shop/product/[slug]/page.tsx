@@ -443,10 +443,11 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                     </p>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        {product.category === 'bilety' && (
+                        {product.category === 'bilety' ? (
                             <TicketRulesButton />
+                        ) : (
+                            <ShippingInfoButton />
                         )}
-                        <ShippingInfoButton />
                         <ProductInquiryButton product={product} />
                     </div>
                 </div>
