@@ -6,6 +6,7 @@ import { ShippingInfoButton } from '@/components/shop/ShippingInfoButton';
 import { TicketRulesButton } from '@/components/shop/TicketRulesButton';
 import { ConditionGuideButton } from '@/components/shop/ConditionGuideButton';
 import { ProductInquiryButton } from '@/components/shop/ProductInquiryButton';
+import { ProductImageGallery } from '@/components/shop/ProductImageGallery';
 import type { Product } from '@/app/shop/page';
 import '../../shop.css';
 import { Metadata } from 'next';
@@ -136,14 +137,13 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
             <div className="product-detail-grid">
                 {/* Image */}
-                <div className="product-detail-image-wrap glass-panel">
-                    {product.image_url ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={product.image_url} alt={product.title} />
-                    ) : (
+                {product.image_url ? (
+                    <ProductImageGallery imageUrl={product.image_url} alt={product.title} category={product.category} />
+                ) : (
+                    <div className="product-detail-image-wrap glass-panel">
                         <span>{categoryEmoji[product.category]}</span>
-                    )}
-                </div>
+                    </div>
+                )}
 
                 {/* Info */}
                 <div className="product-detail-info">
