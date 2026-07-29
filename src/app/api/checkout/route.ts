@@ -133,7 +133,7 @@ export async function POST(req: NextRequest) {
 
         if (orderErr) {
             console.error('[Checkout DB Error]', orderErr);
-            throw new Error(`Błąd bazy danych: ${orderErr.message}`);
+            throw new Error('Błąd serwera podczas tworzenia zamówienia');
         }
 
         // Insert into order_items

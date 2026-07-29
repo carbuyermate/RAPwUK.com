@@ -84,7 +84,7 @@ export async function createListing(data: CreateListingData) {
 
             if (uploadError) {
                 console.error('[Storage Upload Error]', uploadError);
-                throw new Error(`Błąd wysyłania pliku: ${uploadError.message}`);
+                throw new Error('Błąd wysyłania zdjęcia. Spróbuj ponownie.');
             }
 
             const { data: { publicUrl } } = supabaseAdmin.storage
@@ -118,7 +118,7 @@ export async function createListing(data: CreateListingData) {
 
         if (insertError) {
             console.error('[Database Insert Error]', insertError);
-            throw new Error(`Błąd zapisu w bazie danych: ${insertError.message}`);
+            throw new Error('Błąd zapisu w bazie danych. Spróbuj ponownie.');
         }
 
         revalidatePath('/shop/gielda');
@@ -287,7 +287,7 @@ export async function updateListing(id: string, token: string, data: UpdateListi
 
             if (uploadError) {
                 console.error('[Storage Upload Error]', uploadError);
-                throw new Error(`Błąd wysyłania pliku: ${uploadError.message}`);
+                throw new Error('Błąd wysyłania zdjęcia. Spróbuj ponownie.');
             }
 
             const { data: { publicUrl } } = supabaseAdmin.storage
@@ -325,7 +325,7 @@ export async function updateListing(id: string, token: string, data: UpdateListi
 
         if (updateError) {
             console.error('[Database Update Error]', updateError);
-            throw new Error(`Błąd aktualizacji ogłoszenia: ${updateError.message}`);
+            throw new Error('Błąd aktualizacji ogłoszenia. Spróbuj ponownie.');
         }
 
         revalidatePath('/shop/gielda');
