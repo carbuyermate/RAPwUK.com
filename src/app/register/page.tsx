@@ -32,7 +32,7 @@ export default function RegisterPage() {
                 </Link>
 
                 <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '1rem' }}>
-                    Kontakt: <a href="mailto:admin@rapwuk.com" style={{ color: 'var(--text-primary)' }}>admin@rapwuk.com</a>
+                    Kontakt: <a href="mailto:kontakt@rapwuk.com" style={{ color: 'var(--text-primary)' }}>kontakt@rapwuk.com</a>
                 </p>
             </div>
         </div>

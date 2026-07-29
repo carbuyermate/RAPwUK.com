@@ -468,9 +468,11 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                         <AddToCartButton product={product} />
                     )}
 
-                    <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
-                        Na stanie: {product.stock} szt.
-                    </p>
+                    {product.category !== 'bilety' && (
+                        <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                            Na stanie: {product.stock} szt.
+                        </p>
+                    )}
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         {product.category === 'bilety' ? (
