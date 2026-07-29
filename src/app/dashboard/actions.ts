@@ -28,12 +28,23 @@ async function getSupabase() {
     )
 }
 
-export async function deleteNews(id: string) {
-    const supabase = await getSupabase();
-    
-    // Auth check
+async function verifyAdmin(supabase: any) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Unauthorized');
+
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+    if (profile?.role !== 'admin') throw new Error('Forbidden');
+    return user;
+}
+
+export async function deleteNews(id: string) {
+    const supabase = await getSupabase();
+    await verifyAdmin(supabase);
 
     const { error } = await supabase.from('news').delete().eq('id', id);
     if (error) throw new Error(error.message);
@@ -46,9 +57,7 @@ export async function deleteNews(id: string) {
 
 export async function deleteEvent(id: string) {
     const supabase = await getSupabase();
-    
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Unauthorized');
+    await verifyAdmin(supabase);
 
     const { error } = await supabase.from('events').delete().eq('id', id);
     if (error) throw new Error(error.message);
@@ -61,9 +70,7 @@ export async function deleteEvent(id: string) {
 
 export async function deleteRapper(id: string) {
     const supabase = await getSupabase();
-    
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Unauthorized');
+    await verifyAdmin(supabase);
 
     const { error } = await supabase.from('rappers').delete().eq('id', id);
     if (error) throw new Error(error.message);

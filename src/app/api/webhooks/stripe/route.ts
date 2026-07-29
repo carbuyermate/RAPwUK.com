@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
         );
     } catch (err: any) {
         console.error('[Webhook Signature Error]', err.message);
-        return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
+        return NextResponse.json({ error: 'Webhook verification failed' }, { status: 400 });
     }
 
     if (event.type === 'checkout.session.completed') {

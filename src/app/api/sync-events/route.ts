@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
     const secret = searchParams.get('secret');
     const expectedSecret = process.env.CRON_SECRET;
 
-    if (expectedSecret && secret !== expectedSecret) {
+    if (!expectedSecret || secret !== expectedSecret) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Clock, ChevronLeft, User } from "lucide-react";
 import { ViewTracker } from "@/components/ViewTracker";
 import { NewsReactions } from "@/components/NewsReactions";
+import DOMPurify from "isomorphic-dompurify";
 import "../news.css";
 import "./article.css";
 
@@ -200,7 +201,7 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
 
         <div 
           className="article-body rich-content"
-          dangerouslySetInnerHTML={{ __html: article.content || '' }}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(article.content || '', { ADD_TAGS: ['iframe'], ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling', 'target'] }) }}
         >
         </div>
 

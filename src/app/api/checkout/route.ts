@@ -18,15 +18,31 @@ const supabaseAdmin = createClient(
 
 export async function POST(req: NextRequest) {
     try {
-        const { items } = await req.json();
+        const body = await req.json();
+        const items = body?.items;
 
-        if (!items || items.length === 0) {
+        if (!Array.isArray(items) || items.length === 0) {
             return NextResponse.json({ error: 'Koszyk jest pusty' }, { status: 400 });
+        }
+
+        if (items.length > 20) {
+            return NextResponse.json({ error: 'Zbyt wiele pozycji w koszyku' }, { status: 400 });
         }
 
         // Check live database stock and price for each item
         const verifiedItems = [];
         for (const item of items) {
+            // Validate quantity
+            const qty = Number(item.quantity);
+            if (!Number.isInteger(qty) || qty <= 0 || qty > 10) {
+                return NextResponse.json({ error: 'Nieprawidłowa ilość produktu (dozwolone: 1-10)' }, { status: 400 });
+            }
+
+            // Validate item ID format (UUID)
+            if (!item.id || typeof item.id !== 'string' || item.id.length > 40) {
+                return NextResponse.json({ error: 'Nieprawidłowy identyfikator produktu' }, { status: 400 });
+            }
+
             const { data: product } = await supabaseAdmin
                 .from('products')
                 .select('stock, title, price, category, slug, purchase_price')
@@ -34,14 +50,14 @@ export async function POST(req: NextRequest) {
                 .maybeSingle();
 
             if (!product) {
-                return NextResponse.json({ error: `Produkt "${item.title}" nie istnieje w bazie` }, { status: 400 });
+                return NextResponse.json({ error: `Produkt nie istnieje w bazie` }, { status: 400 });
             }
 
             if (product.stock === null || product.stock === 0) {
                 return NextResponse.json({ error: `Produkt "${product.title}" jest chwilowo niedostępny` }, { status: 400 });
             }
 
-            if (item.quantity > product.stock) {
+            if (qty > product.stock) {
                 return NextResponse.json({ 
                     error: `Maksymalna dostępna ilość dla "${product.title}" to ${product.stock} szt. Zmniejsz ilość w koszyku.` 
                 }, { status: 400 });
@@ -229,6 +245,6 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ url: session.url });
     } catch (err: any) {
         console.error('[Checkout API Error]', err);
-        return NextResponse.json({ error: err.message }, { status: 500 });
+        return NextResponse.json({ error: 'Wystąpił błąd serwera. Spróbuj ponownie.' }, { status: 500 });
     }
 }
