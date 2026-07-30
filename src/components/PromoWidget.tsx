@@ -306,9 +306,9 @@ export async function PromoWidget({ position = 'homepage_bottom' }: PromoWidgetP
                     style={{
                         width: '100%',
                         height: isTop ? '100%' : 'auto',
-                        minHeight: isTop ? '180px' : undefined,
-                        maxHeight: isTop ? '180px' : undefined,
-                        objectFit: isTop ? 'cover' : 'contain',
+                        minHeight: isTop ? '180px' : '80px',
+                        maxHeight: isTop ? '180px' : '160px',
+                        objectFit: 'cover',
                         display: 'block',
                     }}
                 />
