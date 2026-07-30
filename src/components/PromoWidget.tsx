@@ -305,10 +305,10 @@ export async function PromoWidget({ position = 'homepage_bottom' }: PromoWidgetP
                     alt="Polecane"
                     style={{
                         width: '100%',
-                        height: '100%',
-                        minHeight: isTop ? '180px' : '90px',
-                        maxHeight: isTop ? '180px' : '120px',
-                        objectFit: 'cover',
+                        height: isTop ? '100%' : 'auto',
+                        minHeight: isTop ? '180px' : undefined,
+                        maxHeight: isTop ? '180px' : undefined,
+                        objectFit: isTop ? 'cover' : 'contain',
                         display: 'block',
                     }}
                 />
