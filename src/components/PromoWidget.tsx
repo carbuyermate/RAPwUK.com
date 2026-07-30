@@ -48,7 +48,11 @@ export async function PromoWidget({ position = 'homepage_bottom' }: PromoWidgetP
         console.error('Błąd pobierania baneru', e);
     }
 
-    const ad = adData || (isSidebar ? PLACEHOLDER_SIDEBAR : isTop ? PLACEHOLDER_TOP : PLACEHOLDER_BOTTOM);
+    const isOldPlaceholder = adData && !isSidebar && !isTop && (
+        adData.image_url?.includes('banner-placeholder') ||
+        adData.image_url?.includes('promo/1775996623902')
+    );
+    const ad = (adData && !isOldPlaceholder) ? adData : (isSidebar ? PLACEHOLDER_SIDEBAR : isTop ? PLACEHOLDER_TOP : PLACEHOLDER_BOTTOM);
 
     if (isTop && !adData) {
         return (
