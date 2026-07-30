@@ -5,8 +5,8 @@ interface PromoWidgetProps {
 }
 
 const PLACEHOLDER_BOTTOM = {
-    image_url: '/banner-placeholder.png',
-    link_url: 'https://fb.com/RAPwUK',
+    image_url: '/banner-cardiffornia.png',
+    link_url: 'https://rapwuk.com/shop/product/hip-hop-cardiffornia-cardiff',
 };
 
 const PLACEHOLDER_SIDEBAR = {
