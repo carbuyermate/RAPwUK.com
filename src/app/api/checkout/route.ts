@@ -154,6 +154,28 @@ export async function POST(req: NextRequest) {
             console.error('[Checkout order_items Error]', itemsErr);
         }
 
+        // Reserve stock immediately upon creating pending order
+        for (const item of verifiedItems) {
+            try {
+                const { data: prod } = await supabaseAdmin
+                    .from('products')
+                    .select('stock')
+                    .eq('id', item.id)
+                    .maybeSingle();
+
+                if (prod && prod.stock !== null) {
+                    const newStock = Math.max(0, prod.stock - item.quantity);
+                    await supabaseAdmin
+                        .from('products')
+                        .update({ stock: newStock })
+                        .eq('id', item.id);
+                    console.log(`[Checkout Stock Reservation] Decremented stock for product ${item.id} (${item.title}) from ${prod.stock} to ${newStock}`);
+                }
+            } catch (stockErr: any) {
+                console.error('[Checkout Stock Reservation Error]', stockErr.message);
+            }
+        }
+
         const stripe = getStripe();
         const sessionOptions: Stripe.Checkout.SessionCreateParams = {
             payment_method_types: ['card'],

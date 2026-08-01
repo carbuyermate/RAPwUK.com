@@ -201,8 +201,9 @@ export async function POST(req: NextRequest) {
                         });
 
                         // Decrement stock in Node code
-                        if (prod && prod.stock !== null && item.quantity > 0) {
-                            const newStock = Math.max(0, prod.stock - item.quantity);
+                        const itemQty = Number(item.quantity || 1);
+                        if (prod && prod.stock !== null && itemQty > 0) {
+                            const newStock = Math.max(0, prod.stock - itemQty);
                             await supabaseAdmin
                                 .from('products')
                                 .update({ stock: newStock })
@@ -220,6 +221,73 @@ export async function POST(req: NextRequest) {
             }
         } catch (err: any) {
             console.error('[Webhook Processing Error]', err.message);
+        }
+    }
+
+    if (event.type === 'checkout.session.expired' || event.type === 'payment_intent.payment_failed') {
+        const session = event.data.object as any;
+        const orderId = session.metadata?.order_id;
+        const sessionId = session.id;
+
+        try {
+            let dbOrder = null;
+            if (orderId) {
+                const { data } = await supabaseAdmin
+                    .from('orders')
+                    .select('*')
+                    .eq('id', orderId)
+                    .maybeSingle();
+                dbOrder = data;
+            }
+            if (!dbOrder && sessionId) {
+                const { data } = await supabaseAdmin
+                    .from('orders')
+                    .select('*')
+                    .eq('stripe_session_id', sessionId)
+                    .maybeSingle();
+                dbOrder = data;
+            }
+
+            if (dbOrder && (dbOrder.status === 'pending' || dbOrder.status === 'created')) {
+                // Mark order as cancelled
+                await supabaseAdmin
+                    .from('orders')
+                    .update({ status: 'cancelled' })
+                    .eq('id', dbOrder.id);
+
+                // Return reserved stock to products
+                const items = dbOrder.items || [];
+                for (const item of items) {
+                    let prodId = item.id;
+                    if (!prodId && item.slug) {
+                        const { data: p } = await supabaseAdmin.from('products').select('id').eq('slug', item.slug).maybeSingle();
+                        prodId = p?.id;
+                    }
+                    if (!prodId && item.title) {
+                        const { data: p } = await supabaseAdmin.from('products').select('id').eq('title', item.title).maybeSingle();
+                        prodId = p?.id;
+                    }
+
+                    if (prodId && item.quantity > 0) {
+                        const { data: prod } = await supabaseAdmin
+                            .from('products')
+                            .select('stock')
+                            .eq('id', prodId)
+                            .maybeSingle();
+
+                        if (prod && prod.stock !== null) {
+                            const newStock = prod.stock + item.quantity;
+                            await supabaseAdmin
+                                .from('products')
+                                .update({ stock: newStock })
+                                .eq('id', prodId);
+                            console.log(`[Webhook Stock Restoration] Restored stock for product ${prodId} from ${prod.stock} to ${newStock}`);
+                        }
+                    }
+                }
+            }
+        } catch (restoreErr: any) {
+            console.error('[Webhook Stock Restoration Error]', restoreErr.message);
         }
     }
 
