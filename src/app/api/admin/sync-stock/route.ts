@@ -62,14 +62,20 @@ export async function GET(req: NextRequest) {
             // If product had 1 in stock and 1+ ordered, stock should be 0
             if (orderedQty > 0) {
                 // Determine new stock
-                // Note: For single copy items (stock was 1, ordered 1), newStock becomes 0
                 const targetStock = Math.max(0, prod.stock - orderedQty);
 
                 if (prod.stock !== targetStock) {
-                    await supabaseAdmin
-                        .from('products')
-                        .update({ stock: targetStock })
-                        .eq('id', prod.id);
+                    const { error: rpcErr } = await supabaseAdmin.rpc('decrement_product_stock', {
+                        product_id: prod.id,
+                        qty: orderedQty
+                    });
+
+                    if (rpcErr) {
+                        await supabaseAdmin
+                            .from('products')
+                            .update({ stock: targetStock })
+                            .eq('id', prod.id);
+                    }
 
                     updates.push({
                         id: prod.id,

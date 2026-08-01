@@ -165,10 +165,19 @@ export async function POST(req: NextRequest) {
 
                 if (prod && prod.stock !== null) {
                     const newStock = Math.max(0, prod.stock - item.quantity);
-                    await supabaseAdmin
-                        .from('products')
-                        .update({ stock: newStock })
-                        .eq('id', item.id);
+                    // Use SECURITY DEFINER RPC to bypass RLS restrictions on products table
+                    const { error: rpcErr } = await supabaseAdmin.rpc('decrement_product_stock', {
+                        product_id: item.id,
+                        qty: item.quantity
+                    });
+
+                    if (rpcErr) {
+                        console.warn('[Checkout Stock Reservation] RPC failed, fallback to direct update:', rpcErr.message);
+                        await supabaseAdmin
+                            .from('products')
+                            .update({ stock: newStock })
+                            .eq('id', item.id);
+                    }
                     console.log(`[Checkout Stock Reservation] Decremented stock for product ${item.id} (${item.title}) from ${prod.stock} to ${newStock}`);
                 }
             } catch (stockErr: any) {

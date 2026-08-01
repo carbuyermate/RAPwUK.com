@@ -142,10 +142,16 @@ export async function POST(req: NextRequest) {
                                 .maybeSingle();
                             if (prod && prod.stock !== null) {
                                 const newStock = Math.max(0, prod.stock - item.quantity);
-                                await supabaseAdmin
-                                    .from('products')
-                                    .update({ stock: newStock })
-                                    .eq('id', item.id);
+                                const { error: rpcErr } = await supabaseAdmin.rpc('decrement_product_stock', {
+                                    product_id: item.id,
+                                    qty: item.quantity
+                                });
+                                if (rpcErr) {
+                                    await supabaseAdmin
+                                        .from('products')
+                                        .update({ stock: newStock })
+                                        .eq('id', item.id);
+                                }
                                 console.log(`[Webhook Failsafe] Decremented stock for product ${item.id} from ${prod.stock} to ${newStock}`);
                             }
                         }
@@ -204,10 +210,16 @@ export async function POST(req: NextRequest) {
                         const itemQty = Number(item.quantity || 1);
                         if (prod && prod.stock !== null && itemQty > 0) {
                             const newStock = Math.max(0, prod.stock - itemQty);
-                            await supabaseAdmin
-                                .from('products')
-                                .update({ stock: newStock })
-                                .eq('id', prod.id);
+                            const { error: rpcErr } = await supabaseAdmin.rpc('decrement_product_stock', {
+                                product_id: prod.id,
+                                qty: itemQty
+                            });
+                            if (rpcErr) {
+                                await supabaseAdmin
+                                    .from('products')
+                                    .update({ stock: newStock })
+                                    .eq('id', prod.id);
+                            }
                             console.log(`[Webhook Fallback] Decremented stock for product ${prod.id} from ${prod.stock} to ${newStock}`);
                         }
                     }
