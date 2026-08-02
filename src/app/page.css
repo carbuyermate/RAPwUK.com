@@ -99,7 +99,7 @@
 .homepage-outer {
   display: flex;
   gap: 2rem;
-  align-items: flex-start;
+  align-items: stretch;
   padding-bottom: 4rem;
 }
 
