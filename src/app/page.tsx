@@ -73,7 +73,7 @@ export default async function Home() {
   ]);
 
   const news = (newsData || []) as NewsItem[];
-  const events = ((eventsData || []) as EventItem[]).slice(0, 32);
+  const events = ((eventsData || []) as EventItem[]).slice(0, 33);
   const shopProducts = shopProductsData || [];
 
   // Pick one random product for the Shop Widget

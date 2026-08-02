@@ -624,6 +624,11 @@
     max-height: none;
   }
 
+  /* Show only first 10 events on mobile */
+  .events-list .event-row:nth-child(n+11) {
+    display: none;
+  }
+
   /* Hero: tighter padding on phones */
   .hero {
     padding: 1.5rem 0 1.5rem;
