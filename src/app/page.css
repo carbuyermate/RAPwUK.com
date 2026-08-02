@@ -112,23 +112,27 @@
   margin-top: 2rem;
 }
 
-/* Promo side zone – sticky sidebar with Socials, Shop */
+/* Promo side zone – sidebar with Socials, Shop */
 .promo-zone-side {
   flex-shrink: 0;
   width: 270px;
   display: flex;
   flex-direction: column;
   margin-top: 0;
-  position: sticky;
-  top: 90px;
-  align-self: flex-start;
 }
 
-.promo-zone-side > * + * {
+.promo-zone-side-sticky {
+  position: sticky;
+  top: 90px;
+  display: flex;
+  flex-direction: column;
+}
+
+.promo-zone-side-sticky > * + * {
   margin-top: 1.25rem;
 }
 
-.promo-zone-side > .section-header + * {
+.promo-zone-side-sticky > .section-header + * {
   margin-top: 0;
 }
 
@@ -140,6 +144,8 @@
     width: 100%;
     order: 3; /* Move to the end */
     margin-top: 2rem;
+  }
+  .promo-zone-side-sticky {
     position: static;
   }
 }

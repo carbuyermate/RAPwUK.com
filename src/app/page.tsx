@@ -260,13 +260,15 @@ export default async function Home() {
 
         {/* Far-right: vertical sidebar */}
         <aside className="promo-zone-side">
-          <div className="section-header">
-            <h2 className="section-title">
-              <Share2 size={22} /> Obserwuj Nas
-            </h2>
+          <div className="promo-zone-side-sticky">
+            <div className="section-header">
+              <h2 className="section-title">
+                <Share2 size={22} /> Obserwuj Nas
+              </h2>
+            </div>
+            <SocialBox showLabel={false} />
+            <ShopWidget product={randomProduct} />
           </div>
-          <SocialBox showLabel={false} />
-          <ShopWidget product={randomProduct} />
         </aside>
 
       </div>{/* /.homepage-outer */}
