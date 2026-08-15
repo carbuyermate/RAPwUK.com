@@ -2,7 +2,7 @@
 
 import { supabase } from '@/lib/supabase';
 import { useState, useEffect } from 'react';
-import { Ticket, Printer, AlertTriangle, Calendar, MapPin, User, Key, CheckCircle, Clock } from 'lucide-react';
+import { Ticket, Printer, AlertTriangle, Calendar, MapPin, User, Key, CheckCircle, Clock, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import '../dashboard.css';
 
@@ -189,14 +189,16 @@ export default function TicketsDashboard() {
                 }
             `}} />
 
-            <div className="flex justify-between items-center mb-6 no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h1 className="section-title m-0" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <Ticket size={24} /> Zarządzanie Biletami (Listy Gości)
-                </h1>
-                <Link href="/dashboard" className="btn-secondary text-sm">
-                    Powrót
-                </Link>
-            </div>
+            <header className="dashboard-header no-print">
+                <div className="flex items-center gap-4">
+                    <Link href="/dashboard" className="action-btn">
+                        <ChevronLeft size={24} />
+                    </Link>
+                    <h1 className="text-2xl font-bold flex items-center gap-2">
+                        <Ticket size={24} /> Zarządzanie Biletami (Listy Gości)
+                    </h1>
+                </div>
+            </header>
 
             {error && (
                 <div className="glass-panel text-center no-print" style={{ borderColor: 'rgba(239,68,68,0.2)', padding: '2rem', marginBottom: '2rem' }}>
