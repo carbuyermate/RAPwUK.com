@@ -168,6 +168,20 @@
     box-shadow: none;
 }
 
+/* Hide the card's top border behind the patronat badge */
+.event-tag-premium::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100% + 12px);
+    height: calc(100% + 4px);
+    background: var(--bg-primary, #0a0a0a);
+    z-index: -1;
+    border-radius: 6px;
+}
+
 .event-card.premium {
     border-color: rgba(245, 158, 11, 0.4);
     box-shadow: 0 8px 30px rgba(245, 158, 11, 0.08);
