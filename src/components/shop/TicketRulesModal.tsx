@@ -37,7 +37,7 @@ export function TicketRulesModal({ isOpen, onClose }: TicketRulesModalProps) {
             <div className="shipping-modal-content glass-panel animate-scale-up" style={{ maxWidth: '600px' }}>
                 <header className="shipping-modal-header">
                     <div className="flex items-center gap-3">
-                        <Ticket size={24} className="text-secondary" style={{ color: '#ec4899' }} />
+                        <Ticket size={24} className="text-secondary" style={{ color: '#f59e0b' }} />
                         <h2 className="shipping-modal-title">Zasady Kupowania Biletu</h2>
                     </div>
                     <button onClick={onClose} className="shipping-modal-close-btn" aria-label="Zamknij">
@@ -98,8 +98,8 @@ export function TicketRulesModal({ isOpen, onClose }: TicketRulesModalProps) {
                 </div>
 
                 <footer className="shipping-modal-footer">
-                    <button onClick={onClose} className="btn-primary w-full py-3" style={{ background: '#ec4899', boxShadow: '0 4px 15px rgba(236,72,153,0.3)' }}>
-                        Zrozumiałem zasady
+                    <button onClick={onClose} className="btn-primary w-full py-3">
+                        Rozumiem
                     </button>
                 </footer>
             </div>
