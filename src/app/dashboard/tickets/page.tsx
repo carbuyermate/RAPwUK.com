@@ -19,7 +19,7 @@ interface Order {
     customer_email: string;
     total_amount: number;
     status: 'pending' | 'paid' | 'shipped' | 'cancelled';
-    items: Array<{ id: string; title: string; quantity: number; price: number }>;
+    items: Array<{ id: string; title: string; quantity: number; price: number; ticket_tier_id?: string; ticket_tier_name?: string }>;
     created_at: string;
     ticket_buyer_name?: string;
     ticket_password?: string;
@@ -33,6 +33,7 @@ interface Attendee {
     quantity: number;
     status: string;
     purchased_at: string;
+    ticket_tier_name?: string;
 }
 
 interface TicketGroup {
@@ -89,7 +90,8 @@ export default function TicketsDashboard() {
                             password: order.ticket_password || 'Brak hasła',
                             quantity: item.quantity,
                             status: order.status,
-                            purchased_at: order.created_at
+                            purchased_at: order.created_at,
+                            ticket_tier_name: item.ticket_tier_name || undefined,
                         });
                         groupedMap.set(item.id, existing);
                     }
@@ -276,6 +278,7 @@ export default function TicketsDashboard() {
                                                     <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', color: 'var(--text-secondary)' }}>
                                                         <th style={{ padding: '12px 8px', fontWeight: 500 }}>Imię i Nazwisko</th>
                                                         <th style={{ padding: '12px 8px', fontWeight: 500 }}>Hasło</th>
+                                                        <th style={{ padding: '12px 8px', fontWeight: 500 }}>Rodzaj biletu</th>
                                                         <th style={{ padding: '12px 8px', fontWeight: 500, textAlign: 'center' }}>Ilość</th>
                                                         <th className="no-print" style={{ padding: '12px 8px', fontWeight: 500 }}>Data Zakupu</th>
                                                         <th style={{ padding: '12px 8px', fontWeight: 500, textAlign: 'center' }}>Status</th>
@@ -297,6 +300,24 @@ export default function TicketsDashboard() {
                                                                     <Key size={14} className="text-secondary no-print" /> 
                                                                     {attendee.password}
                                                                 </span>
+                                                            </td>
+                                                            <td style={{ padding: '12px 8px' }}>
+                                                                {attendee.ticket_tier_name ? (
+                                                                    <span style={{
+                                                                        display: 'inline-block',
+                                                                        padding: '3px 9px',
+                                                                        borderRadius: '99px',
+                                                                        background: 'rgba(245,158,11,0.12)',
+                                                                        border: '1px solid rgba(245,158,11,0.25)',
+                                                                        color: '#f59e0b',
+                                                                        fontSize: '0.75rem',
+                                                                        fontWeight: 700,
+                                                                    }}>
+                                                                        {attendee.ticket_tier_name}
+                                                                    </span>
+                                                                ) : (
+                                                                    <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>—</span>
+                                                                )}
                                                             </td>
                                                             <td style={{ padding: '12px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '1.2em' }}>
                                                                 {attendee.quantity}

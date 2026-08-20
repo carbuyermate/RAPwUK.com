@@ -100,8 +100,10 @@ export default function CartPage() {
             <div className="cart-grid">
                 {/* Items */}
                 <div className="cart-items-list">
-                    {items.map((item) => (
-                        <div key={item.id} className="cart-item">
+                    {items.map((item) => {
+                        const cartKey = item.ticket_tier_id ? `${item.id}::${item.ticket_tier_id}` : item.id;
+                        return (
+                        <div key={cartKey} className="cart-item">
                             <div className="cart-item-image">
                                 {item.image_url ? (
                                     // eslint-disable-next-line @next/next/no-img-element
@@ -113,12 +115,28 @@ export default function CartPage() {
                             <div className="cart-item-info">
                                 <div className="cart-item-category">{item.category}</div>
                                 <div className="cart-item-title">{item.title}</div>
+                                {item.ticket_tier_name && (
+                                    <div style={{
+                                        display: 'inline-block',
+                                        marginTop: '4px',
+                                        padding: '2px 8px',
+                                        borderRadius: '99px',
+                                        background: 'rgba(245,158,11,0.15)',
+                                        border: '1px solid rgba(245,158,11,0.3)',
+                                        color: '#f59e0b',
+                                        fontSize: '0.72rem',
+                                        fontWeight: 700,
+                                        letterSpacing: '0.03em',
+                                    }}>
+                                        🎟️ {item.ticket_tier_name}
+                                    </div>
+                                )}
                                 <div className="cart-item-qty">
-                                    <button className="qty-btn" onClick={() => updateQuantity(item.id, item.quantity - 1)} disabled={item.quantity <= 1}>−</button>
+                                    <button className="qty-btn" onClick={() => updateQuantity(cartKey, item.quantity - 1)} disabled={item.quantity <= 1}>−</button>
                                     <span className="qty-value">{item.quantity}</span>
                                     <button 
                                         className="qty-btn" 
-                                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                        onClick={() => updateQuantity(cartKey, item.quantity + 1)}
                                         disabled={item.quantity >= item.stock}
                                     >+</button>
                                     {item.quantity >= item.stock && (
@@ -129,11 +147,13 @@ export default function CartPage() {
                                 </div>
                             </div>
                             <div className="cart-item-price">£{(item.price * item.quantity).toFixed(2)}</div>
-                            <button className="cart-item-remove" onClick={() => removeItem(item.id)} title="Usuń">
+                            <button className="cart-item-remove" onClick={() => removeItem(cartKey)} title="Usuń">
                                 <Trash2 size={18} />
                             </button>
                         </div>
-                    ))}
+                        );
+                    })}
+
                 </div>
 
                 {/* Summary */}

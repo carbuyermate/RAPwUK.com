@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 import { BackButton } from '@/components/shop/BackButton';
 import { AddToCartButton } from '@/components/shop/AddToCartButton';
+import { TicketTierSelector } from '@/components/shop/TicketTierSelector';
 import { ShippingInfoButton } from '@/components/shop/ShippingInfoButton';
 import { TicketRulesButton } from '@/components/shop/TicketRulesButton';
 import { ConditionGuideButton } from '@/components/shop/ConditionGuideButton';
@@ -464,6 +465,9 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                         }}>
                             Brak w magazynie
                         </div>
+                    ) : product.category === 'bilety' && product.ticket_tiers && product.ticket_tiers.length > 0 ? (
+                        /* Ticket with multiple tiers – show interactive selector */
+                        <TicketTierSelector product={product} tiers={product.ticket_tiers} />
                     ) : (
                         <AddToCartButton product={product} />
                     )}

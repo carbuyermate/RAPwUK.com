@@ -35,6 +35,13 @@ export const metadata: Metadata = {
     robots: { index: true, follow: true },
 };
 
+export interface TicketTier {
+    id: string;
+    name: string;
+    price: number;
+    description?: string;
+}
+
 export interface Product {
     id: string;
     slug: string;
@@ -64,6 +71,7 @@ export interface Product {
     movie_cast?: string | null;
     movie_genre?: string | null;
     release_year?: string | null;
+    ticket_tiers?: TicketTier[] | null;
     created_at?: string;
 }
 

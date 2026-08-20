@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
 
             const { data: product } = await supabaseAdmin
                 .from('products')
-                .select('stock, title, price, category, slug, purchase_price')
+                .select('stock, title, price, category, slug, purchase_price, ticket_tiers')
                 .eq('id', item.id)
                 .maybeSingle();
 
@@ -63,15 +63,30 @@ export async function POST(req: NextRequest) {
                 }, { status: 400 });
             }
 
+            // Determine the verified price (from tier if present, otherwise from product)
+            let verifiedPrice = Number(product.price);
+            let tierName: string | undefined;
+
+            if (item.ticket_tier_id && product.ticket_tiers && Array.isArray(product.ticket_tiers)) {
+                const tier = product.ticket_tiers.find((t: { id: string; price: number; name: string }) => t.id === item.ticket_tier_id);
+                if (!tier) {
+                    return NextResponse.json({ error: `Wybrany wariant biletu nie istnieje` }, { status: 400 });
+                }
+                verifiedPrice = Number(tier.price);
+                tierName = tier.name;
+            }
+
             verifiedItems.push({
                 id: item.id,
-                title: product.title,
-                price: Number(product.price),
+                title: tierName ? `${product.title} — ${tierName}` : product.title,
+                price: verifiedPrice,
                 purchase_price: Number(product.purchase_price || 0),
                 quantity: item.quantity,
                 category: product.category,
                 slug: product.slug,
-                image_url: item.image_url // image URL is safe to pass from client for display
+                image_url: item.image_url, // image URL is safe to pass from client for display
+                ticket_tier_id: item.ticket_tier_id,
+                ticket_tier_name: tierName,
             });
         }
 
@@ -116,7 +131,9 @@ export async function POST(req: NextRequest) {
             price: item.price,
             quantity: item.quantity,
             category: item.category || null,
-            slug: item.slug || null
+            slug: item.slug || null,
+            ticket_tier_id: item.ticket_tier_id || null,
+            ticket_tier_name: item.ticket_tier_name || null,
         }));
 
         // Pre-create pending order in Supabase

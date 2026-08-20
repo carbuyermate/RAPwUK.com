@@ -66,6 +66,8 @@ export default function EditProductPage() {
     const [ticketCity, setTicketCity] = useState('');
     const [ticketType, setTicketType] = useState('');
     const [ticketAgeRestriction, setTicketAgeRestriction] = useState('');
+    // Pule biletów (warianty)
+    const [ticketTiers, setTicketTiers] = useState<Array<{ id: string; name: string; price: string; description: string }>>([]);
     
     // Parametry filmu & muzyki
     const [releaseYear, setReleaseYear] = useState('');
@@ -249,6 +251,16 @@ export default function EditProductPage() {
                 setTicketCity(data.ticket_city || '');
                 setTicketType(data.ticket_type || '');
                 setTicketAgeRestriction(data.ticket_age_restriction || '');
+                // Load ticket tiers
+                if (data.ticket_tiers && Array.isArray(data.ticket_tiers)) {
+                    setTicketTiers(data.ticket_tiers.map((t: any) => ({
+                        id: t.id || `tier-${Math.random()}`,
+                        name: t.name || '',
+                        price: String(t.price ?? ''),
+                        description: t.description || '',
+                    })));
+                }
+
                 setMovieFormat(data.movie_format || '');
                 setMovieCast(data.movie_cast || '');
                 if (data.movie_language) {
@@ -360,6 +372,9 @@ export default function EditProductPage() {
                     ticket_city: category === 'bilety' ? ticketCity : null,
                     ticket_type: category === 'bilety' ? ticketType : null,
                     ticket_age_restriction: category === 'bilety' ? ticketAgeRestriction : null,
+                    ticket_tiers: category === 'bilety' && ticketTiers.length > 0
+                        ? ticketTiers.map(t => ({ ...t, price: parseFloat(t.price) || 0 }))
+                        : null,
                     movie_format: category === 'filmy' ? movieFormat : null,
                     movie_language: category === 'filmy' && selectedAudioLangs.length > 0 ? selectedAudioLangs.join(', ') : null,
                     movie_subtitles: category === 'filmy' && selectedSubtitles.length > 0 ? selectedSubtitles.join(', ') : null,
@@ -577,18 +592,81 @@ export default function EditProductPage() {
                                 <input type="text" className="form-input" placeholder="np. 16 Parkfield St, London N1 0PS" value={ticketVenueAddress} onChange={(e) => setTicketVenueAddress(e.target.value)} />
                             </div>
 
-                            <div className="form-group">
-                                <label className="form-label">Rodzaj / Pula biletu</label>
-                                <select className="form-input" value={ticketType} onChange={(e) => setTicketType(e.target.value)}>
-                                    <option value="">-- Wybierz rodzaj --</option>
-                                    <option value="Bilet Standardowy">🎟️ Bilet Standardowy</option>
-                                    <option value="Bilet VIP">⭐ Bilet VIP</option>
-                                    <option value="I Pula (Early Bird)">🔥 I Pula (Early Bird)</option>
-                                    <option value="II Pula">🎫 II Pula</option>
-                                    <option value="III Pula (Ostatnie bilety)">⏳ III Pula (Ostatnie bilety)</option>
-                                    <option value="Meet & Greet">🤝 Meet & Greet</option>
-                                </select>
+                            {/* Pule biletów – edytor */}
+                            <div style={{ gridColumn: 'span 2', marginTop: '0.5rem', padding: '1.25rem', background: 'rgba(245,158,11,0.04)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: '8px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                                    <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700 }}>🎟️ Pule biletów (warianty)</h4>
+                                    <button
+                                        type="button"
+                                        style={{ fontSize: '0.78rem', padding: '5px 12px', borderRadius: '6px', border: '1px solid #f59e0b', background: 'rgba(245,158,11,0.1)', color: '#f59e0b', cursor: 'pointer', fontWeight: 600 }}
+                                        onClick={() => setTicketTiers([
+                                            { id: 'early-bird', name: 'Early Bird', price: '', description: 'Pierwsza pula – ograniczona liczba!' },
+                                            { id: 'general-admission', name: 'General Admission', price: '', description: '' },
+                                            { id: 'vip', name: 'VIP', price: '', description: 'Strefa VIP + Polish Buffet' },
+                                            { id: 'polish-buffet', name: 'Polish Buffet', price: '', description: 'Bilet z dostępem do polskiego bufetu' },
+                                        ])}
+                                    >
+                                        ⚡ Załaduj szablon
+                                    </button>
+                                </div>
+
+                                {ticketTiers.length === 0 && (
+                                    <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', margin: 0 }}>
+                                        Brak wariantów – bilet będzie miał jedną cenę (z pola Cena powyżej). Kliknij ⚡ Załaduj szablon lub dodaj warianty ręcznie.
+                                    </p>
+                                )}
+
+                                {ticketTiers.map((tier, idx) => (
+                                    <div key={idx} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr auto', gap: '0.75rem', marginBottom: '0.75rem', alignItems: 'end' }}>
+                                        <div>
+                                            <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Nazwa</label>
+                                            <input
+                                                className="form-input"
+                                                value={tier.name}
+                                                onChange={e => setTicketTiers(prev => prev.map((t, i) => i === idx ? { ...t, name: e.target.value } : t))}
+                                                placeholder="np. VIP"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Cena (£)</label>
+                                            <input
+                                                className="form-input"
+                                                type="number"
+                                                min="0"
+                                                step="0.01"
+                                                value={tier.price}
+                                                onChange={e => setTicketTiers(prev => prev.map((t, i) => i === idx ? { ...t, price: e.target.value } : t))}
+                                                placeholder="0.00"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Opis (opcjonalnie)</label>
+                                            <input
+                                                className="form-input"
+                                                value={tier.description}
+                                                onChange={e => setTicketTiers(prev => prev.map((t, i) => i === idx ? { ...t, description: e.target.value } : t))}
+                                                placeholder="np. Strefa VIP + wejście bez kolejki"
+                                            />
+                                        </div>
+                                        <button
+                                            type="button"
+                                            style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid rgba(255,80,80,0.4)', background: 'rgba(255,80,80,0.08)', color: '#f87171', cursor: 'pointer', fontWeight: 700, fontSize: '1rem', lineHeight: 1 }}
+                                            onClick={() => setTicketTiers(prev => prev.filter((_, i) => i !== idx))}
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
+                                ))}
+
+                                <button
+                                    type="button"
+                                    style={{ marginTop: ticketTiers.length > 0 ? '0.25rem' : '0.5rem', fontSize: '0.82rem', padding: '7px 14px', borderRadius: '6px', border: '1px dashed rgba(255,255,255,0.2)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}
+                                    onClick={() => setTicketTiers(prev => [...prev, { id: `tier-${Date.now()}`, name: '', price: '', description: '' }])}
+                                >
+                                    + Dodaj wariant
+                                </button>
                             </div>
+
                             <div className="form-group">
                                 <label className="form-label">Wymóg wiekowy</label>
                                 <select className="form-input" value={ticketAgeRestriction} onChange={(e) => setTicketAgeRestriction(e.target.value)}>
