@@ -212,12 +212,12 @@ export default function DashboardPage() {
                             <MonitorPlay size={28} style={{ color: '#f59e0b' }} />
                         </div>
                         <div>
-                            <h3 className="font-bold text-lg mb-1">Reklama</h3>
-                            <p className="text-secondary text-sm">Zarządzaj banerami reklamowymi</p>
+                            <h3 className="font-bold text-lg mb-1">Banery Reklamowe</h3>
+                            <p className="text-secondary text-sm">Baner na dole strony, sidebar i inne pozycje</p>
                         </div>
                     </div>
                     <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between' }}>
-                        <span className="text-secondary">Sprzedaj miejsce reklamowe</span>
+                        <span className="text-secondary">Włącz, wyłącz lub zmień baner</span>
                         <span style={{ color: '#f59e0b', fontWeight: 700 }}>→</span>
                     </div>
                 </Link>
