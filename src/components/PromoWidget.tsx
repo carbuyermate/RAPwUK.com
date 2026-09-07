@@ -48,11 +48,17 @@ export async function PromoWidget({ position = 'homepage_bottom' }: PromoWidgetP
         console.error('Błąd pobierania baneru', e);
     }
 
-    const isOldPlaceholder = adData && !isSidebar && !isTop && (
+    const isOldPlaceholder = adData && (
         adData.image_url?.includes('banner-placeholder') ||
         adData.image_url?.includes('promo/1775996623902')
     );
-    const ad = (adData && !isOldPlaceholder) ? adData : (isSidebar ? PLACEHOLDER_SIDEBAR : isTop ? PLACEHOLDER_TOP : PLACEHOLDER_BOTTOM);
+
+    // If no active ad in DB and it's the bottom or sidebar — show nothing.
+    // Only homepage_top keeps an animated fallback widget.
+    const hasRealAd = adData && !isOldPlaceholder;
+    if (!hasRealAd && !isTop) return null;
+
+    const ad = hasRealAd ? adData : PLACEHOLDER_TOP;
 
     if (isTop && !adData) {
         return (
