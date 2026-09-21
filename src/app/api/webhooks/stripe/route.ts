@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
+import { sendOrderConfirmationEmail } from '@/lib/email';
 
 function getStripe() {
     const key = (process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder')
@@ -129,6 +130,26 @@ export async function POST(req: NextRequest) {
                     if (ticketUpdateErr) console.error('[Webhook] Failed to update ticket info:', ticketUpdateErr.message);
                 }
 
+                // Send order confirmation email to customer
+                try {
+                    const emailItems = (dbOrder.items || []).map((item: any) => ({
+                        title: item.title || item.name || 'Produkt',
+                        quantity: Number(item.quantity) || 1,
+                        price: Number(item.price) || 0,
+                    }));
+                    await sendOrderConfirmationEmail({
+                        orderId: dbOrder.id,
+                        customerEmail: customerDetails?.email || dbOrder.customer_email,
+                        items: emailItems,
+                        totalAmount: Number(dbOrder.total_amount) || 0,
+                        shippingAddress: shippingAddressObj,
+                        ticketBuyerName: ticketBuyerName,
+                        ticketPassword: ticketPassword,
+                    });
+                } catch (emailErr: any) {
+                    console.error('[Webhook Email Error]', emailErr.message);
+                }
+
                 // Note: Stock decrement is handled automatically via public.handle_order_stock_change database trigger.
                 // Fail-safe / fallback: Decrement stock directly in Node code in case the database trigger is not installed or failed.
                 try {
@@ -186,6 +207,21 @@ export async function POST(req: NextRequest) {
                     .single();
                 if (insertErr) throw insertErr;
                 console.log(`[Webhook] Order ${session.id} created on-the-fly as PAID`);
+
+                // Send confirmation email for on-the-fly order
+                try {
+                    await sendOrderConfirmationEmail({
+                        orderId: newOrder?.id || session.id,
+                        customerEmail: customerDetails?.email || 'unknown@example.com',
+                        items: items.map((i: any) => ({ title: i.title, quantity: Number(i.quantity) || 1, price: Number(i.price) || 0 })),
+                        totalAmount: (session.amount_total || 0) / 100,
+                        shippingAddress: shippingAddressObj,
+                        ticketBuyerName: ticketBuyerName,
+                        ticketPassword: ticketPassword,
+                    });
+                } catch (emailErr: any) {
+                    console.error('[Webhook Email Error (on-the-fly)]', emailErr.message);
+                }
 
                 // Insert into order_items and decrement stock
                 if (newOrder) {
