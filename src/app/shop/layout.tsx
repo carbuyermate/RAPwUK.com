@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'RAPwUK Shop | Polski Sklep Muzyczny w UK',
-    description: 'Oficjalny polski sklep muzyczny w Wielkiej Brytanii. Kupuj polskie płyty rapowe, CD, bilety na koncerty i streetwear. Szybka dostawa InPost w UK.',
+    title: 'Sklep RAPwUK.com Shop - jedyny polski sklep hip-hopowy w UK',
+    description: 'Jedyny polski sklep hip-hopowy w Wielkiej Brytanii. Polskie płyty rapowe, CD, merch, streetwear i bilety na koncerty. Szybka dostawa InPost w UK.',
     robots: { index: true, follow: true },
 };
 

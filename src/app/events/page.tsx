@@ -9,14 +9,14 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export const metadata: Metadata = {
-    title: 'Lista imprez w UK | Hip-hopowe koncerty i eventy',
-    description: 'Kalendarz hip-hopowych imprez w Wielkiej Brytanii. Koncerty, eventy i festiwale – polski rap w UK i światowe gwiazdy hip-hopu na jednej liście.',
+    title: 'Lista imprez - Lista koncertów, eventów, imprez w UK',
+    description: 'Kalendarz koncertów, eventów i imprez hip-hopowych w Wielkiej Brytanii. Polski rap w UK i światowe gwiazdy hip-hopu na jednej liście.',
     alternates: {
         canonical: 'https://rapwuk.com/events',
     },
     openGraph: {
-        title: 'Lista imprez w UK | Hip-hopowe koncerty i eventy',
-        description: 'Kalendarz hip-hopowych imprez w Wielkiej Brytanii. Koncerty, eventy i festiwale – polski rap w UK i światowe gwiazdy hip-hopu na jednej liście.',
+        title: 'Lista imprez - Lista koncertów, eventów, imprez w UK',
+        description: 'Kalendarz koncertów, eventów i imprez hip-hopowych w Wielkiej Brytanii. Polski rap w UK i światowe gwiazdy hip-hopu na jednej liście.',
         url: 'https://rapwuk.com/events',
         siteName: 'RAPwUK.com',
         locale: 'pl_PL',

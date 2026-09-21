@@ -9,14 +9,14 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export const metadata: Metadata = {
-    title: 'Scena | Polscy raperzy w UK – RAPwUK.com',
-    description: 'Katalog polskich artystów hip-hopowych w Wielkiej Brytanii. Raperzy, DJ-e, studia i labele działające na polskiej scenie rap w UK.',
+    title: "Scena - Polska scena w UK. Raperzy, DJ'e, studia nagrań w UK.",
+    description: "Polska scena hip-hopowa w Wielkiej Brytanii. Raperzy, DJ'e i studia nagrań działające w UK. Odkryj polskich artystów hip-hopowych na Wyspach.",
     alternates: {
         canonical: 'https://rapwuk.com/rappers',
     },
     openGraph: {
-        title: 'Scena | Polscy raperzy w UK – RAPwUK.com',
-        description: 'Katalog polskich artystów hip-hopowych w Wielkiej Brytanii. Raperzy, DJ-e, studia i labele.',
+        title: "Scena - Polska scena w UK. Raperzy, DJ'e, studia nagrań w UK.",
+        description: "Polska scena hip-hopowa w Wielkiej Brytanii. Raperzy, DJ'e i studia nagrań działające w UK.",
         url: 'https://rapwuk.com/rappers',
         siteName: 'RAPwUK.com',
         locale: 'pl_PL',
