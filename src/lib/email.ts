@@ -1,6 +1,23 @@
+import nodemailer from 'nodemailer';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getZohoTransporter() {
+    const password = process.env.ZOHO_APP_PASSWORD?.replace(/\s+/g, '');
+    const user = process.env.ZOHO_EMAIL || 'kontakt@rapwuk.com';
+
+    if (!password) return null;
+
+    return nodemailer.createTransport({
+        host: 'smtp.zoho.eu',
+        port: 465,
+        secure: true,
+        auth: {
+            user,
+            pass: password,
+        },
+    });
+}
+
 
 export interface OrderItem {
     title: string;
@@ -168,28 +185,54 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData): Promise<
     const { customerEmail, orderId } = data;
     const shortId = orderId.slice(0, 8).toUpperCase();
 
-    if (!process.env.RESEND_API_KEY) {
-        console.error('[Email] RESEND_API_KEY is not set — skipping email send.');
-        return;
-    }
-
     if (!customerEmail || customerEmail === 'pending@example.com' || customerEmail === 'unknown@example.com') {
         console.error(`[Email] Invalid customer email "${customerEmail}" — skipping.`);
         return;
     }
 
     const html = buildEmailHtml(data);
+    const subject = `✅ Potwierdzenie zamówienia #${shortId} – RAPwUK.com`;
 
-    const { data: result, error } = await resend.emails.send({
-        from: 'RAPwUK.com Sklep <zamowienia@rapwuk.com>',
-        to: customerEmail,
-        subject: `✅ Potwierdzenie zamówienia #${shortId} – RAPwUK.com`,
-        html,
-    });
-
-    if (error) {
-        console.error('[Email] Resend error:', error);
-    } else {
-        console.log(`[Email] Confirmation sent to ${customerEmail}, id: ${result?.id}`);
+    // 1. Try Zoho Mail SMTP first if ZOHO_APP_PASSWORD is set
+    const zohoTransporter = getZohoTransporter();
+    if (zohoTransporter) {
+        try {
+            const sender = process.env.ZOHO_EMAIL || 'kontakt@rapwuk.com';
+            const info = await zohoTransporter.sendMail({
+                from: `"RAPwUK.com Sklep" <${sender}>`,
+                to: customerEmail,
+                subject,
+                html,
+            });
+            console.log(`[Email] Zoho confirmation sent to ${customerEmail}, messageId: ${info.messageId}`);
+            return;
+        } catch (zohoErr: any) {
+            console.error('[Email] Zoho SMTP sending failed:', zohoErr.message);
+            // Fall through to Resend if available
+        }
     }
+
+    // 2. Fallback to Resend if RESEND_API_KEY is configured
+    if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== 're_REPLACE_ME') {
+        try {
+            const resend = new Resend(process.env.RESEND_API_KEY);
+            const { data: result, error } = await resend.emails.send({
+                from: 'RAPwUK.com Sklep <zamowienia@rapwuk.com>',
+                to: customerEmail,
+                subject,
+                html,
+            });
+
+            if (error) {
+                console.error('[Email] Resend error:', error);
+            } else {
+                console.log(`[Email] Resend confirmation sent to ${customerEmail}, id: ${result?.id}`);
+            }
+            return;
+        } catch (resendErr: any) {
+            console.error('[Email] Resend error:', resendErr.message);
+        }
+    }
+
+    console.error('[Email] Neither ZOHO_APP_PASSWORD nor valid RESEND_API_KEY is configured.');
 }
